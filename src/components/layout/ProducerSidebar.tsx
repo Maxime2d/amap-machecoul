@@ -5,50 +5,32 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
+  Truck,
   FileText,
-  Users,
-  Tractor,
-  Calendar,
-  Wallet,
-  Newspaper,
   ChevronLeft,
   ChevronRight,
   LogOut,
   Leaf,
-  Package,
-  CreditCard,
-  Truck,
-  FileDown,
-  Heart,
-  Mail,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const adminNavItems = [
-  { label: 'Vue d\'ensemble', href: '/admin', icon: LayoutDashboard },
-  { label: 'Contrats', href: '/admin/contrats', icon: FileText },
-  { label: 'Membres', href: '/admin/membres', icon: Users },
-  { label: 'Producteurs', href: '/admin/producteurs', icon: Tractor },
-  { label: 'Produits', href: '/admin/produits', icon: Package },
-  { label: 'Paiements', href: '/admin/paiements', icon: CreditCard },
-  { label: 'Remises producteur', href: '/admin/remises', icon: Truck },
-  { label: 'Distributions', href: '/admin/distributions', icon: FileDown },
-  { label: 'Permanences', href: '/admin/permanences', icon: Calendar },
-  { label: 'Finances', href: '/admin/finances', icon: Wallet },
-  { label: 'Cotisations', href: '/admin/cotisations', icon: Heart },
-  { label: 'Actualités', href: '/admin/actualites', icon: Newspaper },
-  { label: 'Emails', href: '/admin/emails', icon: Mail },
+const producerNavItems = [
+  { label: 'Tableau de bord', href: '/producteur', icon: LayoutDashboard },
+  { label: 'Mes livraisons', href: '/producteur/livraisons', icon: Truck },
+  { label: 'Mes contrats', href: '/producteur/contrats', icon: FileText },
 ];
 
-interface AdminSidebarProps {
+interface ProducerSidebarProps {
+  producerName?: string;
   isCollapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
 }
 
-export function AdminSidebar({
+export function ProducerSidebar({
+  producerName = 'Producteur',
   isCollapsed = false,
   onCollapsedChange,
-}: AdminSidebarProps) {
+}: ProducerSidebarProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(isCollapsed);
 
@@ -70,7 +52,7 @@ export function AdminSidebar({
         {!collapsed && (
           <div className="flex items-center gap-2">
             <Leaf className="w-5 h-5 text-green-400" />
-            <span className="font-bold text-sm">Admin AMAP</span>
+            <span className="font-bold text-sm">Producteur</span>
           </div>
         )}
         <button
@@ -86,11 +68,19 @@ export function AdminSidebar({
         </button>
       </div>
 
+      {/* Producer Name */}
+      {!collapsed && (
+        <div className="px-4 py-4 border-b border-slate-700">
+          <p className="text-xs text-slate-400 uppercase tracking-wide">Producteur</p>
+          <p className="font-medium text-white truncate mt-1">{producerName}</p>
+        </div>
+      )}
+
       {/* Navigation */}
       <nav className="flex-1 px-2 py-4 space-y-1">
-        {adminNavItems.map((item) => {
+        {producerNavItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || (item.href !== '/producteur' && pathname.startsWith(item.href));
 
           return (
             <Link
@@ -99,7 +89,7 @@ export function AdminSidebar({
               className={cn(
                 'flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-sm transition-colors',
                 isActive
-                  ? 'bg-indigo-600 text-white'
+                  ? 'bg-green-600 text-white'
                   : 'text-slate-300 hover:bg-slate-800 hover:text-white'
               )}
               title={collapsed ? item.label : undefined}
