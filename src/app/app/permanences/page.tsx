@@ -255,7 +255,7 @@ export default function MemberPermanencesPage() {
       {/* Info */}
       <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
         <p className="text-sm text-blue-900">
-          <strong>Rappel :</strong> Chaque adhérent est invité à participer à au moins une permanence par mois.
+          <strong>Rappel :</strong> Chaque adhérent est invité à participer à au moins 2 permanences dans la saison.
           C'est un moment convivial d'échange et de partage lors de la distribution.
         </p>
       </div>
