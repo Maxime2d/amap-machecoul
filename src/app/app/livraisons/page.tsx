@@ -1,3 +1,51 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { Package, Calendar, CheckCircle, Clock, ChevronDown, ChevronUp } from 'lucide-react';
+
+interface Product {
+  name: string;
+  unit_type: string;
+}
+
+interface ContractItem {
+  id: string;
+  product_id: string;
+  delivery_date: string;
+  quantity: number;
+  products: Product;
+}
+
+interface Producer {
+  name: string;
+}
+
+interface ContractModel {
+  id: string;
+  name: string;
+  start_date: string;
+  end_date: string;
+  producers: Producer;
+}
+
+interface Contract {
+  id: string;
+  status: string;
+  total_amount: number;  contract_models: ContractModel;
+  contract_items: ContractItem[];
+}
+
+interface GroupedDelivery {
+  date: string;
+  items: Array<{
+    id: string;
+    product_name: string;
+    quantity: number;
+    unit_type: string;
+    producer_name: string;
+  }>;
+}
 
 export default function LivraisonsPage() {
   const [upcomingDeliveries, setUpcomingDeliveries] = useState<GroupedDelivery[]>([]);
@@ -12,7 +60,6 @@ export default function LivraisonsPage() {
     try {
       setLoading(true);
       setError(null);
-
       // Get current user
       const { data: authData, error: authError } = await supabase.auth.getUser();
       if (authError || !authData?.user) {
@@ -34,9 +81,10 @@ export default function LivraisonsPage() {
 
       if (contractError) {
         throw new Error('Failed to fetch contracts');
-      }      // Group contract_items by delivery_date across all contracts
-      const deliveriesMap = new Map<string, GroupedDelivery>();
+      }
 
+      // Group contract_items by delivery_date across all contracts
+      const deliveriesMap = new Map<string, GroupedDelivery>();
       if (contracts && Array.isArray(contracts)) {
         for (const contract of contracts) {
           const items = contract.contract_items || [];
@@ -63,7 +111,6 @@ export default function LivraisonsPage() {
           }
         }
       }
-
       // Sort dates ascending
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -90,7 +137,8 @@ export default function LivraisonsPage() {
     } finally {
       setLoading(false);
     }
-  }, [supabase]);  useEffect(() => {
+  }, [supabase]);
+  useEffect(() => {
     fetchDeliveries();
   }, [fetchDeliveries]);
 
@@ -117,8 +165,7 @@ export default function LivraisonsPage() {
   if (loading) {
     return (
       <div className="p-6 md:p-8 max-w-6xl">
-        <div>
-          <div className="animate-pulse space-y-4">
+        <div>          <div className="animate-pulse space-y-4">
             <div className="h-8 bg-gray-200 rounded w-1/3"></div>
             <div className="h-32 bg-gray-200 rounded-lg"></div>
             <div className="space-y-4">
@@ -143,7 +190,8 @@ export default function LivraisonsPage() {
         </div>
       </div>
     );
-  }  return (
+  }
+  return (
     <div className="p-6 md:p-8 max-w-6xl">
       <div>
         {/* Page Header */}
@@ -170,8 +218,7 @@ export default function LivraisonsPage() {
               <div>
                 <div className="flex items-center gap-3 mb-2">
                   <Package className="w-5 h-5 text-green-600" />
-                  <p className="text-gray-600 font-medium">Livraisons à venir</p>
-                </div>
+                  <p className="text-gray-600 font-medium">Livraisons à venir</p>                </div>
                 <p className="text-2xl font-bold text-gray-900">
                   {upcomingDeliveries.length}
                 </p>
@@ -191,14 +238,15 @@ export default function LivraisonsPage() {
               Vos livraisons apparaîtront ici dès qu'elles seront planifiées
             </p>
           </div>
-        )}        {/* Upcoming Deliveries */}
+        )}
+
+        {/* Upcoming Deliveries */}
         {upcomingDeliveries.length > 0 && (
           <div className="space-y-4 mb-8">
             <h2 className="text-2xl font-bold text-gray-900">Livraisons à venir</h2>
             {upcomingDeliveries.map((delivery) => (
               <div
-                key={delivery.date}
-                className={`rounded-lg shadow-md overflow-hidden transition-all ${
+                key={delivery.date}                className={`rounded-lg shadow-md overflow-hidden transition-all ${
                   isNextDelivery(delivery.date)
                     ? 'bg-green-50 border-2 border-green-600'
                     : 'bg-white border border-gray-200'
@@ -227,8 +275,7 @@ export default function LivraisonsPage() {
                 </div>
 
                 <div className="p-6 space-y-3">
-                  {delivery.items.map((item) => (
-                    <div
+                  {delivery.items.map((item) => (                    <div
                       key={item.id}
                       className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0"
                     >
@@ -251,12 +298,13 @@ export default function LivraisonsPage() {
               </div>
             ))}
           </div>
-        )}        {/* Past Deliveries Section */}
+        )}
+
+        {/* Past Deliveries Section */}
         {pastDeliveries.length > 0 && (
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <button
-              onClick={() => setExpandedPast(!expandedPast)}
-              className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
+              onClick={() => setExpandedPast(!expandedPast)}              className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center gap-3">
                 <Clock className="w-5 h-5 text-gray-600" />
@@ -283,8 +331,7 @@ export default function LivraisonsPage() {
                   >
                     <p className="font-semibold text-gray-900 mb-3">
                       {formatDate(delivery.date)}
-                    </p>
-                    <div className="space-y-2">
+                    </p>                    <div className="space-y-2">
                       {delivery.items.map((item) => (
                         <div
                           key={item.id}

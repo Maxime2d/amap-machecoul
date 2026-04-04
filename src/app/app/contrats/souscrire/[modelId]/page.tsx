@@ -1,3 +1,43 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { createClient } from '@/lib/supabase/client';
+import { ArrowLeft, Calendar, Package, Check, Loader2, ShoppingBag } from 'lucide-react';
+
+interface Product {
+  id: string;
+  name: string;
+  unit_type: string;
+  packaging: string | null;
+}
+
+interface ModelProduct {
+  id: string;
+  price: number;
+  products: Product;
+}
+
+interface ModelDate {
+  delivery_date: string;
+}
+
+interface Producer {
+  name: string;
+}
+
+interface ContractModel {
+  id: string;
+  name: string;  description: string | null;
+  nature: string;
+  start_date: string;
+  end_date: string;
+  enroll_end: string | null;
+  producers: Producer;
+  model_products: ModelProduct[];
+  model_dates: ModelDate[];
+}
 
 export default function SouscrirePage() {
   const params = useParams();
@@ -16,8 +56,7 @@ export default function SouscrirePage() {
       .from('contract_models')
       .select(`
         id, name, description, nature, start_date, end_date, enroll_end,
-        producers ( name ),
-        model_products ( id, price, products ( id, name, unit_type, packaging ) ),
+        producers ( name ),        model_products ( id, price, products ( id, name, unit_type, packaging ) ),
         model_dates ( delivery_date )
       `)
       .eq('id', modelId)
@@ -46,7 +85,6 @@ export default function SouscrirePage() {
       year: 'numeric',
     });
   };
-
   const deliveryCount = model?.model_dates?.length || 0;
 
   const totalPerDelivery = model?.model_products?.reduce((sum, mp) => {
@@ -75,7 +113,6 @@ export default function SouscrirePage() {
         })
         .select()
         .single();
-
       if (contractError) throw contractError;
 
       // Create contract_items for each product × delivery date
@@ -106,7 +143,8 @@ export default function SouscrirePage() {
     } finally {
       setSubmitting(false);
     }
-  };  if (loading) {
+  };
+  if (loading) {
     return (
       <div className="p-6 md:p-8 max-w-4xl flex items-center justify-center h-64">
         <Loader2 className="w-8 h-8 text-green-600 animate-spin" />
@@ -133,8 +171,7 @@ export default function SouscrirePage() {
     return (
       <div className="p-6 md:p-8 max-w-4xl">
         <div className="bg-green-50 border border-green-200 rounded-lg p-8 text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Check className="w-8 h-8 text-green-600" />
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">            <Check className="w-8 h-8 text-green-600" />
           </div>
           <h2 className="text-2xl font-bold text-green-900 mb-2">Inscription réussie !</h2>
           <p className="text-green-700 mb-6">
@@ -158,7 +195,6 @@ export default function SouscrirePage() {
       </div>
     );
   }
-
   return (
     <div className="p-6 md:p-8 max-w-4xl">
       {/* Back link */}
@@ -189,7 +225,8 @@ export default function SouscrirePage() {
           <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${step >= 2 ? 'bg-green-600 text-white' : 'bg-gray-300 text-gray-600'}`}>2</span>
           Confirmation
         </div>
-      </div>      {step === 1 && (
+      </div>
+      {step === 1 && (
         <div className="space-y-6">
           {/* Contract info */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -215,7 +252,6 @@ export default function SouscrirePage() {
               <p className="text-gray-600 mt-4 text-sm">{model.description}</p>
             )}
           </div>
-
           {/* Product quantities */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Choisissez vos quantités</h2>
@@ -244,7 +280,8 @@ export default function SouscrirePage() {
                 </div>
               ))}
             </div>
-          </div>          {/* Total */}
+          </div>
+          {/* Total */}
           <div className="bg-green-50 rounded-lg border border-green-200 p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -268,7 +305,6 @@ export default function SouscrirePage() {
           </button>
         </div>
       )}
-
       {step === 2 && (
         <div className="space-y-6">
           <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -300,7 +336,6 @@ export default function SouscrirePage() {
               </div>
             </div>
           </div>
-
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="text-sm text-blue-900">
               <strong>Information :</strong> En confirmant, vous vous engagez à régler le montant total de {totalCost.toFixed(2)}€ selon les modalités de paiement du contrat. Vous pourrez régler par chèque, virement ou espèces.
