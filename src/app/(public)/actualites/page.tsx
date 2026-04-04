@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Calendar } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 
@@ -7,7 +8,7 @@ async function getPosts() {
   const { data: posts } = await supabase
     .from('posts')
     .select('*')
-    .eq('published', true)
+    .eq('is_published', true)
     .order('published_at', { ascending: false });
   return posts || [];
 }
@@ -49,6 +50,17 @@ export default async function ActualitesPage() {
                   key={post.id}
                   className="pb-12 border-b border-gray-200 last:border-b-0"
                 >
+                  {post.image_url && (
+                    <div className="relative h-48 md:h-64 rounded-lg overflow-hidden mb-6">
+                      <Image
+                        src={post.image_url}
+                        alt={post.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 800px"
+                      />
+                    </div>
+                  )}
                   <div className="flex items-center gap-2 text-gray-600 mb-3">
                     <Calendar className="w-5 h-5" />
                     <time dateTime={post.published_at}>

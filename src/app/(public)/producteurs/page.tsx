@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Sprout, ArrowLeft } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 
@@ -50,8 +51,18 @@ export default async function ProducteursPage() {
                   href={`/producteurs/${producer.slug}`}
                   className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
                 >
-                  <div className="h-56 bg-gradient-to-br from-green-100 via-green-50 to-emerald-50 rounded-t-lg flex items-center justify-center group-hover:from-green-200 transition-colors">
-                    <Sprout className="w-20 h-20 text-green-300 group-hover:text-green-400 transition-colors" />
+                  <div className="h-56 bg-gradient-to-br from-green-100 via-green-50 to-emerald-50 rounded-t-lg flex items-center justify-center overflow-hidden relative">
+                    {producer.image_url ? (
+                      <Image
+                        src={producer.image_url}
+                        alt={producer.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <Sprout className="w-20 h-20 text-green-300 group-hover:text-green-400 transition-colors" />
+                    )}
                   </div>
                   <div className="p-8">
                     <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-green-700 transition-colors">

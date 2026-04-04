@@ -13,6 +13,7 @@ import {
   LogOut,
   Menu,
   X,
+  Package,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -31,9 +32,7 @@ export function AppSidebar({ userName }: AppSidebarProps) {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  async function handleLogout() {
+  }, []);  async function handleLogout() {
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push('/connexion');
@@ -50,6 +49,11 @@ export function AppSidebar({ userName }: AppSidebarProps) {
       href: '/app/contrats',
       label: 'Mes contrats',
       icon: FileText,
+    },
+    {
+      href: '/app/livraisons',
+      label: 'Mes livraisons',
+      icon: Package,
     },
     {
       href: '/app/permanences',
@@ -71,9 +75,7 @@ export function AppSidebar({ userName }: AppSidebarProps) {
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href;
     return pathname.startsWith(href);
-  };
-
-  const sidebarContent = (
+  };  const sidebarContent = (
     <>
       <div className="p-6 border-b border-green-100">
         <h1 className="text-xl font-bold text-green-700">AMAP</h1>
@@ -121,9 +123,7 @@ export function AppSidebar({ userName }: AppSidebarProps) {
         </button>
       </div>
     </>
-  );
-
-  if (isMobile) {
+  );  if (isMobile) {
     return (
       <>
         <button

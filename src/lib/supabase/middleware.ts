@@ -13,7 +13,9 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
           supabaseResponse = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
@@ -22,13 +24,18 @@ export async function updateSession(request: NextRequest) {
       },
     }
   );
-
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
 
   // Public routes - no auth needed
-  const publicRoutes = ['/', '/producteurs', '/actualites', '/contact', '/connexion', '/inscription'];
-  const isPublic = publicRoutes.some(route => path === route || path.startsWith(route + '/'));
+  const publicRoutes = [
+    '/', '/producteurs', '/actualites', '/contact',
+    '/connexion', '/inscription', '/agenda',
+    '/la-charte', '/qu-est-ce-qu-une-amap', '/ressources',
+  ];
+  const isPublic = publicRoutes.some(
+    (route) => path === route || path.startsWith(route + '/')
+  );
 
   if (!isPublic && !user) {
     const url = request.nextUrl.clone();

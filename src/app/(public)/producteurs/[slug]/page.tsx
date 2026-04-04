@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Mail, Phone, MapPin, Leaf } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import type { Producer } from '@/types/database';
@@ -65,8 +66,18 @@ export default async function ProducerPage({ params }: { params: Promise<{ slug:
           </Link>
           <div className="flex flex-col md:flex-row gap-8 items-start">
             <div className="flex-shrink-0">
-              <div className="w-32 h-32 md:w-40 md:h-40 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                <Leaf className="w-16 h-16 md:w-20 md:h-20 text-green-100" />
+              <div className="w-32 h-32 md:w-40 md:h-40 bg-white bg-opacity-20 rounded-lg flex items-center justify-center overflow-hidden relative">
+                {producer.image_url ? (
+                  <Image
+                    src={producer.image_url}
+                    alt={producer.name}
+                    fill
+                    className="object-cover rounded-lg"
+                    sizes="160px"
+                  />
+                ) : (
+                  <Leaf className="w-16 h-16 md:w-20 md:h-20 text-green-100" />
+                )}
               </div>
             </div>
             <div className="flex-1">

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Sprout, Heart, ShoppingBasket, ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import type { Post } from '@/types/database';
@@ -31,7 +32,8 @@ export default async function HomePage() {
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-green-700 via-green-600 to-green-800 text-white py-20 md:py-32">
-        <div className="absolute inset-0 opacity-10 bg-pattern" />        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="absolute inset-0 opacity-10 bg-pattern" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
               Mangez local, mangez frais
@@ -42,11 +44,12 @@ export default async function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/producteurs"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-green-700 font-bold rounded-lg hover:bg-green-50 transition-colors"
               >
                 Découvrir nos producteurs
                 <ArrowRight className="w-5 h-5" />
-              </Link>              <Link
+              </Link>
+              <Link
                 href="/contact"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-900 text-white font-bold rounded-lg hover:bg-green-950 transition-colors border border-green-100"
               >
@@ -62,7 +65,8 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
             Comment ça marche ?
-          </h2>          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+          </h2>
+          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
             Trois étapes simples pour bénéficier de produits frais et locaux chaque semaine.
           </p>
           <div className="grid md:grid-cols-3 gap-8">
@@ -71,7 +75,8 @@ export default async function HomePage() {
               <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
                 <Sprout className="w-8 h-8 text-green-700" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Les producteurs cultivent</h3>              <p className="text-gray-600">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Les producteurs cultivent</h3>
+              <p className="text-gray-600">
                 Nos agriculteurs paysans cultivent des produits de qualité selon les principes du développement durable.
               </p>
             </div>
@@ -99,8 +104,11 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-      </section>      {/* Producers Section */}
-      <section className="py-16 md:py-24 bg-green-50">        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      </section>
+
+      {/* Producers Section */}
+      <section className="py-16 md:py-24 bg-green-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
             Nos Producteurs
           </h2>
@@ -116,8 +124,18 @@ export default async function HomePage() {
                   href={`/producteurs/${producer.slug}`}
                   className="bg-white rounded-lg shadow hover:shadow-lg transition-all group"
                 >
-                  <div className="h-48 bg-gradient-to-br from-green-100 to-green-50 rounded-t-lg flex items-center justify-center">
-                    <Sprout className="w-16 h-16 text-green-300" />
+                  <div className="h-48 bg-gradient-to-br from-green-100 to-green-50 rounded-t-lg flex items-center justify-center overflow-hidden relative">
+                    {producer.image_url ? (
+                      <Image
+                        src={producer.image_url}
+                        alt={producer.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
+                    ) : (
+                      <Sprout className="w-16 h-16 text-green-300" />
+                    )}
                   </div>
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-gray-900 group-hover:text-green-700 transition-colors">
@@ -136,38 +154,53 @@ export default async function HomePage() {
           <div className="text-center mt-12">
             <Link
               href="/producteurs"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors"
             >
               Voir tous nos producteurs
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
         </div>
-      </section>      {/* Latest News */}
+      </section>
+
+      {/* Latest News */}
       {latestPost && (
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">
               Dernières Actualités
             </h2>
-            <div className="bg-green-50 rounded-lg p-8 md:p-12">
-              <div className="max-w-3xl">
-                {latestPost.published_at && (
-                  <p className="text-sm text-green-700 font-semibold mb-2">
-                    {new Date(latestPost.published_at).toLocaleDateString('fr-FR')}
-                  </p>
-                )}
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-                  {latestPost.title}
-                </h3>
-                <p className="text-gray-700 mb-6 leading-relaxed">{latestPost.excerpt}</p>
-                <Link
-                  href="/actualites"
-                  className="inline-flex items-center gap-2 text-green-700 font-bold hover:text-green-800 transition-colors"
-                >
-                  Lire la suite
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
+            <div className="bg-green-50 rounded-lg overflow-hidden">
+              {latestPost.image_url && (
+                <div className="relative h-64 md:h-80">
+                  <Image
+                    src={latestPost.image_url}
+                    alt={latestPost.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 80vw"
+                  />
+                </div>
+              )}
+              <div className="p-8 md:p-12">
+                <div className="max-w-3xl">
+                  {latestPost.published_at && (
+                    <p className="text-sm text-green-700 font-semibold mb-2">
+                      {new Date(latestPost.published_at).toLocaleDateString('fr-FR')}
+                    </p>
+                  )}
+                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                    {latestPost.title}
+                  </h3>
+                  <p className="text-gray-700 mb-6 leading-relaxed">{latestPost.excerpt}</p>
+                  <Link
+                    href="/actualites"
+                    className="inline-flex items-center gap-2 text-green-700 font-bold hover:text-green-800 transition-colors"
+                  >
+                    Lire la suite
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -184,7 +217,7 @@ export default async function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-green-700 font-bold rounded-lg hover:bg-green-50 transition-colors"
             >
               Nous contacter
             </Link>
