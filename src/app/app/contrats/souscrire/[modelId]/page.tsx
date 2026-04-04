@@ -29,15 +29,9 @@ interface Producer {
 
 const unitTypeLabels: Record<string, string> = {
   unit: 'unité',
-  kg: 'kg',
-  litre: 'litre',
-  bunch: 'botte',
-  dozen: 'douzaine',
-  piece: 'pièce',
-  pot: 'pot',
-  bottle: 'bouteille',
-  basket: 'panier',
-  bag: 'sachet',
+  weight: 'kg',
+  volume: 'litre',
+  bundle: 'lot',
 };
 
 interface ContractModel {
