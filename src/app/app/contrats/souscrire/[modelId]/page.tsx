@@ -34,6 +34,37 @@ const unitTypeLabels: Record<string, string> = {
   bundle: 'lot',
 };
 
+const panierSizeConfig: Record<string, { icon: string; color: string; bgColor: string; borderColor: string; description: string }> = {
+  'petit panier': {
+    icon: '🥬',
+    color: 'text-emerald-700',
+    bgColor: 'bg-emerald-50',
+    borderColor: 'border-emerald-400',
+    description: 'Idéal pour 1 personne (~2 kg de légumes)',
+  },
+  'moyen panier': {
+    icon: '🧺',
+    color: 'text-orange-700',
+    bgColor: 'bg-orange-50',
+    borderColor: 'border-orange-400',
+    description: 'Parfait pour un couple (~4 kg de légumes)',
+  },
+  'grand panier': {
+    icon: '🥦',
+    color: 'text-green-800',
+    bgColor: 'bg-green-50',
+    borderColor: 'border-green-500',
+    description: 'Pour une famille (~6 kg de légumes)',
+  },
+};
+
+function isPanierContract(products: ModelProduct[]): boolean {
+  if (products.length < 2) return false;
+  const names = products.map(mp => mp.products.name.toLowerCase());
+  return names.some(n => n.includes('petit panier')) &&
+         names.some(n => n.includes('grand panier'));
+}
+
 interface ContractModel {
   id: string;
   name: string;  description: string | null;
@@ -71,11 +102,19 @@ export default function SouscrirePage() {
 
     if (data) {
       setModel(data as any);
-      // Initialize quantities to 1 for each product
+      const products = (data as any).model_products || [];
       const q: Record<string, number> = {};
-      (data as any).model_products?.forEach((mp: any) => {
-        q[mp.id] = 1;
-      });
+      if (isPanierContract(products)) {
+        // For panier contracts, default to 0 (user must pick one)
+        products.forEach((mp: any) => {
+          q[mp.id] = 0;
+        });
+      } else {
+        // Regular products: default to 1
+        products.forEach((mp: any) => {
+          q[mp.id] = 1;
+        });
+      }
       setQuantities(q);
     }
     setLoading(false);
@@ -261,41 +300,103 @@ export default function SouscrirePage() {
           </div>
           {/* Product quantities */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-2">Choisissez vos quantités</h2>
-            <p className="text-sm text-gray-500 mb-4">Quantité reçue à chaque livraison ({deliveryCount} livraison{deliveryCount > 1 ? 's' : ''} prévue{deliveryCount > 1 ? 's' : ''})</p>
-            <div className="space-y-4">
-              {model.model_products?.map((mp) => {
-                const qty = quantities[mp.id] || 0;
-                const subtotal = mp.price * qty;
-                return (
-                  <div key={mp.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-900">{mp.products.name}</p>
-                      <p className="text-sm text-gray-500">{mp.price.toFixed(2)}€ par {unitTypeLabels[mp.products.unit_type] || mp.products.unit_type || 'unité'}</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setQuantities(q => ({ ...q, [mp.id]: Math.max(0, (q[mp.id] || 1) - 1) }))}
-                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
-                      >
-                        −
-                      </button>
-                      <span className="w-8 text-center font-bold text-gray-900">{qty}</span>
-                      <button
-                        onClick={() => setQuantities(q => ({ ...q, [mp.id]: (q[mp.id] || 0) + 1 }))}
-                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
-                      >
-                        +
-                      </button>
-                    </div>
-                    <div className="w-24 text-right ml-4">
-                      <p className="font-semibold text-gray-900">{subtotal.toFixed(2)}€</p>
-                      <p className="text-xs text-gray-400">/ livraison</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            {isPanierContract(model.model_products || []) ? (
+              <>
+                <h2 className="text-lg font-bold text-gray-900 mb-2">Choisissez votre taille de panier</h2>
+                <p className="text-sm text-gray-500 mb-6">Sélectionnez le panier que vous recevrez à chaque livraison ({deliveryCount} livraison{deliveryCount > 1 ? 's' : ''} prévue{deliveryCount > 1 ? 's' : ''})</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {[...model.model_products]
+                    .sort((a, b) => a.price - b.price)
+                    .map((mp) => {
+                      const nameKey = mp.products.name.toLowerCase();
+                      const config = panierSizeConfig[nameKey] || {
+                        icon: '📦',
+                        color: 'text-gray-700',
+                        bgColor: 'bg-gray-50',
+                        borderColor: 'border-gray-400',
+                        description: mp.products.packaging || '',
+                      };
+                      const isSelected = (quantities[mp.id] || 0) > 0;
+                      return (
+                        <button
+                          key={mp.id}
+                          type="button"
+                          onClick={() => {
+                            const newQ: Record<string, number> = {};
+                            model.model_products.forEach((p) => {
+                              newQ[p.id] = p.id === mp.id ? 1 : 0;
+                            });
+                            setQuantities(newQ);
+                          }}
+                          className={`relative rounded-xl border-2 p-5 text-left transition-all ${
+                            isSelected
+                              ? `${config.borderColor} ${config.bgColor} shadow-md ring-2 ring-offset-1 ring-green-300`
+                              : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                          }`}
+                        >
+                          {isSelected && (
+                            <div className="absolute top-3 right-3 w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
+                              <Check className="w-4 h-4 text-white" />
+                            </div>
+                          )}
+                          <div className="text-3xl mb-3">{config.icon}</div>
+                          <h3 className={`text-lg font-bold ${config.color}`}>{mp.products.name}</h3>
+                          {mp.products.packaging && (
+                            <p className="text-sm text-gray-500 mt-1">{mp.products.packaging}</p>
+                          )}
+                          <p className="text-sm text-gray-500 mt-1">{config.description}</p>
+                          <div className="mt-4 pt-3 border-t border-gray-200">
+                            <p className="text-2xl font-bold text-gray-900">{mp.price.toFixed(2)}€</p>
+                            <p className="text-xs text-gray-500">par livraison</p>
+                          </div>
+                          <div className="mt-2 text-sm font-medium text-gray-600">
+                            Total : <span className="font-bold text-green-700">{(mp.price * deliveryCount).toFixed(2)}€</span>
+                            <span className="text-gray-400"> / saison</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 className="text-lg font-bold text-gray-900 mb-2">Choisissez vos quantités</h2>
+                <p className="text-sm text-gray-500 mb-4">Quantité reçue à chaque livraison ({deliveryCount} livraison{deliveryCount > 1 ? 's' : ''} prévue{deliveryCount > 1 ? 's' : ''})</p>
+                <div className="space-y-4">
+                  {model.model_products?.map((mp) => {
+                    const qty = quantities[mp.id] || 0;
+                    const subtotal = mp.price * qty;
+                    return (
+                      <div key={mp.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">{mp.products.name}</p>
+                          <p className="text-sm text-gray-500">{mp.price.toFixed(2)}€ par {unitTypeLabels[mp.products.unit_type] || mp.products.unit_type || 'unité'}</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => setQuantities(q => ({ ...q, [mp.id]: Math.max(0, (q[mp.id] || 1) - 1) }))}
+                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
+                          >
+                            −
+                          </button>
+                          <span className="w-8 text-center font-bold text-gray-900">{qty}</span>
+                          <button
+                            onClick={() => setQuantities(q => ({ ...q, [mp.id]: (q[mp.id] || 0) + 1 }))}
+                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <div className="w-24 text-right ml-4">
+                          <p className="font-semibold text-gray-900">{subtotal.toFixed(2)}€</p>
+                          <p className="text-xs text-gray-400">/ livraison</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
           {/* Total breakdown */}
           <div className="bg-green-50 rounded-lg border border-green-200 p-6">

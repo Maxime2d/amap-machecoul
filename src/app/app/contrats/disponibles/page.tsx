@@ -187,17 +187,48 @@ export default async function AvailableContractsPage() {
                       <div className="flex items-center gap-2 mb-3">
                         <Package className="w-5 h-5 text-green-600" />
                         <p className="text-sm font-medium text-gray-900">
-                          Produits inclus
+                          Produits proposés
                         </p>
                       </div>
-                      <div className="space-y-2 ml-8">
-                        {model.model_products && model.model_products.length > 0 ? (
-                          model.model_products.map(
-                            (modelProduct: any, idx: number) => (
-                              <div
-                                key={idx}
-                                className="flex items-center justify-between text-sm"
-                              >
+                      {(() => {
+                        const products = model.model_products || [];
+                        const isPanier = products.length >= 2 &&
+                          products.some((p: any) => p.products?.name?.toLowerCase().includes('petit panier')) &&
+                          products.some((p: any) => p.products?.name?.toLowerCase().includes('grand panier'));
+
+                        if (isPanier) {
+                          const sorted = [...products].sort((a: any, b: any) => a.price - b.price);
+                          const sizeIcons: Record<string, string> = {
+                            'petit panier': '🥬',
+                            'moyen panier': '🧺',
+                            'grand panier': '🥦',
+                          };
+                          return (
+                            <div className="space-y-2 ml-8">
+                              <p className="text-xs text-gray-500 mb-2">Choisissez votre taille lors de l&apos;inscription :</p>
+                              {sorted.map((mp: any, idx: number) => {
+                                const key = mp.products?.name?.toLowerCase() || '';
+                                const icon = sizeIcons[key] || '📦';
+                                return (
+                                  <div key={idx} className="flex items-center justify-between text-sm bg-gray-50 rounded-lg px-3 py-2">
+                                    <span className="text-gray-700 font-medium">
+                                      {icon} {mp.products?.name}
+                                      {mp.products?.packaging && (
+                                        <span className="text-gray-400 text-xs ml-1">— {mp.products.packaging}</span>
+                                      )}
+                                    </span>
+                                    <span className="font-bold text-green-700">{mp.price.toFixed(2)}€<span className="text-xs text-gray-400 font-normal">/livraison</span></span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <div className="space-y-2 ml-8">
+                            {products.length > 0 ? products.map((modelProduct: any, idx: number) => (
+                              <div key={idx} className="flex items-center justify-between text-sm">
                                 <span className="text-gray-700">
                                   {modelProduct.products?.name || 'Produit'}
                                   {modelProduct.products?.unit_type && (
@@ -206,39 +237,55 @@ export default async function AvailableContractsPage() {
                                     </span>
                                   )}
                                 </span>
-                                <span className="font-medium text-gray-900">
-                                  {modelProduct.price.toFixed(2)}€
-                                </span>
+                                <span className="font-medium text-gray-900">{modelProduct.price.toFixed(2)}€</span>
                               </div>
-                            )
-                          )
-                        ) : (
-                          <p className="text-sm text-gray-500 italic">
-                            Aucun produit spécifié
-                          </p>
-                        )}
-                      </div>
+                            )) : (
+                              <p className="text-sm text-gray-500 italic">Aucun produit spécifié</p>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
 
                     {/* Total Cost */}
-                    {deliveryCount > 0 && model.model_products?.length > 0 && (
-                      <div className="pt-4 border-t border-gray-100 space-y-2">
-                        <div className="flex items-center justify-between text-sm text-gray-600">
-                          <span>Panier par livraison</span>
-                          <span className="font-medium text-gray-900">
-                            {(totalCost / deliveryCount).toFixed(2)}€
-                          </span>
+                    {deliveryCount > 0 && model.model_products?.length > 0 && (() => {
+                      const products = model.model_products || [];
+                      const isPanier = products.length >= 2 &&
+                        products.some((p: any) => p.products?.name?.toLowerCase().includes('petit panier')) &&
+                        products.some((p: any) => p.products?.name?.toLowerCase().includes('grand panier'));
+
+                      if (isPanier) {
+                        const minPrice = Math.min(...products.map((p: any) => p.price));
+                        const maxPrice = Math.max(...products.map((p: any) => p.price));
+                        return (
+                          <div className="pt-4 border-t border-gray-100">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm text-gray-600">
+                                Total saison ({deliveryCount} livraisons)
+                              </span>
+                              <span className="text-lg font-bold text-green-600">
+                                de {(minPrice * deliveryCount).toFixed(0)}€ à {(maxPrice * deliveryCount).toFixed(0)}€
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div className="pt-4 border-t border-gray-100 space-y-2">
+                          <div className="flex items-center justify-between text-sm text-gray-600">
+                            <span>Panier par livraison</span>
+                            <span className="font-medium text-gray-900">{(totalCost / deliveryCount).toFixed(2)}€</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600">
+                              Total ({(totalCost / deliveryCount).toFixed(2)}€ × {deliveryCount} livraison{deliveryCount > 1 ? 's' : ''})
+                            </span>
+                            <span className="text-2xl font-bold text-green-600">{totalCost.toFixed(2)}€</span>
+                          </div>
                         </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">
-                            Total ({(totalCost / deliveryCount).toFixed(2)}€ × {deliveryCount} livraison{deliveryCount > 1 ? 's' : ''})
-                          </span>
-                          <span className="text-2xl font-bold text-green-600">
-                            {totalCost.toFixed(2)}€
-                          </span>
-                        </div>
-                      </div>
-                    )}
+                      );
+                    })()}
 
                     {/* Enrollment Deadline */}
                     {model.enroll_end && (
