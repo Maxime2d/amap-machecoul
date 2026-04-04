@@ -254,43 +254,61 @@ export default function SouscrirePage() {
           </div>
           {/* Product quantities */}
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Choisissez vos quantités</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-2">Choisissez vos quantités</h2>
+            <p className="text-sm text-gray-500 mb-4">Quantité reçue à chaque livraison ({deliveryCount} livraison{deliveryCount > 1 ? 's' : ''} prévue{deliveryCount > 1 ? 's' : ''})</p>
             <div className="space-y-4">
-              {model.model_products?.map((mp) => (
-                <div key={mp.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
-                  <div>
-                    <p className="font-medium text-gray-900">{mp.products.name}</p>
-                    <p className="text-sm text-gray-500">{mp.price.toFixed(2)}€ / {mp.products.unit_type || 'unité'}</p>
+              {model.model_products?.map((mp) => {
+                const qty = quantities[mp.id] || 0;
+                const subtotal = mp.price * qty;
+                return (
+                  <div key={mp.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">{mp.products.name}</p>
+                      <p className="text-sm text-gray-500">{mp.price.toFixed(2)}€ par {mp.products.unit_type || 'unité'}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setQuantities(q => ({ ...q, [mp.id]: Math.max(0, (q[mp.id] || 1) - 1) }))}
+                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
+                      >
+                        −
+                      </button>
+                      <span className="w-8 text-center font-bold text-gray-900">{qty}</span>
+                      <button
+                        onClick={() => setQuantities(q => ({ ...q, [mp.id]: (q[mp.id] || 0) + 1 }))}
+                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <div className="w-24 text-right ml-4">
+                      <p className="font-semibold text-gray-900">{subtotal.toFixed(2)}€</p>
+                      <p className="text-xs text-gray-400">/ livraison</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setQuantities(q => ({ ...q, [mp.id]: Math.max(0, (q[mp.id] || 1) - 1) }))}
-                      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
-                    >
-                      −
-                    </button>
-                    <span className="w-8 text-center font-bold text-gray-900">{quantities[mp.id] || 0}</span>
-                    <button
-                      onClick={() => setQuantities(q => ({ ...q, [mp.id]: (q[mp.id] || 0) + 1 }))}
-                      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
-          {/* Total */}
+          {/* Total breakdown */}
           <div className="bg-green-50 rounded-lg border border-green-200 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-700">Coût par livraison</p>
-                <p className="text-sm text-gray-500">{deliveryCount} livraison{deliveryCount > 1 ? 's' : ''}</p>
+            <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">Récapitulatif du coût</h3>
+            {model.model_products?.filter(mp => (quantities[mp.id] || 0) > 0).map((mp) => (
+              <div key={mp.id} className="flex justify-between text-sm text-gray-600 mb-1">
+                <span>{quantities[mp.id]} × {mp.products.name}</span>
+                <span>{(mp.price * (quantities[mp.id] || 0)).toFixed(2)}€ / livraison</span>
               </div>
-              <p className="text-lg font-bold text-gray-900">{totalPerDelivery.toFixed(2)}€</p>
+            ))}
+            <div className="border-t border-green-300 mt-3 pt-3 flex items-center justify-between">
+              <div>
+                <p className="font-semibold text-gray-800">Panier par livraison</p>
+              </div>
+              <p className="font-bold text-gray-900">{totalPerDelivery.toFixed(2)}€</p>
             </div>
-            <div className="border-t border-green-300 mt-4 pt-4 flex items-center justify-between">
+            <div className="flex items-center justify-between mt-2 text-sm text-gray-500">
+              <span>{totalPerDelivery.toFixed(2)}€ × {deliveryCount} livraison{deliveryCount > 1 ? 's' : ''}</span>
+            </div>
+            <div className="border-t border-green-400 mt-3 pt-3 flex items-center justify-between">
               <p className="text-lg font-bold text-green-800">Total du contrat</p>
               <p className="text-2xl font-bold text-green-700">{totalCost.toFixed(2)}€</p>
             </div>
