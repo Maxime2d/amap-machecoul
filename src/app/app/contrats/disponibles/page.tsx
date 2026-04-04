@@ -10,6 +10,19 @@ import {
   Check,
 } from 'lucide-react';
 
+const unitTypeLabels: Record<string, string> = {
+  unit: 'unité',
+  kg: 'kg',
+  litre: 'litre',
+  bunch: 'botte',
+  dozen: 'douzaine',
+  piece: 'pièce',
+  pot: 'pot',
+  bottle: 'bouteille',
+  basket: 'panier',
+  bag: 'sachet',
+};
+
 export default async function AvailableContractsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -195,7 +208,7 @@ export default async function AvailableContractsPage() {
                                   {modelProduct.products?.name || 'Produit'}
                                   {modelProduct.products?.unit_type && (
                                     <span className="text-gray-500 text-xs ml-1">
-                                      ({modelProduct.products.unit_type})
+                                      ({unitTypeLabels[modelProduct.products.unit_type] || modelProduct.products.unit_type})
                                     </span>
                                   )}
                                 </span>
@@ -215,11 +228,16 @@ export default async function AvailableContractsPage() {
 
                     {/* Total Cost */}
                     {deliveryCount > 0 && model.model_products?.length > 0 && (
-                      <div className="pt-4 border-t border-gray-100">
+                      <div className="pt-4 border-t border-gray-100 space-y-2">
+                        <div className="flex items-center justify-between text-sm text-gray-600">
+                          <span>Panier par livraison</span>
+                          <span className="font-medium text-gray-900">
+                            {(totalCost / deliveryCount).toFixed(2)}€
+                          </span>
+                        </div>
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-600">
-                            Coût estimé (total pour {deliveryCount} livraison
-                            {deliveryCount > 1 ? 's' : ''})
+                            Total ({(totalCost / deliveryCount).toFixed(2)}€ × {deliveryCount} livraison{deliveryCount > 1 ? 's' : ''})
                           </span>
                           <span className="text-2xl font-bold text-green-600">
                             {totalCost.toFixed(2)}€
