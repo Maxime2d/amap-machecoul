@@ -26,7 +26,6 @@ export default async function ShiftsPage() {
   const formatTime = (timeString: string) => {
     return timeString;
   };
-
   return (
     <div className="p-6 md:p-8 max-w-6xl">
       <div>
@@ -34,7 +33,7 @@ export default async function ShiftsPage() {
           Permanences
         </h1>
         <p className="text-gray-600 mb-8">
-          Inscrivez-vous aux permanences de distribution
+          Inscrivez-vous aux permanences de distribution. Chaque vendredi de 17h à 19h
         </p>
       </div>
 
@@ -53,8 +52,7 @@ export default async function ShiftsPage() {
                   <div>
                     <h3 className="font-bold text-gray-900">
                       {formatDate(shift.date)}
-                    </h3>
-                    <div className="flex items-center gap-2 text-gray-600 text-sm mt-1">
+                    </h3>                    <div className="flex items-center gap-2 text-gray-600 text-sm mt-1">
                       <Clock className="w-4 h-4" />
                       {formatTime(shift.start_time)} - {formatTime(shift.end_time)}
                     </div>
@@ -83,8 +81,7 @@ export default async function ShiftsPage() {
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">
             Aucune permanence prévue
-          </h2>
-          <p className="text-gray-600">
+          </h2>          <p className="text-gray-600">
             Il n'y a actuellement aucune permanence de distribution programmée.
           </p>
         </div>

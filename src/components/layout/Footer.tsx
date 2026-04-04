@@ -24,6 +24,15 @@ export function Footer() {
                 <Link href="/" className="text-green-100 hover:text-white transition-colors">
                   Accueil
                 </Link>
+              </li>              <li>
+                <Link href="/qu-est-ce-qu-une-amap" className="text-green-100 hover:text-white transition-colors">
+                  Qu'est-ce qu'une AMAP ?
+                </Link>
+              </li>
+              <li>
+                <Link href="/la-charte" className="text-green-100 hover:text-white transition-colors">
+                  La Charte
+                </Link>
               </li>
               <li>
                 <Link href="/producteurs" className="text-green-100 hover:text-white transition-colors">
@@ -31,11 +40,20 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/actualites" className="text-green-100 hover:text-white transition-colors">
-                  Actualités
+                <Link href="/agenda" className="text-green-100 hover:text-white transition-colors">
+                  Agenda
                 </Link>
               </li>
               <li>
+                <Link href="/ressources" className="text-green-100 hover:text-white transition-colors">
+                  Ressources
+                </Link>
+              </li>
+              <li>
+                <Link href="/actualites" className="text-green-100 hover:text-white transition-colors">
+                  Actualités
+                </Link>
+              </li>              <li>
                 <Link href="/contact" className="text-green-100 hover:text-white transition-colors">
                   Contact
                 </Link>
@@ -48,7 +66,7 @@ export function Footer() {
             <h3 className="text-lg font-bold mb-4">Infos pratiques</h3>
             <p className="text-green-100 mb-2">
               <strong>Distribution:</strong><br />
-              Chaque jeudi de 17h30 à 19h00
+              Chaque vendredi de 17h à 19h
             </p>
             <p className="text-green-100">
               <strong>Lieu:</strong><br />
@@ -62,8 +80,7 @@ export function Footer() {
         <div className="border-t border-green-800 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-green-100">
             &copy; {currentYear} AMAP de Machecoul. Tous droits réservés.
-          </p>
-          <div className="flex gap-4 mt-4 md:mt-0">
+          </p>          <div className="flex gap-4 mt-4 md:mt-0">
             <a
               href="https://facebook.com"
               target="_blank"

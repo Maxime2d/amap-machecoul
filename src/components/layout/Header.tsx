@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, Leaf } from 'lucide-react';
+import { Menu, X, Leaf, ChevronDown } from 'lucide-react';
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md">
@@ -27,11 +28,44 @@ export function Header() {
             >
               Accueil
             </Link>
+            {/* L'AMAP Dropdown */}
+            <div className="relative group">
+              <button className="flex items-center gap-1 text-gray-700 hover:text-green-700 font-medium transition-colors">
+                L'AMAP
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              <div className="absolute left-0 mt-0 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-2 z-50">
+                <Link
+                  href="/qu-est-ce-qu-une-amap"
+                  className="block px-4 py-2 text-gray-700 hover:text-green-700 hover:bg-green-50 transition-colors"
+                >
+                  Qu'est-ce qu'une AMAP ?
+                </Link>
+                <Link
+                  href="/la-charte"
+                  className="block px-4 py-2 text-gray-700 hover:text-green-700 hover:bg-green-50 transition-colors"
+                >
+                  La Charte
+                </Link>
+                <Link
+                  href="/producteurs"
+                  className="block px-4 py-2 text-gray-700 hover:text-green-700 hover:bg-green-50 transition-colors"
+                >
+                  Nos Producteurs
+                </Link>
+              </div>
+            </div>
             <Link
-              href="/producteurs"
+              href="/agenda"
               className="text-gray-700 hover:text-green-700 font-medium transition-colors"
             >
-              Nos Producteurs
+              Agenda
+            </Link>
+            <Link
+              href="/ressources"
+              className="text-gray-700 hover:text-green-700 font-medium transition-colors"
+            >
+              Ressources
             </Link>
             <Link
               href="/actualites"
@@ -46,7 +80,6 @@ export function Header() {
               Contact
             </Link>
           </nav>
-
           {/* CTA Button */}
           <div className="hidden md:block">
             <Link
@@ -77,12 +110,54 @@ export function Header() {
             >
               Accueil
             </Link>
+            {/* L'AMAP Mobile Section */}
+            <div>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center gap-2 text-gray-700 hover:text-green-700 font-medium transition-colors py-2 w-full"
+              >
+                L'AMAP
+                <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {dropdownOpen && (
+                <div className="pl-4 space-y-2 mt-2">
+                  <Link
+                    href="/qu-est-ce-qu-une-amap"
+                    className="block text-gray-700 hover:text-green-700 transition-colors py-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Qu'est-ce qu'une AMAP ?
+                  </Link>
+                  <Link
+                    href="/la-charte"
+                    className="block text-gray-700 hover:text-green-700 transition-colors py-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    La Charte
+                  </Link>
+                  <Link
+                    href="/producteurs"
+                    className="block text-gray-700 hover:text-green-700 transition-colors py-2"                    onClick={() => setIsOpen(false)}
+                  >
+                    Nos Producteurs
+                  </Link>
+                </div>
+              )}
+            </div>
+
             <Link
-              href="/producteurs"
+              href="/agenda"
               className="block text-gray-700 hover:text-green-700 font-medium transition-colors py-2"
               onClick={() => setIsOpen(false)}
             >
-              Nos Producteurs
+              Agenda
+            </Link>
+            <Link
+              href="/ressources"
+              className="block text-gray-700 hover:text-green-700 font-medium transition-colors py-2"
+              onClick={() => setIsOpen(false)}
+            >
+              Ressources
             </Link>
             <Link
               href="/actualites"
@@ -90,8 +165,7 @@ export function Header() {
               onClick={() => setIsOpen(false)}
             >
               Actualités
-            </Link>
-            <Link
+            </Link>            <Link
               href="/contact"
               className="block text-gray-700 hover:text-green-700 font-medium transition-colors py-2"
               onClick={() => setIsOpen(false)}

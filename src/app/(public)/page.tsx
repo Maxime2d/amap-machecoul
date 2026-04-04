@@ -31,8 +31,7 @@ export default async function HomePage() {
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-green-700 via-green-600 to-green-800 text-white py-20 md:py-32">
-        <div className="absolute inset-0 opacity-10 bg-pattern" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="absolute inset-0 opacity-10 bg-pattern" />        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
               Mangez local, mangez frais
@@ -64,8 +63,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
             Comment ça marche ?
-          </h2>
-          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+          </h2>          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
             Trois étapes simples pour bénéficier de produits frais et locaux chaque semaine.
           </p>
           <div className="grid md:grid-cols-3 gap-8">
@@ -98,14 +96,12 @@ export default async function HomePage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Vous récoltez chaque semaine</h3>
               <p className="text-gray-600">
-                Chaque jeudi, venez chercher votre panier rempli de saveurs et de fraîcheur.
+                Chaque vendredi de 17h à 19h, venez chercher votre panier rempli de saveurs et de fraîcheur.
               </p>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Producers Section */}
+      </section>      {/* Producers Section */}
       <section className="py-16 md:py-24 bg-green-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
@@ -150,9 +146,7 @@ export default async function HomePage() {
             </Link>
           </div>
         </div>
-      </section>
-
-      {/* Latest News */}
+      </section>      {/* Latest News */}
       {latestPost && (
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
