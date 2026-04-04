@@ -124,28 +124,24 @@ export default function MembersPage() {  const [members, setMembers] = useState<
 
   const stats = [
     {
-      label: 'Membres totaux',
+      title: 'Membres totaux',
       value: members.length,
-      icon: Users,
-      color: 'text-blue-600',
+      icon: <Users className="w-6 h-6" />,
     },
     {
-      label: 'Actifs',
+      title: 'Actifs',
       value: members.filter((m) => m.status === 'active').length,
-      icon: UserCheck,
-      color: 'text-green-600',
+      icon: <UserCheck className="w-6 h-6" />,
     },
     {
-      label: 'En attente',
+      title: 'En attente',
       value: members.filter((m) => m.status === 'pending').length,
-      icon: UserPlus,
-      color: 'text-yellow-600',
+      icon: <UserPlus className="w-6 h-6" />,
     },
     {
-      label: 'Inactifs',
+      title: 'Inactifs',
       value: members.filter((m) => m.status === 'inactive').length,
-      icon: Clock,
-      color: 'text-red-600',
+      icon: <Clock className="w-6 h-6" />,
     },
   ];  const rows = filteredMembers.map((member) => [
     <div key={`avatar-${member.id}`} className="flex items-center gap-3">

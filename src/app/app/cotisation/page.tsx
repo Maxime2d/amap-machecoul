@@ -48,6 +48,16 @@ export default async function CotisationPage() {
     });
   };
 
+  const getPaymentMethodLabel = (method: string) => {
+    switch (method) {
+      case 'check': return 'Chèque';
+      case 'transfer': return 'Virement';
+      case 'cash': return 'Espèces';
+      case 'card': return 'Carte';
+      default: return method;
+    }
+  };
+
   const getPaymentStatusColor = (status: string) => {
     switch (status) {
       case 'received':
@@ -232,8 +242,7 @@ export default async function CotisationPage() {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
                         {payment.method
-                          ? payment.method.charAt(0).toUpperCase() +
-                            payment.method.slice(1)
+                          ? getPaymentMethodLabel(payment.method)
                           : '-'}
                       </td>
                     </tr>

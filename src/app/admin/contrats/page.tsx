@@ -250,19 +250,19 @@ export default function ContractsPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <StatsCard
-          label="Modèles de contrats"
+          title="Modèles de contrats"
           value={contracts.length}
-          icon={FileText}
+          icon={<FileText className="w-6 h-6" />}
         />
         <StatsCard
-          label="Modèles actifs/ouverts"
+          title="Modèles actifs/ouverts"
           value={activeModels}
-          icon={FileText}
+          icon={<FileText className="w-6 h-6" />}
         />
         <StatsCard
-          label="Total d'abonnés"
+          title="Total d'abonnés"
           value={totalSubscribers}
-          icon={FileText}
+          icon={<FileText className="w-6 h-6" />}
         />
       </div>
 
