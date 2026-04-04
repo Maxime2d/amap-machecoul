@@ -84,7 +84,7 @@ export function Header() {
           <div className="hidden md:block">
             <Link
               href="/connexion"
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+              className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
             >
               Espace adhérent
             </Link>
@@ -137,7 +137,8 @@ export function Header() {
                   </Link>
                   <Link
                     href="/producteurs"
-                    className="block text-gray-700 hover:text-green-700 transition-colors py-2"                    onClick={() => setIsOpen(false)}
+                    className="block text-gray-700 hover:text-green-700 transition-colors py-2"
+                    onClick={() => setIsOpen(false)}
                   >
                     Nos Producteurs
                   </Link>
@@ -165,7 +166,8 @@ export function Header() {
               onClick={() => setIsOpen(false)}
             >
               Actualités
-            </Link>            <Link
+            </Link>
+            <Link
               href="/contact"
               className="block text-gray-700 hover:text-green-700 font-medium transition-colors py-2"
               onClick={() => setIsOpen(false)}
@@ -174,7 +176,7 @@ export function Header() {
             </Link>
             <Link
               href="/connexion"
-              className="block w-full px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-center"
+              className="block w-full px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium text-center"
               onClick={() => setIsOpen(false)}
             >
               Espace adhérent

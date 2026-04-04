@@ -303,13 +303,13 @@ export default function CharterPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center px-8 py-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors"
+              className="inline-flex items-center justify-center px-8 py-4 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors"
             >
               Rejoindre l'AMAP
             </Link>
             <Link
               href="/qu-est-ce-qu-une-amap"
-              className="inline-flex items-center justify-center px-8 py-4 border-2 border-green-600 text-green-600 font-bold rounded-lg hover:bg-green-50 transition-colors"
+              className="inline-flex items-center justify-center px-8 py-4 border-2 border-orange-500 text-orange-500 font-bold rounded-lg hover:bg-orange-50 transition-colors"
             >
               En savoir plus sur les AMAP
             </Link>

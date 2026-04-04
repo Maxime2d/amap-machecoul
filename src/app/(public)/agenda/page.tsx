@@ -237,7 +237,7 @@ export default async function AgendaPage() {
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors"
             >
               Nous contacter
               <ArrowRight className="w-5 h-5" />
@@ -258,14 +258,14 @@ export default async function AgendaPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center px-8 py-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors"
+              className="inline-flex items-center justify-center px-8 py-4 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors"
             >
               Rejoindre l'AMAP
               <ArrowRight className="w-5 h-5 ml-2" />
             </Link>
             <Link
               href="/qu-est-ce-qu-une-amap"
-              className="inline-flex items-center justify-center px-8 py-4 border-2 border-green-600 text-green-600 font-bold rounded-lg hover:bg-white transition-colors"
+              className="inline-flex items-center justify-center px-8 py-4 border-2 border-orange-500 text-orange-500 font-bold rounded-lg hover:bg-orange-50 transition-colors"
             >
               En savoir plus
             </Link>

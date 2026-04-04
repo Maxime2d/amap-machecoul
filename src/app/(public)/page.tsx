@@ -42,12 +42,11 @@ export default async function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/producteurs"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-green-700 font-bold rounded-lg hover:bg-green-50 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors"
               >
                 Découvrir nos producteurs
                 <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link
+              </Link>              <Link
                 href="/contact"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-900 text-white font-bold rounded-lg hover:bg-green-950 transition-colors border border-green-100"
               >
@@ -72,8 +71,7 @@ export default async function HomePage() {
               <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
                 <Sprout className="w-8 h-8 text-green-700" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Les producteurs cultivent</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Les producteurs cultivent</h3>              <p className="text-gray-600">
                 Nos agriculteurs paysans cultivent des produits de qualité selon les principes du développement durable.
               </p>
             </div>
@@ -102,8 +100,7 @@ export default async function HomePage() {
           </div>
         </div>
       </section>      {/* Producers Section */}
-      <section className="py-16 md:py-24 bg-green-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 md:py-24 bg-green-50">        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-gray-900">
             Nos Producteurs
           </h2>
@@ -139,7 +136,7 @@ export default async function HomePage() {
           <div className="text-center mt-12">
             <Link
               href="/producteurs"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors"
             >
               Voir tous nos producteurs
               <ArrowRight className="w-5 h-5" />
@@ -187,7 +184,7 @@ export default async function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-green-700 font-bold rounded-lg hover:bg-green-50 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors"
             >
               Nous contacter
             </Link>

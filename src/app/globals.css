@@ -1,15 +1,26 @@
 @import "tailwindcss";
 
-:root {
-  --green-50: #f0fdf4;
-  --green-100: #dcfce7;
-  --green-500: #22c55e;
-  --green-600: #16a34a;
-  --green-700: #15803d;
-  --green-800: #166534;
-  --green-900: #14532d;
+@theme {
+  /* Palette inspirée de amap-idf.org */
+  --color-green-50: #f5f1ed;
+  --color-green-100: #b9e6c0;
+  --color-green-200: #8ec760;
+  --color-green-300: #6cb84a;
+  --color-green-400: #3dbf42;
+  --color-green-500: #19ad31;
+  --color-green-600: #19ad31;
+  --color-green-700: #085332;
+  --color-green-800: #085332;
+  --color-green-900: #202020;
+  --color-orange-50: #fff7ed;
+  --color-orange-100: #ffedd5;
+  --color-orange-400: #f5a623;
+  --color-orange-500: #f59400;
+  --color-orange-600: #e08800;
+  --color-orange-700: #c77a00;
 }
 
 body {
   font-family: system-ui, -apple-system, sans-serif;
+  color: #202020;
 }

@@ -214,9 +214,7 @@ export default function RessourcesPage() {
                 </p>
               </div>
             </div>
-          </div>
-
-          {/* FAQ Section */}
+          </div>          {/* FAQ Section */}
           <div className="mb-20 border-t-2 border-gray-200 pt-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Questions Fréquemment Posées</h2>
 
@@ -307,14 +305,14 @@ export default function RessourcesPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center px-8 py-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors"
+              className="inline-flex items-center justify-center px-8 py-4 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-colors"
             >
               Nous contacter
               <ArrowRight className="w-5 h-5 ml-2" />
             </Link>
             <Link
               href="/agenda"
-              className="inline-flex items-center justify-center px-8 py-4 border-2 border-green-600 text-green-600 font-bold rounded-lg hover:bg-white transition-colors"
+              className="inline-flex items-center justify-center px-8 py-4 border-2 border-orange-500 text-orange-500 font-bold rounded-lg hover:bg-orange-50 transition-colors"
             >              Voir le calendrier
             </Link>
           </div>
