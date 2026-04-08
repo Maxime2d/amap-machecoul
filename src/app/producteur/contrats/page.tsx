@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { formatDate, formatCurrency } from '@/lib/utils';
-import { AlertCircle, Calendar, Users, DollarSign } from 'lucide-react';
+import Link from 'next/link';
+import { AlertCircle, Calendar, Users, Euro } from 'lucide-react';
 
 interface ContractModel {
   id: string;
@@ -193,7 +194,7 @@ export default function ContractsPage() {
 
                   {/* Total Amount */}
                   <div className="flex items-center gap-3 text-sm">
-                    <DollarSign className="w-4 h-4 text-slate-400" />
+                    <Euro className="w-4 h-4 text-slate-400" />
                     <div>
                       <p className="text-slate-600">
                         {formatCurrency(contract.totalAmount)}
@@ -202,9 +203,12 @@ export default function ContractsPage() {
                   </div>
                 </div>
 
-                <button className="w-full px-4 py-2 border border-green-600 text-green-600 hover:bg-green-50 rounded-lg font-medium transition-colors text-sm">
+                <Link
+                  href={`/producteur/contrats/${contract.id}`}
+                  className="block w-full px-4 py-2 border border-green-600 text-green-600 hover:bg-green-50 rounded-lg font-medium transition-colors text-sm text-center"
+                >
                   Voir détails
-                </button>
+                </Link>
               </div>
             </div>
           ))}
