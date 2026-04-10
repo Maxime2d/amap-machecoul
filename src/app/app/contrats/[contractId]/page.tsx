@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   ArrowLeft,
   Zap,
+  ShoppingCart,
 } from 'lucide-react';
 
 interface Product {
@@ -45,6 +46,7 @@ interface ContractModel {
     max_jokers: number;
     min_days_before: number;
   } | null;
+  producer_id: string;
   producers: Producer;
 }
 
@@ -96,6 +98,7 @@ export default function ContractDetailPage() {
             end_date,
             nature,
             joker_config,
+            producer_id,
             producers ( id, name )
           ),
           contract_items (
@@ -312,6 +315,8 @@ export default function ContractDetailPage() {
     );
   }
 
+  const isFlexibleContract = contract.contract_models.nature === 'flexible';
+
   return (
     <div className="p-6 md:p-8 max-w-6xl">
       {/* Back Link */}
@@ -334,25 +339,36 @@ export default function ContractDetailPage() {
               Producteur: {contract.contract_models.producers.name}
             </p>
           </div>
-          <span
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
-              contract.status === 'active'
-                ? 'bg-green-100 text-green-700'
+          <div className="flex flex-col gap-3 md:items-end">
+            <span
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+                contract.status === 'active'
+                  ? 'bg-green-100 text-green-700'
+                  : contract.status === 'completed'
+                    ? 'bg-blue-100 text-blue-700'
+                    : contract.status === 'pending'
+                      ? 'bg-amber-100 text-amber-700'
+                      : 'bg-red-100 text-red-700'
+              }`}
+            >
+              {contract.status === 'active'
+                ? 'Actif'
                 : contract.status === 'completed'
-                  ? 'bg-blue-100 text-blue-700'
+                  ? 'Terminé'
                   : contract.status === 'pending'
-                    ? 'bg-amber-100 text-amber-700'
-                    : 'bg-red-100 text-red-700'
-            }`}
-          >
-            {contract.status === 'active'
-              ? 'Actif'
-              : contract.status === 'completed'
-                ? 'Terminé'
-                : contract.status === 'pending'
-                  ? 'En attente'
-                  : 'Annulé'}
-          </span>
+                    ? 'En attente'
+                    : 'Annulé'}
+            </span>
+            <span
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+                isFlexibleContract
+                  ? 'bg-purple-100 text-purple-700'
+                  : 'bg-blue-100 text-blue-700'
+              }`}
+            >
+              {isFlexibleContract ? 'Commande flexible' : 'Abonnement'}
+            </span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -372,9 +388,7 @@ export default function ContractDetailPage() {
             <div>
               <p className="text-gray-600">Nature</p>
               <p className="font-semibold text-gray-900">
-                {contract.contract_models.nature === 'subscription'
-                  ? 'Abonnement'
-                  : 'Flexible'}
+                {isFlexibleContract ? 'Commande flexible' : 'Abonnement'}
               </p>
             </div>
           </div>
@@ -391,8 +405,31 @@ export default function ContractDetailPage() {
         </div>
       </div>
 
-      {/* Joker Section */}
-      {contract.contract_models.joker_config && (
+      {/* Commander Button for Flexible Contracts */}
+      {isFlexibleContract && (
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg shadow p-6 mb-6 border border-green-200">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 mb-1">
+                Prêt à commander?
+              </h2>
+              <p className="text-gray-600 text-sm">
+                Sélectionnez vos produits pour cette période de contrat flexible.
+              </p>
+            </div>
+            <Link
+              href={`/app/contrats/${contractId}/commander`}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white hover:bg-green-700 rounded-lg font-semibold transition-colors shadow-md"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              Commander
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Joker Section - Only for Subscription Contracts */}
+      {!isFlexibleContract && contract.contract_models.joker_config && (
         <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg shadow p-6 mb-6 border border-amber-200">
           <div className="flex items-center gap-3 mb-4">
             <Zap className="w-6 h-6 text-amber-600" />
@@ -453,7 +490,7 @@ export default function ContractDetailPage() {
                   const canSetJokerValue = canSetJoker(group.delivery_date);
                   const hasJoker = group.items.some((item) => item.is_joker);
                   const jokerAllowed =
-                    contract.contract_models.joker_config !== null;
+                    contract.contract_models.joker_config !== null && !isFlexibleContract;
 
                   return (
                     <tr key={group.delivery_date} className="hover:bg-gray-50">
@@ -598,7 +635,7 @@ export default function ContractDetailPage() {
             </span>
           </div>
 
-          {contract.contract_models.joker_config && jokerUsed > 0 && (
+          {!isFlexibleContract && contract.contract_models.joker_config && jokerUsed > 0 && (
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">
                 Jokers utilisés: {jokerUsed}
@@ -616,7 +653,7 @@ export default function ContractDetailPage() {
             <span className="font-bold text-green-600 text-lg">
               {formatCurrency(
                 contract.total_amount -
-                  (contract.contract_models.joker_config && jokerUsed > 0
+                  (!isFlexibleContract && contract.contract_models.joker_config && jokerUsed > 0
                     ? (contract.total_amount / deliveryGroups.length) * jokerUsed
                     : 0)
               )}

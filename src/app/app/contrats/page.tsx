@@ -78,6 +78,29 @@ export default async function ContractsPage() {
     }
   };
 
+  const getNatureBadgeConfig = (nature: string) => {
+    switch (nature) {
+      case 'subscription':
+        return {
+          badgeBg: 'bg-emerald-100',
+          badgeText: 'text-emerald-700',
+          badgeLabel: 'Abonnement',
+        };
+      case 'flexible':
+        return {
+          badgeBg: 'bg-indigo-100',
+          badgeText: 'text-indigo-700',
+          badgeLabel: 'Commande flexible',
+        };
+      default:
+        return {
+          badgeBg: 'bg-gray-100',
+          badgeText: 'text-gray-700',
+          badgeLabel: nature,
+        };
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('fr-FR', {
@@ -154,11 +177,13 @@ export default async function ContractsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {(activeContracts as any[]).map((contract: any) => {
                     const statusConfig = getStatusConfig(contract.contract_models?.status);
+                    const natureConfig = getNatureBadgeConfig(contract.contract_models?.nature);
                     const StatusIcon = statusConfig.icon;
                     const progress = calculateProgress(
                       contract.contract_models?.start_date || '',
                       contract.contract_models?.end_date || ''
                     );
+                    const isFlexible = contract.contract_models?.nature === 'flexible';
 
                     return (
                       <Link
@@ -195,15 +220,9 @@ export default async function ContractsPage() {
                           {/* Nature Badge */}
                           <div className="mb-4">
                             <span
-                              className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                                contract.contract_models?.nature === 'subscription'
-                                  ? 'bg-blue-100 text-blue-700'
-                                  : 'bg-purple-100 text-purple-700'
-                              }`}
+                              className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${natureConfig.badgeBg} ${natureConfig.badgeText}`}
                             >
-                              {contract.contract_models?.nature === 'subscription'
-                                ? 'Abonnement'
-                                : 'Flexible'}
+                              {natureConfig.badgeLabel}
                             </span>
                           </div>
 
@@ -251,7 +270,7 @@ export default async function ContractsPage() {
 
                           {/* Footer CTA */}
                           <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between text-green-700 font-semibold group-hover:gap-3 transition-all">
-                            <span>Voir les détails</span>
+                            <span>{isFlexible ? 'Commander / Détails' : 'Voir les détails'}</span>
                             <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                           </div>
                         </div>
@@ -274,7 +293,9 @@ export default async function ContractsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {(otherContracts as any[]).map((contract: any) => {
                     const statusConfig = getStatusConfig(contract.contract_models?.status);
+                    const natureConfig = getNatureBadgeConfig(contract.contract_models?.nature);
                     const StatusIcon = statusConfig.icon;
+                    const isFlexible = contract.contract_models?.nature === 'flexible';
 
                     return (
                       <Link
@@ -311,15 +332,9 @@ export default async function ContractsPage() {
                           {/* Nature Badge */}
                           <div className="mb-4">
                             <span
-                              className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                                contract.contract_models?.nature === 'subscription'
-                                  ? 'bg-blue-100 text-blue-700'
-                                  : 'bg-purple-100 text-purple-700'
-                              }`}
+                              className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${natureConfig.badgeBg} ${natureConfig.badgeText}`}
                             >
-                              {contract.contract_models?.nature === 'subscription'
-                                ? 'Abonnement'
-                                : 'Flexible'}
+                              {natureConfig.badgeLabel}
                             </span>
                           </div>
 
@@ -351,7 +366,7 @@ export default async function ContractsPage() {
 
                           {/* Footer CTA */}
                           <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between text-gray-700 font-semibold group-hover:gap-3 transition-all">
-                            <span>Voir les détails</span>
+                            <span>{isFlexible ? 'Commander / Détails' : 'Voir les détails'}</span>
                             <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                           </div>
                         </div>
