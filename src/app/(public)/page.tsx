@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Sprout, Heart, ShoppingBasket, ArrowRight, Leaf, ShieldCheck, Truck, Users } from 'lucide-react';
+import { Sprout, Heart, ShoppingBasket, ArrowRight, Leaf, ShieldCheck, Truck, Users, ShoppingBag } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import type { Post } from '@/types/database';
 
@@ -8,10 +8,26 @@ async function getProducers() {
   const supabase = await createClient();
   const { data: producers } = await supabase
     .from('producers')
-    .select('*')
+    .select('*, contract_models(name)')
     .eq('status', 'active')
     .limit(6);
   return producers || [];
+}
+
+function getContractLabel(producer: any): string {
+  const contracts = producer.contract_models;
+  if (!contracts || contracts.length === 0) return 'Bio';
+  // Extract short label from first contract name (before the " - ")
+  const name: string = contracts[0].name;
+  const short = name.split(' - ')[0];
+  // Clean up common prefixes
+  return short
+    .replace('Panier de légumes bio', 'Légumes')
+    .replace('Produits laitiers et fromage', 'Fromage')
+    .replace('Galette de blé noir', 'Galettes')
+    .replace('Œufs', 'Œufs')
+    .replace('Pain', 'Pain')
+    .replace('Volaille', 'Volaille');
 }
 
 async function getLatestPost(): Promise<Post | null> {
@@ -299,11 +315,11 @@ export default async function HomePage() {
                       {/* Overlay on hover */}
                       <div className="absolute inset-0 bg-gradient-to-t from-green-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                      {/* Bio badge */}
+                      {/* Contract badge */}
                       <div className="absolute top-4 right-4">
                         <span className="inline-flex items-center gap-1.5 bg-green-600 px-3 py-1.5 rounded-full text-xs font-bold text-white shadow-md">
-                          <Leaf className="w-3.5 h-3.5" />
-                          Bio
+                          <ShoppingBag className="w-3.5 h-3.5" />
+                          {getContractLabel(producer)}
                         </span>
                       </div>
                     </div>
