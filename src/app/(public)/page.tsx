@@ -249,7 +249,7 @@ export default async function HomePage() {
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
                 <p className="text-4xl font-bold text-green-300 mb-2">30 km</p>
-                <p className="text-white font-medium">Rayon maximum</p>
+                <p className="text-white font-medium">Producteurs du secteur</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
                 <p className="text-4xl font-bold text-green-300 mb-2">20+</p>
