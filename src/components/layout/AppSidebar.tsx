@@ -66,13 +66,15 @@ export function AppSidebar({ userName }: AppSidebarProps) {
   const sidebarContent = (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="px-6 py-5 flex items-center gap-3">
-        <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
-          <Leaf className="w-5 h-5 text-white" />
-        </div>
-        <div>
-          <h1 className="text-lg font-bold text-gray-900 leading-tight">AMAP</h1>
-          <p className="text-xs text-gray-500 leading-tight">Machecoul</p>
+      <div className="px-5 py-5">
+        <div className="flex items-center gap-3 bg-gradient-to-r from-green-600 to-emerald-500 rounded-xl px-4 py-3">
+          <div className="w-9 h-9 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center flex-shrink-0">
+            <Leaf className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h1 className="text-sm font-bold text-white leading-tight">AMAP Machecoul</h1>
+            <p className="text-[11px] text-green-100 leading-tight">Espace adhérent</p>
+          </div>
         </div>
       </div>
 
