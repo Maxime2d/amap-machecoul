@@ -135,12 +135,12 @@ export default async function HomePage() {
       <section className="bg-gray-100 py-2">
         <div className="flex gap-2 overflow-hidden">
           {[
-            { src: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400&h=250&fit=crop', alt: 'Légumes bio du potager' },
-            { src: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=250&fit=crop', alt: 'Récolte dans les champs' },
-            { src: 'https://images.unsplash.com/photo-1498579397066-22750a3cb424?w=400&h=250&fit=crop', alt: 'Panier de légumes frais' },
-            { src: 'https://images.unsplash.com/photo-1595855759920-86582396756a?w=400&h=250&fit=crop', alt: 'Tomates bio sur pied' },
-            { src: 'https://images.unsplash.com/photo-1471193945509-9ad0617afabf?w=400&h=250&fit=crop', alt: 'Marché de producteurs' },
-            { src: 'https://images.unsplash.com/photo-1592921870789-04563d55041c?w=400&h=250&fit=crop', alt: 'Carottes fraîches bio' },
+            { src: 'https://images.unsplash.com/photo-1566385101042-1a0aa4c1c900?w=400&h=250&fit=crop', alt: 'Panier de légumes bio' },
+            { src: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&h=250&fit=crop', alt: 'Salade et légumes verts frais' },
+            { src: 'https://images.unsplash.com/photo-1518843875459-f738682238a6?w=400&h=250&fit=crop', alt: 'Tomates bio sur pied' },
+            { src: 'https://images.unsplash.com/photo-1445282768818-728615cc910a?w=400&h=250&fit=crop', alt: 'Courgettes du potager' },
+            { src: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400&h=250&fit=crop', alt: 'Carottes fraîches bio' },
+            { src: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=400&h=250&fit=crop', alt: 'Cagettes de légumes au marché' },
           ].map((img, i) => (
             <div key={i} className="relative flex-shrink-0 w-64 h-40 rounded-lg overflow-hidden">
               <Image src={img.src} alt={img.alt} fill className="object-cover" sizes="256px" />
