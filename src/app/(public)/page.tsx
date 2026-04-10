@@ -23,7 +23,7 @@ function getContractLabel(producer: any): string {
   // Clean up common prefixes
   return short
     .replace('Panier de légumes bio', 'Légumes')
-    .replace('Produits laitiers et fromage', 'Fromage')
+    .replace('Produits laitiers et fromage', 'Produits laitiers et fromage')
     .replace('Galette de blé noir', 'Galettes')
     .replace('Œufs', 'Œufs')
     .replace('Pain', 'Pain')
