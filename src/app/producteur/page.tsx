@@ -11,40 +11,16 @@ import {
   ArrowRight,
   Calendar,
   AlertCircle,
+  ChevronRight,
+  ClipboardList,
+  FileText,
 } from 'lucide-react';
 
-interface ContractModel {
-  id: string;
-  name: string;
-}
-
-interface ModelDate {
-  id: string;
-  delivery_date: string;
-  is_cancelled: boolean;
-  model_id: string;
-}
-
-interface Product {
-  id: string;
-  name: string;
-}
-
-interface Producer {
-  id: string;
-  name: string;
-}
-
-interface ContractItem {
-  product_id: string;
-  quantity: number;
-}
-
-interface ProductQuantity {
-  productId: string;
-  productName: string;
-  totalQuantity: number;
-}
+interface ContractModel { id: string; name: string; }
+interface ModelDate { id: string; delivery_date: string; is_cancelled: boolean; model_id: string; }
+interface Product { id: string; name: string; }
+interface Producer { id: string; name: string; }
+interface ProductQuantity { productId: string; productName: string; totalQuantity: number; }
 
 export default function ProducerDashboard() {
   const supabase = createClient();
@@ -54,381 +30,265 @@ export default function ProducerDashboard() {
   const [subscribersCount, setSubscribersCount] = useState(0);
   const [upcomingDeliveries, setUpcomingDeliveries] = useState<ModelDate[]>([]);
   const [nextDelivery, setNextDelivery] = useState<ModelDate | null>(null);
-  const [nextDeliveryQuantities, setNextDeliveryQuantities] = useState<
-    ProductQuantity[]
-  >([]);
+  const [nextDeliveryQuantities, setNextDeliveryQuantities] = useState<ProductQuantity[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-
+        const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        // Get producer referent
-        const { data: referent } = await supabase
-          .from('producer_referents')
-          .select('producer_id')
-          .eq('user_id', user.id)
-          .single();
-
+        const { data: referent } = await supabase.from('producer_referents').select('producer_id').eq('user_id', user.id).single();
         if (!referent) return;
 
-        // Get producer details
-        const { data: producerData } = await supabase
-          .from('producers')
-          .select('id, name')
-          .eq('id', referent.producer_id)
-          .single();
-
+        const { data: producerData } = await supabase.from('producers').select('id, name').eq('id', referent.producer_id).single();
         if (!producerData) return;
-
         setProducer(producerData as Producer);
 
-        // Get contract models
-        const { data: modelsData } = await supabase
-          .from('contract_models')
-          .select('id, name')
-          .eq('producer_id', referent.producer_id);
-
+        const { data: modelsData } = await supabase.from('contract_models').select('id, name').eq('producer_id', referent.producer_id);
         if (modelsData && modelsData.length > 0) {
           setContractModels(modelsData as ContractModel[]);
-
           const modelIds = modelsData.map((m) => m.id);
 
-          // Get upcoming deliveries
           const { data: deliveriesData } = await supabase
-            .from('model_dates')
-            .select('id, delivery_date, is_cancelled, model_id')
-            .in('model_id', modelIds)
-            .gte('delivery_date', new Date().toISOString().split('T')[0])
-            .eq('is_cancelled', false)
-            .order('delivery_date', { ascending: true });
+            .from('model_dates').select('id, delivery_date, is_cancelled, model_id')
+            .in('model_id', modelIds).gte('delivery_date', new Date().toISOString().split('T')[0])
+            .eq('is_cancelled', false).order('delivery_date', { ascending: true });
 
           if (deliveriesData && deliveriesData.length > 0) {
             setUpcomingDeliveries(deliveriesData as ModelDate[]);
             setNextDelivery(deliveriesData[0]);
 
-            // Get products for this producer
-            const { data: productsData } = await supabase
-              .from('products')
-              .select('id, name')
-              .eq('producer_id', referent.producer_id);
-
+            const { data: productsData } = await supabase.from('products').select('id, name').eq('producer_id', referent.producer_id);
             if (productsData) {
               setProducts(productsData as Product[]);
-
-              // Get contract items for next delivery
               const nextDate = deliveriesData[0].delivery_date;
-              const { data: itemsData } = await supabase
-                .from('contract_items')
-                .select('product_id, quantity')
-                .eq('delivery_date', nextDate)
-                .eq('is_joker', false);
+              const { data: itemsData } = await supabase.from('contract_items').select('product_id, quantity').eq('delivery_date', nextDate).eq('is_joker', false);
 
               if (itemsData && itemsData.length > 0) {
-                // Group by product and sum quantities
                 const quantityMap = new Map<string, number>();
-                itemsData.forEach((item: ContractItem) => {
-                  const current = quantityMap.get(item.product_id) || 0;
-                  quantityMap.set(item.product_id, current + item.quantity);
+                itemsData.forEach((item: any) => {
+                  quantityMap.set(item.product_id, (quantityMap.get(item.product_id) || 0) + item.quantity);
                 });
-
-                // Map to product names
-                const quantities: ProductQuantity[] = Array.from(
-                  quantityMap.entries()
-                ).map(([productId, totalQuantity]) => {
-                  const product = productsData.find((p) => p.id === productId);
-                  return {
-                    productId,
-                    productName: product?.name || 'Produit inconnu',
-                    totalQuantity,
-                  };
-                });
-
-                setNextDeliveryQuantities(quantities);
+                setNextDeliveryQuantities(Array.from(quantityMap.entries()).map(([productId, totalQuantity]) => ({
+                  productId, totalQuantity,
+                  productName: productsData.find((p) => p.id === productId)?.name || 'Produit inconnu',
+                })));
               }
             }
           }
         }
 
-        // Get active subscribers count
-        const { data: contractsData } = await supabase
-          .from('contracts')
-          .select('id', { count: 'exact' })
-          .eq('status', 'active');
-
-        if (contractsData) {
-          setSubscribersCount(contractsData.length);
-        }
+        const { data: contractsData } = await supabase.from('contracts').select('id', { count: 'exact' }).eq('status', 'active');
+        if (contractsData) setSubscribersCount(contractsData.length);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     }
-
     fetchData();
   }, []);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-slate-600">Chargement...</p>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        {/* Skeleton loader */}
+        <div className="h-8 w-64 bg-gray-200 rounded-lg animate-pulse" />
+        <div className="h-4 w-40 bg-gray-100 rounded animate-pulse" />
+        <div className="h-48 bg-gray-100 rounded-2xl animate-pulse" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => <div key={i} className="h-28 bg-gray-100 rounded-2xl animate-pulse" />)}
+        </div>
       </div>
     );
   }
 
   const today = new Date();
-  const todayFormatted = today.toLocaleDateString('fr-FR', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const dateStr = today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const hour = today.getHours();
+  const greeting = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
 
   return (
-    <div>
-      {/* Welcome Header */}
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-1">
-          Bienvenue, {producer?.name}!
+        <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+          <Calendar className="w-3.5 h-3.5" />
+          <span className="capitalize">{dateStr}</span>
+        </div>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+          {greeting}, {producer?.name}
         </h1>
-        <p className="text-slate-600 text-sm">{todayFormatted}</p>
+        <p className="text-gray-500 mt-1">Voici le résumé de votre activité.</p>
       </div>
 
-      {/* Next Delivery Hero Card */}
+      {/* Next Delivery Hero */}
       {nextDelivery ? (
-        <div className="mb-8 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-8 shadow-sm">
-          <div className="flex items-start justify-between mb-6">
+        <div className="mb-8 bg-white rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-5 flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-green-700 uppercase tracking-wide mb-2">
-                Prochaine livraison
-              </p>
-              <h2 className="text-4xl font-bold text-slate-900">
-                {new Date(nextDelivery.delivery_date).toLocaleDateString(
-                  'fr-FR',
-                  {
-                    weekday: 'long',
-                    day: 'numeric',
-                    month: 'long',
-                  }
-                )}
+              <p className="text-green-100 text-xs font-semibold uppercase tracking-wider mb-1">Prochaine livraison</p>
+              <h2 className="text-2xl font-bold text-white capitalize">
+                {new Date(nextDelivery.delivery_date + 'T00:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
               </h2>
             </div>
-            <Calendar className="w-12 h-12 text-green-600" />
+            <div className="w-12 h-12 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm">
+              <Calendar className="w-6 h-6 text-white" />
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            {/* Quantities to Prepare */}
-            <div>
-              <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">
-                À préparer
-              </p>
-              {nextDeliveryQuantities.length > 0 ? (
-                <div className="space-y-3">
-                  {nextDeliveryQuantities.map((item) => (
-                    <div
-                      key={item.productId}
-                      className="flex items-center justify-between bg-white rounded-lg p-3 shadow-sm"
-                    >
-                      <span className="text-slate-700 font-medium">
-                        {item.productName}
-                      </span>
-                      <span className="text-2xl font-bold text-green-600">
-                        {item.totalQuantity}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-slate-600 text-sm">
-                  Aucune commande pour cette livraison.
-                </p>
-              )}
-            </div>
-
-            {/* Subscribers Count */}
-            <div className="flex flex-col justify-between">
+          <div className="p-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Products to prepare */}
               <div>
-                <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">
-                  Adhérents à servir
-                </p>
-                <p className="text-5xl font-bold text-green-600">
-                  {subscribersCount}
-                </p>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">À préparer</p>
+                {nextDeliveryQuantities.length > 0 ? (
+                  <div className="space-y-2">
+                    {nextDeliveryQuantities.map((item) => (
+                      <div key={item.productId} className="flex items-center justify-between bg-gray-50 rounded-xl p-3.5">
+                        <span className="text-sm font-medium text-gray-700">{item.productName}</span>
+                        <span className="text-lg font-bold text-green-600 bg-green-50 px-3 py-0.5 rounded-lg">{item.totalQuantity}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">Aucune commande pour cette livraison.</p>
+                )}
               </div>
-              <Link
-                href="/producteur/commandes"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors w-full md:w-auto"
-              >
-                Voir la préparation complète
-                <ArrowRight className="w-5 h-5" />
-              </Link>
+
+              {/* Subscribers + CTA */}
+              <div className="flex flex-col">
+                <div className="bg-gray-50 rounded-xl p-5 mb-4 flex-1">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Adhérents à servir</p>
+                  <p className="text-4xl font-bold text-gray-900">{subscribersCount}</p>
+                </div>
+                <Link
+                  href="/producteur/commandes"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold text-sm transition-colors"
+                >
+                  Voir la préparation complète
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       ) : (
-        <div className="mb-8 bg-amber-50 border-2 border-amber-200 rounded-xl p-8">
-          <div className="flex items-start gap-4">
-            <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-1" />
-            <div>
-              <p className="font-semibold text-amber-900">
-                Aucune livraison prévue
-              </p>
-              <p className="text-sm text-amber-700 mt-1">
-                Il n'y a pas de livraison prévue pour le moment.
-              </p>
-            </div>
+        <div className="mb-8 flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl">
+          <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <AlertCircle className="w-5 h-5 text-amber-600" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-amber-900">Aucune livraison prévue</p>
+            <p className="text-xs text-amber-700">Il n'y a pas de livraison à venir pour le moment.</p>
           </div>
         </div>
       )}
 
-      {/* Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white rounded-lg shadow p-5 border-l-4 border-green-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-600 text-xs font-semibold uppercase tracking-wide">
-                Modèles de contrats
-              </p>
-              <p className="text-3xl font-bold text-slate-900 mt-2">
-                {contractModels.length}
-              </p>
-            </div>
-            <CheckCircle className="w-6 h-6 text-green-600 opacity-70" />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-5 border-l-4 border-blue-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-600 text-xs font-semibold uppercase tracking-wide">
-                Adhérents actifs
-              </p>
-              <p className="text-3xl font-bold text-slate-900 mt-2">
-                {subscribersCount}
-              </p>
-            </div>
-            <Users className="w-6 h-6 text-blue-600 opacity-70" />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-5 border-l-4 border-amber-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-600 text-xs font-semibold uppercase tracking-wide">
-                Produits
-              </p>
-              <p className="text-3xl font-bold text-slate-900 mt-2">
-                {products.length}
-              </p>
-            </div>
-            <Package className="w-6 h-6 text-amber-600 opacity-70" />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-5 border-l-4 border-purple-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-600 text-xs font-semibold uppercase tracking-wide">
-                Livraisons à venir
-              </p>
-              <p className="text-3xl font-bold text-slate-900 mt-2">
-                {upcomingDeliveries.length}
-              </p>
-            </div>
-            <Truck className="w-6 h-6 text-purple-600 opacity-70" />
-          </div>
-        </div>
-      </div>
-
-      {/* Upcoming 5 Deliveries List */}
-      <div className="bg-white rounded-lg shadow p-6 mb-8">
-        <h2 className="text-lg font-bold text-slate-900 mb-4">
-          Prochaines livraisons
-        </h2>
-        {upcomingDeliveries.length > 0 ? (
-          <div className="space-y-2">
-            {upcomingDeliveries.map((delivery, index) => (
-              <div
-                key={delivery.id}
-                className="flex items-center justify-between p-3 hover:bg-slate-50 rounded-lg transition-colors border border-slate-100"
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-3 h-3 rounded-full flex-shrink-0 ${
-                      delivery.is_cancelled
-                        ? 'bg-red-400'
-                        : index === 0
-                          ? 'bg-green-500'
-                          : 'bg-slate-300'
-                    }`}
-                  />
-                  <div>
-                    <p
-                      className={`font-medium ${
-                        delivery.is_cancelled
-                          ? 'text-slate-500 line-through'
-                          : 'text-slate-900'
-                      }`}
-                    >
-                      {new Date(delivery.delivery_date).toLocaleDateString(
-                        'fr-FR',
-                        {
-                          weekday: 'short',
-                          day: 'numeric',
-                          month: 'short',
-                        }
-                      )}
-                    </p>
-                  </div>
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {[
+          { label: 'Contrats', value: contractModels.length, icon: FileText, color: 'green' },
+          { label: 'Adhérents actifs', value: subscribersCount, icon: Users, color: 'blue' },
+          { label: 'Produits', value: products.length, icon: Package, color: 'amber' },
+          { label: 'Livraisons à venir', value: upcomingDeliveries.length, icon: Truck, color: 'purple' },
+        ].map((stat) => {
+          const Icon = stat.icon;
+          const bgColor = `bg-${stat.color}-50`;
+          const textColor = `text-${stat.color}-600`;
+          return (
+            <div key={stat.label} className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  stat.color === 'green' ? 'bg-green-50' : stat.color === 'blue' ? 'bg-blue-50' : stat.color === 'amber' ? 'bg-amber-50' : 'bg-purple-50'
+                }`}>
+                  <Icon className={`w-5 h-5 ${
+                    stat.color === 'green' ? 'text-green-600' : stat.color === 'blue' ? 'text-blue-600' : stat.color === 'amber' ? 'text-amber-500' : 'text-purple-600'
+                  }`} />
                 </div>
-                <span
-                  className={`text-xs font-semibold uppercase tracking-wide ${
-                    delivery.is_cancelled
-                      ? 'text-red-600 bg-red-50'
-                      : 'text-green-600 bg-green-50'
-                  } px-3 py-1 rounded-full`}
-                >
-                  {delivery.is_cancelled ? 'Annulée' : 'Prévue'}
-                </span>
               </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-slate-600 text-sm">
-            Aucune livraison prévue pour le moment.
-          </p>
-        )}
+              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+              <p className="text-xs text-gray-500 mt-0.5">{stat.label}</p>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link
-          href="/producteur/commandes"
-          className="flex items-center justify-center gap-2 px-6 py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-semibold transition-colors"
-        >
-          <Package className="w-5 h-5" />
-          Commandes
-        </Link>
-        <Link
-          href="/producteur/livraisons"
-          className="flex items-center justify-center gap-2 px-6 py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-semibold transition-colors"
-        >
-          <Truck className="w-5 h-5" />
-          Livraisons
-        </Link>
-        <Link
-          href="/producteur/contrats"
-          className="flex items-center justify-center gap-2 px-6 py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-semibold transition-colors"
-        >
-          <CheckCircle className="w-5 h-5" />
-          Contrats
-        </Link>
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* Upcoming deliveries */}
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
+            <h2 className="text-base font-semibold text-gray-900">Prochaines livraisons</h2>
+            <Link href="/producteur/livraisons" className="text-xs font-medium text-green-600 hover:text-green-700 flex items-center gap-1">
+              Tout voir <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+          {upcomingDeliveries.length > 0 ? (
+            <div className="divide-y divide-gray-50">
+              {upcomingDeliveries.slice(0, 6).map((delivery, i) => {
+                const date = new Date(delivery.delivery_date + 'T00:00:00');
+                const dayNum = date.getDate();
+                const dayName = date.toLocaleDateString('fr-FR', { weekday: 'short' });
+                const isNext = i === 0;
+                return (
+                  <div key={delivery.id} className="flex items-center gap-4 px-6 py-3.5">
+                    <div className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center flex-shrink-0 ${
+                      isNext ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      <span className="text-[10px] font-medium uppercase leading-none mt-0.5">{dayName}</span>
+                      <span className="text-lg font-bold leading-none">{dayNum}</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900 capitalize">
+                        {date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+                      </p>
+                      <p className="text-xs text-gray-500">17h00 — 19h00</p>
+                    </div>
+                    {isNext && <span className="px-2.5 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-lg">Prochaine</span>}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="p-10 text-center text-sm text-gray-500">Aucune livraison prévue.</div>
+          )}
+        </div>
+
+        {/* Quick Actions sidebar */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-5 h-fit">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Accès rapide</h3>
+          <div className="space-y-2">
+            {[
+              { href: '/producteur/commandes', label: 'Commandes', desc: 'Préparation', icon: ClipboardList, color: 'green' },
+              { href: '/producteur/livraisons', label: 'Livraisons', desc: 'Planning', icon: Truck, color: 'blue' },
+              { href: '/producteur/contrats', label: 'Contrats', desc: 'Gestion', icon: FileText, color: 'purple' },
+            ].map((action) => {
+              const Icon = action.icon;
+              return (
+                <Link
+                  key={action.href}
+                  href={action.href}
+                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group"
+                >
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                    action.color === 'green' ? 'bg-green-50 group-hover:bg-green-100' : action.color === 'blue' ? 'bg-blue-50 group-hover:bg-blue-100' : 'bg-purple-50 group-hover:bg-purple-100'
+                  } transition-colors`}>
+                    <Icon className={`w-[18px] h-[18px] ${
+                      action.color === 'green' ? 'text-green-600' : action.color === 'blue' ? 'text-blue-600' : 'text-purple-600'
+                    }`} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">{action.label}</p>
+                    <p className="text-xs text-gray-500">{action.desc}</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-300" />
+                </Link>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
