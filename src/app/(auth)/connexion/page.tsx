@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
-import { LogIn } from 'lucide-react';
+import { Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
 
 export default function ConnexionPage() {
   const router = useRouter();
@@ -43,78 +43,91 @@ export default function ConnexionPage() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-8 border border-green-100">
-      <div className="flex justify-center mb-8">
-        <div className="bg-green-100 p-3 rounded-lg">
-          <LogIn className="w-6 h-6 text-green-700" />
-        </div>
-      </div>
-
-      <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">Connexion</h1>
-      <p className="text-center text-gray-600 text-sm mb-8">
+    <div>
+      <h1 className="text-2xl md:text-3xl font-extrabold text-stone-900 tracking-tight mb-2">
+        Connexion
+      </h1>
+      <p className="text-stone-500 mb-8">
         Accédez à votre espace adhérent
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-red-700 text-sm">{error}</p>
+          <div className="flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl p-4">
+            <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+            <p className="text-red-700 text-sm font-medium">{error}</p>
           </div>
         )}
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-            Email
+          <label htmlFor="email" className="block text-sm font-semibold text-stone-700 mb-2">
+            Adresse email
           </label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            placeholder="vous@exemple.com"
-          />
+          <div className="relative">
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-stone-400" />
+            <input
+              id="email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full pl-11 pr-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+              placeholder="vous@exemple.com"
+            />
+          </div>
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-            Mot de passe
-          </label>
-          <input
-            id="password"
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            placeholder="••••••••"
-          />
+          <div className="flex items-center justify-between mb-2">
+            <label htmlFor="password" className="block text-sm font-semibold text-stone-700">
+              Mot de passe
+            </label>
+            <Link
+              href="/mot-de-passe-oublie"
+              className="text-xs font-medium text-green-600 hover:text-green-700 transition-colors"
+            >
+              Oublié ?
+            </Link>
+          </div>
+          <div className="relative">
+            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-stone-400" />
+            <input
+              id="password"
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full pl-11 pr-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+              placeholder="••••••••"
+            />
+          </div>
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+          className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-stone-300 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-lg shadow-green-600/20 disabled:shadow-none"
         >
-          {loading ? 'Connexion en cours...' : 'Se connecter'}
+          {loading ? (
+            <span>Connexion en cours...</span>
+          ) : (
+            <>
+              Se connecter
+              <ArrowRight className="w-4 h-4" />
+            </>
+          )}
         </button>
       </form>
 
-      <div className="mt-6 space-y-3">
+      <p className="mt-8 text-center text-sm text-stone-500">
+        Pas encore de compte ?{' '}
         <Link
           href="/inscription"
-          className="block text-center text-sm text-green-600 hover:text-green-700 font-medium"
+          className="font-semibold text-green-600 hover:text-green-700 transition-colors"
         >
           Créer un compte
         </Link>
-        <Link
-          href="/mot-de-passe-oublie"
-          className="block text-center text-sm text-gray-600 hover:text-gray-700"
-        >
-          Mot de passe oublié?
-        </Link>
-      </div>
+      </p>
     </div>
   );
 }

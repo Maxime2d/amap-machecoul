@@ -72,8 +72,8 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-lg font-bold text-gray-900 mb-2">Distribution</h3>
                     <p className="text-gray-700">
-                      Chaque jeudi<br />
-                      17h30 à 19h00
+                      Chaque vendredi<br />
+                      17h00 à 19h00
                     </p>
                   </div>
                 </div>
