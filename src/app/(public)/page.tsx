@@ -81,7 +81,7 @@ export default async function HomePage() {
             </h1>
 
             <p className="text-xl md:text-2xl text-green-50/90 mb-10 leading-relaxed max-w-2xl">
-              L'AMAP de Machecoul réunit des producteurs bio de Loire-Atlantique et des consommateurs engagés. Légumes, pain, fromage, œufs, volaille — cultivés et élevés dans le respect du vivant.
+              L'AMAP de Machecoul réunit des producteurs bio du territoire et des consommateurs engagés. Légumes, pain, fromage, œufs, volaille — cultivés et élevés dans le respect du vivant.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
