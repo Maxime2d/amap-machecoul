@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Mail, Phone, MapPin, Clock, ArrowLeft } from 'lucide-react';
 
@@ -92,11 +92,9 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Map Placeholder */}
-              <div className="mt-12 bg-gray-200 rounded-lg h-64 flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-gray-600 font-semibold">Carte à venir</p>
-                </div>
+              {/* Map */}
+              <div className="mt-12">
+                <ContactMap />
               </div>
             </div>
 
@@ -215,5 +213,89 @@ export default function ContactPage() {
         </div>
       </section>
     </>
+  );
+}
+
+/* ─── Map component using Leaflet + OpenStreetMap ─── */
+
+const PEPINIERES_LAT = 46.9926;
+const PEPINIERES_LNG = -1.8185;
+
+function ContactMap() {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!mapRef.current || loaded) return;
+
+    // Load Leaflet CSS
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(link);
+
+    // Load Leaflet JS
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.onload = () => {
+      if (!mapRef.current) return;
+      const L = (window as any).L;
+
+      const map = L.map(mapRef.current, {
+        scrollWheelZoom: false,
+      }).setView([PEPINIERES_LAT, PEPINIERES_LNG], 14);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19,
+      }).addTo(map);
+
+      // Custom green marker
+      const icon = L.divIcon({
+        className: '',
+        html: `<div style="
+          width: 36px; height: 36px;
+          background: #16a34a;
+          border: 3px solid white;
+          border-radius: 50%;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          display: flex; align-items: center; justify-content: center;
+        ">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+        </div>`,
+        iconSize: [36, 36],
+        iconAnchor: [18, 36],
+        popupAnchor: [0, -36],
+      });
+
+      L.marker([PEPINIERES_LAT, PEPINIERES_LNG], { icon })
+        .addTo(map)
+        .bindPopup(
+          `<div style="text-align:center;font-family:system-ui;padding:4px 0;">
+            <strong style="font-size:14px;">AMAP Machecoul</strong><br/>
+            <span style="color:#555;font-size:12px;">Pepinieres Breneliere</span><br/>
+            <span style="color:#555;font-size:12px;">Vendredi 17h-19h</span>
+          </div>`
+        )
+        .openPopup();
+
+      setLoaded(true);
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      // Cleanup handled by React unmount
+    };
+  }, [loaded]);
+
+  return (
+    <div
+      ref={mapRef}
+      className="w-full h-72 rounded-xl overflow-hidden border border-gray-200 shadow-sm"
+      style={{ zIndex: 0 }}
+    />
   );
 }
