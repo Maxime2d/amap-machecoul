@@ -475,7 +475,7 @@ export default function CotisationsPage() {
                 ? 'bg-green-500 text-white'
                 : toast.type === 'error'
                   ? 'bg-red-500 text-white'
-                  : 'bg-stone-900 text-white'
+                  : 'bg-green-600 text-white'
             }`}
           >
             {toast.message}
@@ -502,7 +502,7 @@ export default function CotisationsPage() {
               <h2 className="text-lg font-extrabold text-stone-900">Périodes d'adhésion</h2>
               <button
                 onClick={() => setShowPeriodModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-stone-900 text-white rounded-xl hover:bg-stone-800 transition-colors font-medium text-sm"
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-medium text-sm"
               >
                 <Plus className="w-4 h-4" />
                 Nouvelle période
@@ -550,7 +550,7 @@ export default function CotisationsPage() {
                     onClick={() => setSelectedPeriod(period.id)}
                     className={`px-4 py-2 rounded-xl font-medium text-sm transition-colors ${
                       selectedPeriod === period.id
-                        ? 'bg-stone-900 text-white'
+                        ? 'bg-green-600 text-white'
                         : 'bg-white border border-stone-200 text-stone-700 hover:bg-stone-50'
                     }`}
                   >
@@ -568,7 +568,7 @@ export default function CotisationsPage() {
             <p className="text-stone-600 mb-4">Aucune période d'adhésion créée</p>
             <button
               onClick={() => setShowPeriodModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-stone-900 text-white rounded-xl hover:bg-stone-800 transition-colors font-medium text-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-medium text-sm"
             >
               <Plus className="w-4 h-4" />
               Créer la première période
@@ -658,7 +658,7 @@ export default function CotisationsPage() {
                   onClick={() => setStatusFilter(status)}
                   className={`px-4 py-2 rounded-xl font-medium text-sm transition-colors whitespace-nowrap ${
                     statusFilter === status
-                      ? 'bg-stone-900 text-white'
+                      ? 'bg-green-600 text-white'
                       : 'bg-white border border-stone-200 text-stone-700 hover:bg-stone-50'
                   }`}
                 >
@@ -954,7 +954,7 @@ export default function CotisationsPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-3 bg-stone-900 text-white rounded-xl hover:bg-stone-800 transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
                   {isSubmitting ? 'Création...' : 'Créer'}

@@ -266,7 +266,7 @@ export default function ProductsPage() {
         </div>
         <button
           onClick={handleOpenModal}
-          className="flex items-center gap-2 px-5 py-3 bg-stone-900 text-white rounded-xl hover:bg-stone-800 transition-colors font-semibold text-sm"
+          className="flex items-center gap-2 px-5 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-semibold text-sm"
         >
           <Plus className="w-4 h-4" />
           Ajouter un produit
@@ -300,7 +300,7 @@ export default function ProductsPage() {
           onClick={() => setProducerFilter('all')}
           className={`px-4 py-2 rounded-xl font-medium text-sm whitespace-nowrap transition-colors ${
             producerFilter === 'all'
-              ? 'bg-stone-900 text-white'
+              ? 'bg-green-600 text-white'
               : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50'
           }`}
         >
@@ -312,7 +312,7 @@ export default function ProductsPage() {
             onClick={() => setProducerFilter(producer.id)}
             className={`px-4 py-2 rounded-xl font-medium text-sm whitespace-nowrap transition-colors ${
               producerFilter === producer.id
-                ? 'bg-stone-900 text-white'
+                ? 'bg-green-600 text-white'
                 : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50'
             }`}
           >
@@ -541,7 +541,7 @@ export default function ProductsPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-800 transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>

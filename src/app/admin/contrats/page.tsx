@@ -315,7 +315,7 @@ export default function ContractsPage() {
                 onClick={() => setStatusFilter(status)}
                 className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors whitespace-nowrap ${
                   statusFilter === status
-                    ? 'bg-stone-900 text-white'
+                    ? 'bg-green-600 text-white'
                     : 'bg-white border border-stone-200 text-stone-700 hover:bg-stone-50'
                 }`}
               >

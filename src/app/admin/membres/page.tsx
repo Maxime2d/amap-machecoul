@@ -93,7 +93,7 @@ export default function MembersPage() {
     <div className="max-w-5xl mx-auto">
       {/* Toast */}
       {toast && (
-        <div className="fixed top-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 bg-stone-900 text-white text-sm font-medium rounded-xl shadow-xl animate-in slide-in-from-top">
+        <div className="fixed top-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white text-sm font-medium rounded-xl shadow-xl animate-in slide-in-from-top">
           <Check className="w-4 h-4 text-green-400" />
           {toast}
         </div>
@@ -118,7 +118,7 @@ export default function MembersPage() {
             onClick={() => setActiveTab(tab.key)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap ${
               activeTab === tab.key
-                ? 'bg-stone-900 text-white'
+                ? 'bg-green-600 text-white'
                 : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-300'
             }`}
           >

@@ -266,7 +266,7 @@ export default function AdminPermanencesPage() {
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-2 px-4 py-2 bg-stone-900 text-white rounded-xl hover:bg-stone-800 transition-colors font-medium text-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-medium text-sm"
           >
             <Plus className="w-4 h-4" />
             Ajouter une date
@@ -298,7 +298,7 @@ export default function AdminPermanencesPage() {
                 onClick={() => setSelectedPeriod(period.id)}
                 className={`px-4 py-2 rounded-xl font-medium text-sm transition-colors whitespace-nowrap ${
                   selectedPeriod === period.id
-                    ? 'bg-stone-900 text-white'
+                    ? 'bg-green-600 text-white'
                     : 'bg-white border border-stone-300 text-stone-700 hover:bg-stone-50'
                 }`}
               >
@@ -349,7 +349,7 @@ export default function AdminPermanencesPage() {
             <div className="flex gap-2 mt-6">
               <button
                 onClick={handleAddDate}
-                className="px-4 py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-800 transition-colors font-medium text-sm"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm"
               >
                 Ajouter
               </button>
@@ -445,7 +445,7 @@ export default function AdminPermanencesPage() {
             <p className="text-stone-600 mb-6">Commencez par ajouter une première date de permanence</p>
             <button
               onClick={() => setShowForm(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-stone-900 text-white rounded-xl hover:bg-stone-800 transition-colors font-medium text-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-medium text-sm"
             >
               <Plus className="w-4 h-4" />
               Ajouter une date
