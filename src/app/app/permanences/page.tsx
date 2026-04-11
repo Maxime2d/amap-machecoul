@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Calendar, Clock, CheckCircle, XCircle, Users, MapPin } from 'lucide-react';
+import { Calendar, Check, MapPin, Loader2 } from 'lucide-react';
 
 interface ShiftDate {
   id: string;
@@ -58,27 +58,24 @@ export default function MemberPermanencesPage() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  const handleSignUp = async (shiftDateId: string) => {
+  const handleToggle = async (shift: ShiftDate) => {
     if (!userId) return;
-    setActionLoading(shiftDateId);
-    await supabase.from('volunteer_shifts').insert({
-      shift_date_id: shiftDateId, user_id: userId, role: 'distribution', status: 'confirmed',
-    });
+    const isFull = shift.volunteer_count >= shift.capacity;
+    if (!shift.is_signed_up && isFull) return;
+
+    const loadingKey = shift.is_signed_up ? shift.my_shift_id! : shift.id;
+    setActionLoading(loadingKey);
+
+    if (shift.is_signed_up && shift.my_shift_id) {
+      await supabase.from('volunteer_shifts').delete().eq('id', shift.my_shift_id);
+    } else {
+      await supabase.from('volunteer_shifts').insert({
+        shift_date_id: shift.id, user_id: userId, role: 'distribution', status: 'confirmed',
+      });
+    }
+
     setActionLoading(null);
     fetchData();
-  };
-
-  const handleCancel = async (shiftId: string) => {
-    setActionLoading(shiftId);
-    await supabase.from('volunteer_shifts').delete().eq('id', shiftId);
-    setActionLoading(null);
-    fetchData();
-  };
-
-  const formatDateLong = (dateString: string) => {
-    return new Date(dateString + 'T00:00:00').toLocaleDateString('fr-FR', {
-      weekday: 'long', day: 'numeric', month: 'long',
-    });
   };
 
   const getMonthKey = (dateString: string) => {
@@ -96,13 +93,16 @@ export default function MemberPermanencesPage() {
 
   const mySignups = shiftDates.filter(d => d.is_signed_up);
   const groupedShifts = groupShiftsByMonth();
+  const TARGET = 2;
+  const progress = Math.min(mySignups.length, TARGET);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-[#f8f7f4] p-6 md:p-8">
-        <div className="max-w-3xl mx-auto">
-          <div className="h-8 w-48 bg-stone-200 rounded-lg animate-pulse mb-6" />
-          {[...Array(4)].map((_, i) => <div key={i} className="h-16 bg-white rounded-xl border border-stone-200 animate-pulse mb-2" />)}
+        <div className="max-w-2xl mx-auto">
+          <div className="h-8 w-48 bg-stone-200 rounded-lg animate-pulse mb-4" />
+          <div className="h-20 bg-stone-200 rounded-xl animate-pulse mb-6" />
+          {[...Array(5)].map((_, i) => <div key={i} className="h-14 bg-white rounded-xl border border-stone-200 animate-pulse mb-2" />)}
         </div>
       </div>
     );
@@ -110,104 +110,137 @@ export default function MemberPermanencesPage() {
 
   return (
     <div className="min-h-screen bg-[#f8f7f4] p-6 md:p-8">
-      <div className="max-w-3xl mx-auto">
-        {/* Header + lieu */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-extrabold text-stone-900 tracking-tight">Permanences</h1>
-          <div className="mt-3 p-4 bg-stone-900 rounded-xl flex items-start gap-3">
+      <div className="max-w-2xl mx-auto">
+
+        {/* Header */}
+        <h1 className="text-2xl font-extrabold text-stone-900 tracking-tight mb-4">Permanences</h1>
+
+        {/* Info + progress card */}
+        <div className="mb-6 bg-stone-900 rounded-2xl p-5">
+          <div className="flex items-start gap-3 mb-4">
             <MapPin className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-bold text-white">Chaque vendredi · 17h — 19h</p>
               <p className="text-xs text-stone-400 mt-0.5">Pépinières Brenelière, Machecoul</p>
-              <p className="text-xs text-stone-500 mt-1">Chaque adhérent participe à au moins 2 permanences par saison.</p>
             </div>
+          </div>
+
+          {/* Progress bar */}
+          <div className="bg-stone-800 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-semibold text-stone-400">Votre participation cette saison</p>
+              <p className="text-sm font-extrabold text-white">{mySignups.length}/{TARGET}</p>
+            </div>
+            <div className="h-2.5 bg-stone-700 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${
+                  progress >= TARGET ? 'bg-green-400' : 'bg-amber-400'
+                }`}
+                style={{ width: `${(progress / TARGET) * 100}%` }}
+              />
+            </div>
+            <p className="text-[11px] mt-2 text-stone-500">
+              {progress >= TARGET
+                ? 'Objectif atteint — merci pour votre engagement !'
+                : `Encore ${TARGET - progress} permanence${TARGET - progress > 1 ? 's' : ''} à choisir (minimum ${TARGET} par saison)`
+              }
+            </p>
           </div>
         </div>
 
-        {/* My signups summary */}
-        {mySignups.length > 0 && (
-          <div className="mb-6 px-4 py-3 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
-            <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-            <p className="text-sm text-green-800">
-              <span className="font-bold">Inscrit(e) à {mySignups.length} permanence{mySignups.length > 1 ? 's' : ''}</span>
-              {' — '}prochaine : <span className="font-semibold capitalize">{formatDateLong(mySignups[0].date)}</span>
-            </p>
-          </div>
-        )}
+        {/* Legend */}
+        <div className="flex items-center gap-4 mb-4 text-xs text-stone-500">
+          <span className="flex items-center gap-1.5">
+            <span className="w-5 h-5 rounded-md bg-green-600 flex items-center justify-center"><Check className="w-3 h-3 text-white" /></span>
+            Inscrit
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-5 h-5 rounded-md border-2 border-stone-300" />
+            Disponible
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-5 h-5 rounded-md bg-stone-200" />
+            Complet
+          </span>
+        </div>
 
-        {/* Shifts list */}
+        {/* Shifts list — clickable rows */}
         {shiftDates.length > 0 ? (
-          <div className="space-y-8">
+          <div className="space-y-6">
             {Object.entries(groupedShifts).map(([monthKey, shifts]) => (
               <div key={monthKey}>
-                <h2 className="text-sm font-bold text-stone-400 uppercase tracking-wider mb-3 capitalize">{monthKey}</h2>
-                <div className="space-y-2">
+                <h2 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-2 capitalize">{monthKey}</h2>
+                <div className="space-y-1.5">
                   {shifts.map((shift) => {
                     const isFull = shift.volunteer_count >= shift.capacity;
                     const isLoading = actionLoading === shift.id || actionLoading === shift.my_shift_id;
                     const d = new Date(shift.date + 'T00:00:00');
+                    const isClickable = shift.is_signed_up || !isFull;
 
                     return (
-                      <div
+                      <button
                         key={shift.id}
-                        className={`flex items-center gap-4 p-3.5 bg-white rounded-xl border transition-colors ${
+                        onClick={() => handleToggle(shift)}
+                        disabled={!isClickable || isLoading}
+                        className={`w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all duration-150 ${
                           shift.is_signed_up
-                            ? 'border-green-300 bg-green-50/40'
-                            : 'border-stone-200 hover:border-stone-300'
-                        }`}
+                            ? 'bg-green-50 border-green-300 hover:bg-green-100'
+                            : isFull
+                              ? 'bg-stone-50 border-stone-200 opacity-50 cursor-not-allowed'
+                              : 'bg-white border-stone-200 hover:border-green-400 hover:shadow-sm cursor-pointer'
+                        } ${isLoading ? 'opacity-70' : ''}`}
                       >
-                        {/* Date block */}
-                        <div className={`w-12 h-14 rounded-lg flex flex-col items-center justify-center flex-shrink-0 ${
-                          shift.is_signed_up ? 'bg-green-600 text-white' : 'bg-stone-100 text-stone-600'
+                        {/* Checkbox */}
+                        <div className={`w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-150 ${
+                          shift.is_signed_up
+                            ? 'bg-green-600 border-2 border-green-600'
+                            : isFull
+                              ? 'bg-stone-200 border-2 border-stone-200'
+                              : 'border-2 border-stone-300 hover:border-green-500'
                         }`}>
-                          <span className="text-[10px] font-bold uppercase leading-none">
+                          {isLoading ? (
+                            <Loader2 className="w-3.5 h-3.5 text-white animate-spin" />
+                          ) : shift.is_signed_up ? (
+                            <Check className="w-3.5 h-3.5 text-white" />
+                          ) : null}
+                        </div>
+
+                        {/* Date block compact */}
+                        <div className={`w-10 text-center flex-shrink-0 ${
+                          shift.is_signed_up ? 'text-green-700' : 'text-stone-500'
+                        }`}>
+                          <p className="text-[10px] font-bold uppercase leading-none">
                             {d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}
-                          </span>
-                          <span className="text-xl font-black leading-none mt-0.5">{d.getDate()}</span>
+                          </p>
+                          <p className="text-lg font-black leading-tight">{d.getDate()}</p>
                         </div>
 
-                        {/* Info */}
+                        {/* Date text */}
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-stone-900 capitalize">{formatDateLong(shift.date)}</p>
-                          <div className="flex items-center gap-3 mt-1">
-                            <span className="text-xs text-stone-500 flex items-center gap-1">
-                              <Clock className="w-3 h-3" /> 17h — 19h
-                            </span>
-                            <span className={`text-xs font-semibold flex items-center gap-1 ${
-                              isFull ? 'text-red-600' : 'text-stone-500'
-                            }`}>
-                              <Users className="w-3 h-3" />
-                              {shift.volunteer_count}/{shift.capacity}
-                              {!isFull && <span className="text-stone-400 font-normal">· {shift.capacity - shift.volunteer_count} libre{shift.capacity - shift.volunteer_count > 1 ? 's' : ''}</span>}
-                            </span>
-                          </div>
+                          <p className={`text-sm font-semibold capitalize ${
+                            shift.is_signed_up ? 'text-green-800' : isFull ? 'text-stone-400' : 'text-stone-800'
+                          }`}>
+                            {d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                          </p>
                         </div>
 
-                        {/* Action */}
-                        <div className="flex-shrink-0">
-                          {shift.is_signed_up ? (
-                            <button
-                              onClick={() => shift.my_shift_id && handleCancel(shift.my_shift_id)}
-                              disabled={isLoading}
-                              className="px-3 py-1.5 text-xs font-bold text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
-                            >
-                              {isLoading ? '...' : 'Annuler'}
-                            </button>
-                          ) : isFull ? (
-                            <span className="px-3 py-1.5 text-xs font-bold text-stone-400 bg-stone-100 rounded-lg">
-                              Complet
-                            </span>
-                          ) : (
-                            <button
-                              onClick={() => handleSignUp(shift.id)}
-                              disabled={isLoading}
-                              className="px-3 py-1.5 text-xs font-bold text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors disabled:opacity-50"
-                            >
-                              {isLoading ? '...' : "S'inscrire"}
-                            </button>
+                        {/* Places indicator */}
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          <div className="flex gap-0.5">
+                            {Array.from({ length: shift.capacity }).map((_, i) => (
+                              <div
+                                key={i}
+                                className={`w-2 h-2 rounded-full ${
+                                  i < shift.volunteer_count ? 'bg-green-500' : 'bg-stone-300'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          {isFull && !shift.is_signed_up && (
+                            <span className="text-[10px] font-bold text-stone-400 ml-1">Complet</span>
                           )}
                         </div>
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
