@@ -111,10 +111,17 @@ export default function MemberPermanencesPage() {
   return (
     <div className="min-h-screen bg-[#f8f7f4] p-6 md:p-8">
       <div className="max-w-3xl mx-auto">
-        {/* Header compact */}
+        {/* Header + lieu */}
         <div className="mb-6">
           <h1 className="text-2xl font-extrabold text-stone-900 tracking-tight">Permanences</h1>
-          <p className="text-sm text-stone-500 mt-1">Inscrivez-vous aux créneaux de distribution</p>
+          <div className="mt-3 p-4 bg-stone-900 rounded-xl flex items-start gap-3">
+            <MapPin className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-bold text-white">Chaque vendredi · 17h — 19h</p>
+              <p className="text-xs text-stone-400 mt-0.5">Pépinières Brenelière, Machecoul</p>
+              <p className="text-xs text-stone-500 mt-1">Chaque adhérent participe à au moins 2 permanences par saison.</p>
+            </div>
+          </div>
         </div>
 
         {/* My signups summary */}
@@ -215,15 +222,6 @@ export default function MemberPermanencesPage() {
           </div>
         )}
 
-        {/* Info compact */}
-        <div className="mt-8 p-4 bg-stone-900 rounded-xl flex items-start gap-3">
-          <MapPin className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-bold text-white">Chaque vendredi · 17h — 19h</p>
-            <p className="text-xs text-stone-400 mt-0.5">Pépinières Brenelière, Machecoul</p>
-            <p className="text-xs text-stone-500 mt-2">Chaque adhérent participe à au moins 2 permanences par saison.</p>
-          </div>
-        </div>
       </div>
     </div>
   );
