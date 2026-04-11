@@ -8,11 +8,9 @@ import {
   Users,
   Truck,
   ArrowRight,
-  Calendar,
   AlertCircle,
   ChevronRight,
   ClipboardList,
-  FileText,
   Clock,
   MapPin,
 } from 'lucide-react';
@@ -208,132 +206,58 @@ export default function ProducerDashboard() {
           </div>
         )}
 
-        {/* Two-column layout */}
-        <div className="grid lg:grid-cols-5 gap-6">
-
-          {/* LEFT — Stats + Calendar */}
-          <div className="lg:col-span-3 space-y-6">
-            {/* Mini stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {[
-                { label: 'Contrats', value: contractModels.length, color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/20' },
-                { label: 'Adhérents', value: subscribersCount, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-                { label: 'Produits', value: products.length, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
-                { label: 'Livraisons', value: upcomingDeliveries.length, color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/20' },
-              ].map((stat) => (
-                <div key={stat.label} className={`${stat.bg} rounded-2xl border ${stat.border} p-4`}>
-                  <p className={`text-2xl font-black ${stat.color}`}>{stat.value}</p>
-                  <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mt-0.5">{stat.label}</p>
-                </div>
-              ))}
+        {/* Stats + Calendar */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+          {[
+            { label: 'Contrats', value: contractModels.length, color: 'text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/20' },
+            { label: 'Adhérents', value: subscribersCount, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
+            { label: 'Produits', value: products.length, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+            { label: 'Livraisons', value: upcomingDeliveries.length, color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/20' },
+          ].map((stat) => (
+            <div key={stat.label} className={`${stat.bg} rounded-2xl border ${stat.border} p-4`}>
+              <p className={`text-2xl font-black ${stat.color}`}>{stat.value}</p>
+              <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide mt-0.5">{stat.label}</p>
             </div>
+          ))}
+        </div>
 
-            {/* Calendar — upcoming dates */}
-            {upcomingDeliveries.length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-extrabold text-white">Calendrier</h2>
-                  <Link href="/producteur/livraisons" className="text-sm font-bold text-green-400 hover:text-green-300 flex items-center gap-1">
-                    Tout voir <ChevronRight className="w-4 h-4" />
-                  </Link>
-                </div>
-                <div className="space-y-2">
-                  {upcomingDeliveries.slice(0, 5).map((delivery, i) => {
-                    const date = new Date(delivery.delivery_date + 'T00:00:00');
-                    const isNext = i === 0;
-                    return (
-                      <div key={delivery.id} className={`flex items-center gap-4 p-3.5 rounded-2xl border transition-colors ${
-                        isNext
-                          ? 'bg-green-500/10 border-green-500/20'
-                          : 'bg-slate-900 border-slate-800 hover:border-slate-700'
-                      }`}>
-                        <div className={`w-12 h-14 rounded-xl flex flex-col items-center justify-center flex-shrink-0 ${
-                          isNext ? 'bg-green-500 text-white' : 'bg-slate-800 text-slate-300'
-                        }`}>
-                          <span className="text-[10px] font-bold uppercase leading-none">
-                            {date.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}
-                          </span>
-                          <span className="text-xl font-black leading-none mt-0.5">{date.getDate()}</span>
-                        </div>
-                        <div className="flex-1">
-                          <p className={`text-sm font-semibold capitalize ${isNext ? 'text-green-300' : 'text-slate-300'}`}>
-                            {date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
-                          </p>
-                          <p className="text-xs text-slate-500 mt-0.5">17h — 19h</p>
-                        </div>
-                        {isNext && <span className="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-full border border-green-500/30">Prochaine</span>}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+        {/* Calendar — upcoming dates */}
+        {upcomingDeliveries.length > 1 && (
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-extrabold text-white">Prochaines dates</h2>
+              <Link href="/producteur/livraisons" className="text-sm font-bold text-green-400 hover:text-green-300 flex items-center gap-1">
+                Tout voir <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="grid sm:grid-cols-3 gap-3">
+              {upcomingDeliveries.slice(1, 4).map((delivery) => {
+                const date = new Date(delivery.delivery_date + 'T00:00:00');
+                return (
+                  <div key={delivery.id} className="bg-slate-900 rounded-2xl border border-slate-800 p-4 text-center hover:border-slate-700 transition-colors">
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                      {date.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}
+                    </p>
+                    <p className="text-2xl font-black text-white my-1">{date.getDate()}</p>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase">
+                      {date.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '')}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
+        )}
 
-          {/* RIGHT — Navigation */}
-          <div className="lg:col-span-2 space-y-4">
-            <h2 className="text-lg font-extrabold text-white mb-1">Navigation</h2>
-
-            {[
-              { href: '/producteur/commandes', label: 'Commandes', desc: 'Préparation & détails', icon: ClipboardList, primary: true },
-              { href: '/producteur/livraisons', label: 'Mes livraisons', desc: 'Planning & feuilles', icon: Truck, primary: false },
-              { href: '/producteur/contrats', label: 'Mes contrats', desc: `${contractModels.length} contrat${contractModels.length > 1 ? 's' : ''} actif${contractModels.length > 1 ? 's' : ''}`, icon: FileText, primary: false },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-4 p-4 rounded-2xl border transition-all group ${
-                    item.primary
-                      ? 'bg-green-500 border-green-500 hover:bg-green-400 text-white shadow-lg shadow-green-500/20'
-                      : 'bg-slate-900 border-slate-800 hover:border-green-500/30'
-                  }`}
-                >
-                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
-                    item.primary ? 'bg-white/20' : 'bg-slate-800 group-hover:bg-green-500/10'
-                  }`}>
-                    <Icon className={`w-5 h-5 ${
-                      item.primary ? 'text-white' : 'text-slate-400 group-hover:text-green-400'
-                    } transition-colors`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-bold ${item.primary ? '' : 'text-slate-200'}`}>{item.label}</p>
-                    <p className={`text-xs mt-0.5 ${item.primary ? 'text-green-200' : 'text-slate-500'}`}>{item.desc}</p>
-                  </div>
-                  <ChevronRight className={`w-4 h-4 flex-shrink-0 ${
-                    item.primary ? 'text-white/50' : 'text-slate-600'
-                  }`} />
-                </Link>
-              );
-            })}
-
-            {/* Return to member space */}
-            <Link
-              href="/app"
-              className="flex items-center gap-4 p-4 rounded-2xl border border-slate-800 bg-slate-900/50 hover:border-slate-700 transition-colors group"
-            >
-              <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 bg-slate-800 group-hover:bg-slate-700 transition-colors">
-                <Users className="w-5 h-5 text-slate-400" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-slate-300">Espace adhérent</p>
-                <p className="text-xs text-slate-600 mt-0.5">Retour à l&apos;espace membre</p>
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-700" />
-            </Link>
-
-            {/* Distribution info */}
-            <div className="p-4 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700/50">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-white">Tous les vendredis</p>
-                  <p className="text-xs text-slate-400 mt-0.5">17h — 19h · Salle associative de Machecoul</p>
-                </div>
-              </div>
+        {/* Distribution info */}
+        <div className="mt-6 p-4 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700/50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center flex-shrink-0">
+              <MapPin className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-white">Tous les vendredis</p>
+              <p className="text-xs text-slate-400 mt-0.5">17h — 19h · Salle associative de Machecoul</p>
             </div>
           </div>
         </div>

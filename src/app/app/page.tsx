@@ -3,19 +3,15 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
-  AlertCircle,
   Leaf,
   Clock,
-  Truck,
   ArrowRight,
   Calendar,
   Package,
   ChevronRight,
   ShoppingBag,
   MapPin,
-  FileText,
   CreditCard,
-  User,
 } from 'lucide-react';
 
 export default async function DashboardPage() {
@@ -154,153 +150,115 @@ export default async function DashboardPage() {
           </Link>
         )}
 
-        {/* Two-column layout */}
-        <div className="grid lg:grid-cols-5 gap-6">
+        {/* Contracts + Calendar in a clean grid */}
+        <div className="grid lg:grid-cols-3 gap-6">
 
-          {/* LEFT — Contracts */}
-          <div className="lg:col-span-3 space-y-6">
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-extrabold text-stone-900">Mes contrats</h2>
-                <Link href="/app/contrats" className="text-sm font-bold text-green-700 hover:text-green-800 flex items-center gap-1">
-                  Tous <ChevronRight className="w-4 h-4" />
-                </Link>
-              </div>
-
-              {activeContracts.length > 0 ? (
-                <div className="space-y-3">
-                  {activeContracts.map((contract: any) => {
-                    const isFlexible = contract.contract_models?.nature === 'flexible';
-                    return (
-                      <Link
-                        key={contract.id}
-                        href={`/app/contrats/${contract.id}`}
-                        className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-stone-200 hover:border-green-300 hover:shadow-lg hover:shadow-green-100/50 transition-all group"
-                      >
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 ${
-                          isFlexible
-                            ? 'bg-gradient-to-br from-indigo-100 to-violet-100 text-indigo-600'
-                            : 'bg-gradient-to-br from-green-100 to-emerald-100 text-green-700'
-                        }`}>
-                          {isFlexible ? <ShoppingBag className="w-6 h-6" /> : <Package className="w-6 h-6" />}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-bold text-stone-900 truncate group-hover:text-green-700 transition-colors">
-                            {contract.contract_models?.name}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs text-stone-500">{contract.contract_models?.producers?.name}</span>
-                            {isFlexible && (
-                              <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-[10px] font-bold uppercase">Flexible</span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="text-right flex-shrink-0">
-                          {isFlexible ? (
-                            <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg">Commander</span>
-                          ) : (
-                            <ChevronRight className="w-5 h-5 text-stone-300 group-hover:text-green-500 transition-colors" />
-                          )}
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              ) : (
-                <Link
-                  href="/app/contrats/disponibles"
-                  className="flex items-center gap-5 p-6 bg-gradient-to-r from-green-600 to-emerald-500 rounded-2xl text-white hover:from-green-700 hover:to-emerald-600 transition-all shadow-lg shadow-green-600/20 group"
-                >
-                  <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <Leaf className="w-7 h-7" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-extrabold text-lg">Rejoignez nos producteurs bio</p>
-                    <p className="text-green-100 text-sm mt-0.5">Souscrivez votre premier contrat — légumes, pain, fromage...</p>
-                  </div>
-                  <ArrowRight className="w-6 h-6 text-white/70 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              )}
+          {/* Contracts */}
+          <div className="lg:col-span-2">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-extrabold text-stone-900">Mes contrats</h2>
+              <Link href="/app/contrats" className="text-sm font-bold text-green-700 hover:text-green-800 flex items-center gap-1">
+                Tous <ChevronRight className="w-4 h-4" />
+              </Link>
             </div>
 
-            {/* Calendar preview — next dates compact */}
+            {activeContracts.length > 0 ? (
+              <div className="space-y-3">
+                {activeContracts.map((contract: any) => {
+                  const isFlexible = contract.contract_models?.nature === 'flexible';
+                  return (
+                    <Link
+                      key={contract.id}
+                      href={`/app/contrats/${contract.id}`}
+                      className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-stone-200 hover:border-green-300 hover:shadow-lg hover:shadow-green-100/50 transition-all group"
+                    >
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 ${
+                        isFlexible
+                          ? 'bg-gradient-to-br from-indigo-100 to-violet-100 text-indigo-600'
+                          : 'bg-gradient-to-br from-green-100 to-emerald-100 text-green-700'
+                      }`}>
+                        {isFlexible ? <ShoppingBag className="w-6 h-6" /> : <Package className="w-6 h-6" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-stone-900 truncate group-hover:text-green-700 transition-colors">
+                          {contract.contract_models?.name}
+                        </p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-stone-500">{contract.contract_models?.producers?.name}</span>
+                          {isFlexible && (
+                            <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-[10px] font-bold uppercase">Flexible</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        {isFlexible ? (
+                          <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg">Commander</span>
+                        ) : (
+                          <ChevronRight className="w-5 h-5 text-stone-300 group-hover:text-green-500 transition-colors" />
+                        )}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <Link
+                href="/app/contrats/disponibles"
+                className="flex items-center gap-5 p-6 bg-gradient-to-r from-green-600 to-emerald-500 rounded-2xl text-white hover:from-green-700 hover:to-emerald-600 transition-all shadow-lg shadow-green-600/20 group"
+              >
+                <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <Leaf className="w-7 h-7" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-extrabold text-lg">Rejoignez nos producteurs bio</p>
+                  <p className="text-green-100 text-sm mt-0.5">Souscrivez votre premier contrat — légumes, pain, fromage...</p>
+                </div>
+                <ArrowRight className="w-6 h-6 text-white/70 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            )}
+          </div>
+
+          {/* Right column — Calendar + Distribution */}
+          <div className="space-y-6">
+            {/* Upcoming dates */}
             {upcomingDates.length > 1 && (
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-extrabold text-stone-900">Calendrier</h2>
+                  <h2 className="text-lg font-extrabold text-stone-900">Prochaines dates</h2>
                   <Link href="/app/livraisons" className="text-sm font-bold text-green-700 hover:text-green-800 flex items-center gap-1">
                     Toutes <ChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-2">
                   {upcomingDates.slice(1, 4).map(([date, producers]: [string, string[]]) => {
                     const d = new Date(date + 'T00:00:00');
                     return (
-                      <div key={date} className="bg-white rounded-2xl border border-stone-200 p-4 text-center hover:border-green-300 transition-colors">
-                        <p className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">
-                          {d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}
-                        </p>
-                        <p className="text-2xl font-black text-stone-900 my-1">{d.getDate()}</p>
-                        <p className="text-[10px] font-bold text-stone-500 uppercase">
-                          {d.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '')}
-                        </p>
+                      <div key={date} className="flex items-center gap-3 bg-white rounded-xl border border-stone-200 p-3 hover:border-green-300 transition-colors">
+                        <div className="w-12 h-14 rounded-lg bg-stone-100 flex flex-col items-center justify-center flex-shrink-0">
+                          <span className="text-[10px] font-bold text-stone-400 uppercase">
+                            {d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}
+                          </span>
+                          <span className="text-xl font-black text-stone-900">{d.getDate()}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-stone-800 capitalize">
+                            {d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                          </p>
+                          {producers.length > 0 && (
+                            <p className="text-xs text-stone-500 truncate mt-0.5">
+                              {producers.join(', ')}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
                 </div>
               </div>
             )}
-          </div>
 
-          {/* RIGHT — Navigation & info */}
-          <div className="lg:col-span-2 space-y-4">
-            <h2 className="text-lg font-extrabold text-stone-900 mb-1">Navigation</h2>
-
-            {[
-              { href: '/app/contrats/disponibles', label: 'Souscrire un contrat', desc: 'Découvrir les producteurs', icon: Leaf, color: 'green' as const },
-              { href: '/app/contrats', label: 'Mes contrats', desc: `${activeContracts.length} actif${activeContracts.length > 1 ? 's' : ''}`, icon: FileText, color: 'stone' as const },
-              { href: '/app/livraisons', label: 'Mes livraisons', desc: 'Historique & à venir', icon: Truck, color: 'stone' as const },
-              { href: '/app/permanences', label: 'Permanences', desc: 'Planning & inscription', icon: Clock, color: 'stone' as const },
-              { href: '/app/cotisation', label: 'Cotisation', desc: pendingPayments.length > 0 ? `${pendingPayments.length} en attente` : 'À jour', icon: CreditCard, color: pendingPayments.length > 0 ? 'red' as const : 'stone' as const },
-              { href: '/app/profil', label: 'Mon profil', desc: 'Informations personnelles', icon: User, color: 'stone' as const },
-            ].map((item) => {
-              const Icon = item.icon;
-              const isGreen = item.color === 'green';
-              const isRed = item.color === 'red';
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-4 p-4 rounded-2xl border transition-all group ${
-                    isGreen
-                      ? 'bg-green-700 border-green-700 hover:bg-green-800 text-white shadow-md shadow-green-700/20'
-                      : isRed
-                        ? 'bg-white border-red-200 hover:border-red-300'
-                        : 'bg-white border-stone-200 hover:border-green-300 hover:shadow-md'
-                  }`}
-                >
-                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                    isGreen ? 'bg-white/20' : isRed ? 'bg-red-100' : 'bg-stone-100 group-hover:bg-green-100'
-                  } transition-colors`}>
-                    <Icon className={`w-5 h-5 ${
-                      isGreen ? 'text-white' : isRed ? 'text-red-600' : 'text-stone-500 group-hover:text-green-600'
-                    } transition-colors`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-bold ${isGreen ? '' : 'text-stone-900'}`}>{item.label}</p>
-                    <p className={`text-xs mt-0.5 ${
-                      isGreen ? 'text-green-200' : isRed ? 'text-red-600 font-semibold' : 'text-stone-500'
-                    }`}>{item.desc}</p>
-                  </div>
-                  <ChevronRight className={`w-4 h-4 flex-shrink-0 ${
-                    isGreen ? 'text-white/50' : 'text-stone-300'
-                  }`} />
-                </Link>
-              );
-            })}
-
-            {/* Distribution reminder */}
-            <div className="mt-2 p-4 bg-stone-900 rounded-2xl text-white">
+            {/* Distribution info */}
+            <div className="p-4 bg-stone-900 rounded-2xl text-white">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center flex-shrink-0">
                   <MapPin className="w-5 h-5 text-white" />
