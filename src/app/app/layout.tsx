@@ -13,15 +13,17 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('first_name, last_name')
+    .select('first_name, last_name, role')
     .eq('id', user.id)
     .single();
 
   const userName = (profile as Profile | null) ? `${(profile as any).first_name} ${(profile as any).last_name}` : user.email;
+  const userRole = (profile as any)?.role || 'member';
+  const isAdmin = ['admin', 'superadmin', 'treasurer'].includes(userRole);
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f7f4]">
-      <AppSidebar userName={userName} />
+      <AppSidebar userName={userName} isAdmin={isAdmin} />
       <main className="flex-1 overflow-auto">
         {children}
       </main>

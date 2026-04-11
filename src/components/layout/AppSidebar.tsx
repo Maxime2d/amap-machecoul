@@ -16,14 +16,17 @@ import {
   Package,
   Leaf,
   ChevronRight,
+  Globe,
+  Shield,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface AppSidebarProps {
   userName?: string;
+  isAdmin?: boolean;
 }
 
-export function AppSidebar({ userName }: AppSidebarProps) {
+export function AppSidebar({ userName, isAdmin }: AppSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -126,12 +129,31 @@ export function AppSidebar({ userName }: AppSidebarProps) {
             </div>
           </div>
         )}
+        {/* Navigation links */}
+        <div className="mx-1 space-y-0.5">
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-500 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all duration-200"
+            >
+              <Shield className="w-4 h-4" />
+              <span>Administration</span>
+            </Link>
+          )}
+          <Link
+            href="/"
+            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-500 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all duration-200"
+          >
+            <Globe className="w-4 h-4" />
+            <span>Site public</span>
+          </Link>
+        </div>
         <button
           onClick={handleLogout}
           className="w-full mx-1 flex items-center gap-3 px-4 py-2.5 text-sm text-gray-500 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all duration-200"
         >
           <LogOut className="w-4 h-4" />
-          <span>Déconnexion</span>
+          <span>Deconnexion</span>
         </button>
       </div>
     </div>

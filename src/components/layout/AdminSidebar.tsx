@@ -22,6 +22,9 @@ import {
   Menu,
   X,
   ChevronRight,
+  ExternalLink,
+  ArrowLeftRight,
+  Globe,
 } from 'lucide-react';
 
 const adminNavItems = [
@@ -40,7 +43,7 @@ const adminNavItems = [
   { label: 'Emails', href: '/admin/emails', icon: Mail },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebar({ firstName }: { firstName?: string }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -108,14 +111,27 @@ export function AdminSidebar() {
         </ul>
       </nav>
 
-      {/* Footer */}
-      <div className="px-3 pb-4 pt-2 space-y-2 border-t border-gray-100">
+      {/* Footer — navigation links */}
+      <div className="px-3 pb-4 pt-2 space-y-1 border-t border-gray-100">
+        {firstName && (
+          <div className="mx-1 px-4 py-2.5 mb-1">
+            <p className="text-xs text-gray-400">Connecte en tant que</p>
+            <p className="text-sm font-semibold text-gray-700">{firstName}</p>
+          </div>
+        )}
         <Link
           href="/app"
-          className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700 rounded-xl transition-all duration-200"
+          className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all duration-200"
         >
-          <LogOut className="w-4 h-4" />
-          <span>Retour au site</span>
+          <ArrowLeftRight className="w-4 h-4" />
+          <span>Espace adherent</span>
+        </Link>
+        <Link
+          href="/"
+          className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all duration-200"
+        >
+          <Globe className="w-4 h-4" />
+          <span>Site public</span>
         </Link>
       </div>
     </div>

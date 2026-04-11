@@ -38,7 +38,7 @@ export default async function AdminLayout({
 
   return (
     <div className="flex h-screen bg-[#f8f7f4]">
-      <AdminSidebar />
+      <AdminSidebar firstName={(profile as any)?.first_name} />
       <div className="flex-1 overflow-auto">
         <main className="p-6 md:p-8">{children}</main>
       </div>
