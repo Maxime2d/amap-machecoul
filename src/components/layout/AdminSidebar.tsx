@@ -64,13 +64,13 @@ export function AdminSidebar() {
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="px-5 py-5">
-        <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-xl px-4 py-3">
+        <div className="flex items-center gap-3 bg-gradient-to-r from-green-700 to-emerald-600 rounded-xl px-4 py-3">
           <div className="w-9 h-9 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center flex-shrink-0">
             <Leaf className="w-5 h-5 text-white" />
           </div>
           <div>
             <h1 className="text-sm font-bold text-white leading-tight">AMAP Machecoul</h1>
-            <p className="text-[11px] text-indigo-200 leading-tight">Administration</p>
+            <p className="text-[11px] text-green-200 leading-tight">Administration</p>
           </div>
         </div>
       </div>
@@ -88,19 +88,19 @@ export function AdminSidebar() {
                   href={item.href}
                   className={`group flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                     active
-                      ? 'bg-indigo-50 text-indigo-700 shadow-sm'
+                      ? 'bg-green-50 text-green-700 shadow-sm'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`}
                 >
                   <div className={`flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
                     active
-                      ? 'bg-indigo-100 text-indigo-600'
+                      ? 'bg-green-100 text-green-600'
                       : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200 group-hover:text-gray-700'
                   }`}>
                     <Icon className="w-[18px] h-[18px]" />
                   </div>
                   <span className="flex-1">{item.label}</span>
-                  {active && <ChevronRight className="w-4 h-4 text-indigo-400" />}
+                  {active && <ChevronRight className="w-4 h-4 text-green-400" />}
                 </Link>
               </li>
             );
