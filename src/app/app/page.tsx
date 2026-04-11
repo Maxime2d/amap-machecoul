@@ -21,10 +21,13 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/connexion');
 
-  const [{ data: profile }, { data: contracts }, { data: nextDeliveries }] = await Promise.all([
+  const today = new Date().toISOString().split('T')[0];
+
+  const [{ data: profile }, { data: contracts }, { data: nextDeliveries }, { data: myShifts }] = await Promise.all([
     supabase.from('profiles').select('first_name, last_name').eq('id', user.id).single(),
     supabase.from('contracts').select('*, contract_models(name, nature, producer_id, producers(name))').eq('user_id', user.id),
-    supabase.from('delivery_dates').select('date, contract_model_id, contract_models(name, producers(name))').gte('date', new Date().toISOString().split('T')[0]).order('date').limit(10),
+    supabase.from('delivery_dates').select('date, contract_model_id, contract_models(name, producers(name))').gte('date', today).order('date').limit(10),
+    supabase.from('volunteer_shifts').select('id, status, shift_dates ( id, date, capacity )').eq('user_id', user.id).eq('status', 'confirmed'),
   ]);
 
   const { data: payments } = await supabase
@@ -47,6 +50,12 @@ export default async function DashboardPage() {
 
   const firstName = (profile as any)?.first_name || 'Adherent';
   const pendingTotal = pendingPayments.reduce((sum: number, p: any) => sum + (p.amount || 0), 0);
+
+  // Upcoming permanences the user is signed up for
+  const upcomingShifts = (myShifts as any[] || [])
+    .filter((s: any) => s.shift_dates?.date >= today)
+    .sort((a: any, b: any) => a.shift_dates.date.localeCompare(b.shift_dates.date))
+    .slice(0, 3);
 
   // Days until next delivery
   let daysUntil = -1;
@@ -208,6 +217,53 @@ export default async function DashboardPage() {
             </Link>
           )}
         </div>
+
+        {/* Mes permanences */}
+        {upcomingShifts.length > 0 && (
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">
+                Mes permanences
+              </h2>
+              <Link
+                href="/app/permanences"
+                className="text-xs font-semibold text-green-700 hover:text-green-800 flex items-center gap-0.5"
+              >
+                Voir tout <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+            <div className="space-y-2">
+              {upcomingShifts.map((shift: any) => {
+                const d = new Date(shift.shift_dates.date + 'T00:00:00');
+                return (
+                  <div
+                    key={shift.id}
+                    className="flex items-center gap-3 bg-white rounded-xl border border-stone-200 p-3"
+                  >
+                    <div className="w-11 h-11 rounded-lg bg-green-100 flex flex-col items-center justify-center flex-shrink-0">
+                      <span className="text-[10px] font-bold text-green-600 uppercase leading-none">
+                        {d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '')}
+                      </span>
+                      <span className="text-lg font-bold text-green-800 leading-tight">
+                        {d.getDate()}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-stone-800 capitalize">
+                        {d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                      </p>
+                      <p className="text-xs text-stone-500">17h — 19h</p>
+                    </div>
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 bg-green-50 border border-green-200 px-2.5 py-1 rounded-full flex-shrink-0">
+                      <Users className="w-3 h-3" />
+                      Inscrit
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Prochaines dates */}
         {upcomingDates.length > 1 && (
