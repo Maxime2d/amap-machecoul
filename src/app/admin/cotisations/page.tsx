@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Heart, Plus, X, Check, AlertCircle, Loader2, Search, Banknote } from 'lucide-react';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 const statusConfig = {
@@ -485,15 +486,11 @@ export default function CotisationsPage() {
 
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
         {/* Header */}
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-100">
-            <Heart className="w-6 h-6 text-green-600" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-extrabold text-stone-900">Gestion des cotisations</h1>
-            <p className="text-sm text-stone-600">Suivi des adhésions annuelles à l'AMAP</p>
-          </div>
-        </div>
+        <AdminPageHeader
+          title="Gestion des cotisations"
+          subtitle="Suivi des adhesions annuelles"
+          imageUrl="https://images.unsplash.com/photo-1445282768818-728615cc910a?w=900&q=75"
+        />
 
         {/* Period Cards */}
         {periods.length > 0 && (

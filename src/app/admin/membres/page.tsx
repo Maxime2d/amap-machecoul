@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Search, Check, Loader2 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import type { Profile } from '@/types/database';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 
 const roleLabels: Record<string, string> = {
   member: 'Adhérent', producer: 'Producteur', referent: 'Référent',
@@ -100,10 +101,11 @@ export default function MembersPage() {
       )}
 
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-extrabold text-stone-900 tracking-tight">Membres</h1>
-        <p className="text-sm text-stone-500 mt-1">{members.length} inscrits au total</p>
-      </div>
+      <AdminPageHeader
+        title="Membres"
+        subtitle={`${members.length} inscrits au total`}
+        imageUrl="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=900&q=75"
+      />
 
       {/* Tabs with counts */}
       <div className="flex items-center gap-2 mb-4 overflow-x-auto">

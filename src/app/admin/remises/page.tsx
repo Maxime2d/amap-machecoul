@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import {
   Check,
   Loader2,
@@ -462,18 +463,12 @@ export default function RemittancesPage() {
       </div>
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100">
-              <Banknote className="w-6 h-6 text-amber-600" />
-            </div>
-            Remise producteur
-          </h1>
-          <p className="text-sm text-slate-600 mt-1">
-            Gestion des bordereaux de remise de chèques
-          </p>
-        </div>
+      <AdminPageHeader
+        title="Remises producteur"
+        subtitle="Gestion des bordereaux de remise de cheques"
+        imageUrl="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=900&q=75"
+      />
+      <div className="flex items-center justify-end -mt-4 mb-2">
         <button
           onClick={() => {
             setFormData({

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Search, Check, Loader2, Plus, X, Tractor, Pencil, Trash2 } from 'lucide-react';
 import type { Producer } from '@/types/database';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 
 const statusConfig = {
   active: {
@@ -685,20 +686,12 @@ export default function ProducersPage() {
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-100">
-            <Tractor className="w-6 h-6 text-green-600" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-extrabold text-stone-900">
-              Producteurs
-            </h1>
-            <p className="text-sm text-stone-600">
-              {filteredProducers.length} affichés{filteredProducers.length !== totalProducers ? ` sur ${totalProducers}` : ''}
-            </p>
-          </div>
-        </div>
+      <AdminPageHeader
+        title="Producteurs"
+        subtitle={`${filteredProducers.length} affiches${filteredProducers.length !== totalProducers ? ` sur ${totalProducers}` : ''}`}
+        imageUrl="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=900&q=75"
+      />
+      <div className="flex items-center justify-end -mt-4 mb-2">
         <button
           onClick={handleCreateClick}
           className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm"

@@ -34,7 +34,7 @@ export default async function DashboardPage() {
     .from('payments').select('*')
     .in('contract_id', (contracts as any[])?.map((c: any) => c.id) || []);
 
-  const activeContracts = (contracts as any[])?.filter((c: any) => c.status === 'active') || [];
+  const activeContracts = (contracts as any[])?.filter((c: any) => ['active', 'pending'].includes(c.status)) || [];
   const pendingPayments = (payments as any[])?.filter((p: any) => p.status === 'pending') || [];
 
   // Get unique next delivery dates with associated producers
@@ -192,6 +192,11 @@ export default async function DashboardPage() {
                         {isFlexible && (
                           <span className="ml-1.5 px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded text-[10px] font-bold uppercase">
                             Flexible
+                          </span>
+                        )}
+                        {contract.status === 'pending' && (
+                          <span className="ml-1.5 px-1.5 py-0.5 bg-amber-50 text-amber-700 rounded text-[10px] font-bold uppercase">
+                            En attente
                           </span>
                         )}
                       </p>

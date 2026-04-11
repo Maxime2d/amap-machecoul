@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Search, Check, Loader2, Plus, X, FileText, Users } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import type { ContractModel, Producer } from '@/types/database';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 
 const statusConfig = {
   draft: { label: 'Brouillon', dot: 'bg-stone-400', bg: 'bg-stone-100 text-stone-600 border-stone-200' },
@@ -258,16 +259,12 @@ export default function ContractsPage() {
 
       <div className="space-y-6 p-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-100">
-              <FileText className="w-6 h-6 text-green-600" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-extrabold text-stone-900">Gestion des contrats</h1>
-              <p className="text-sm text-stone-600 mt-1">Organisez et gérez vos modèles de contrats</p>
-            </div>
-          </div>
+        <AdminPageHeader
+          title="Gestion des contrats"
+          subtitle="Organisez et gerez vos modeles de contrats"
+          imageUrl="https://images.unsplash.com/photo-1566385101042-1a0aa4c1c900?w=900&q=75"
+        />
+        <div className="flex items-center justify-end -mt-4 mb-2">
           <button
             onClick={() => setShowModal(true)}
             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm"

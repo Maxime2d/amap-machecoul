@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Package, Plus, Pencil, Trash2, X, Search, Check, Loader2 } from 'lucide-react';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import type { Product, Producer } from '@/types/database';
 
 const unitTypeLabels: Record<string, string> = {
@@ -259,11 +260,12 @@ export default function ProductsPage() {
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-extrabold text-stone-900">Gestion des produits</h1>
-          <p className="text-sm text-stone-600 mt-1">{filteredProducts.length} produit(s) affichés</p>
-        </div>
+      <AdminPageHeader
+        title="Gestion des produits"
+        subtitle={`${filteredProducts.length} produit(s) affiches`}
+        imageUrl="https://images.unsplash.com/photo-1540420773420-3366772f4999?w=900&q=75"
+      />
+      <div className="flex items-center justify-end -mt-4 mb-2">
         <button
           onClick={handleOpenModal}
           className="flex items-center gap-2 px-5 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-semibold text-sm"

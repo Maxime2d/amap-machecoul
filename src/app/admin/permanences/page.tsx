@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Calendar, Plus, Trash2, Users, Check, Loader2 } from 'lucide-react';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 
 interface ShiftDate {
   id: string;
@@ -254,16 +255,12 @@ export default function AdminPermanencesPage() {
 
       <div className="space-y-6 p-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-stone-200">
-              <Calendar className="w-6 h-6 text-stone-700" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-extrabold text-stone-900">Gestion des permanences</h1>
-              <p className="text-sm text-stone-600">{shiftDates.length} date(s) programmée(s)</p>
-            </div>
-          </div>
+        <AdminPageHeader
+          title="Gestion des permanences"
+          subtitle={`${shiftDates.length} date(s) programmee(s)`}
+          imageUrl="https://images.unsplash.com/photo-1518843875459-f738682238a6?w=900&q=75"
+        />
+        <div className="flex items-center justify-end -mt-4 mb-2">
           <button
             onClick={() => setShowForm(!showForm)}
             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-medium text-sm"
@@ -273,19 +270,19 @@ export default function AdminPermanencesPage() {
           </button>
         </div>
 
-        {/* Stats - Compact inline blocks */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
-            <div className="text-xs font-semibold text-emerald-700 uppercase tracking-wide mb-1">Prochaines permanences</div>
-            <div className="text-3xl font-extrabold text-emerald-900">{upcomingDates.length}</div>
+        {/* Stats - green tones */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+            <div className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-1">Prochaines permanences</div>
+            <div className="text-2xl font-bold text-green-900">{upcomingDates.length}</div>
           </div>
-          <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-            <div className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-1">Bénévoles inscrits</div>
-            <div className="text-3xl font-extrabold text-blue-900">{totalVolunteers}</div>
+          <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+            <div className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-1">Benevoles inscrits</div>
+            <div className="text-2xl font-bold text-green-900">{totalVolunteers}</div>
           </div>
-          <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
-            <div className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1">Taux de remplissage</div>
-            <div className="text-3xl font-extrabold text-amber-900">{avgFillRate}%</div>
+          <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+            <div className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-1">Taux de remplissage</div>
+            <div className="text-2xl font-bold text-green-900">{avgFillRate}%</div>
           </div>
         </div>
 

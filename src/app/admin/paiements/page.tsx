@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Search, Check, Loader2, Plus, X, Archive, Banknote } from 'lucide-react';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import type { Payment, Profile, Contract, ContractModel } from '@/types/database';
 
@@ -379,16 +380,12 @@ export default function PaymentsPage() {
   return (
     <div className="min-h-screen bg-[#f8f7f4] space-y-6 p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-100">
-            <Banknote className="w-6 h-6 text-green-600" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-extrabold text-stone-900">Paiements</h1>
-            <p className="text-sm text-stone-600">Gestion et suivi des recouvrement</p>
-          </div>
-        </div>
+      <AdminPageHeader
+        title="Paiements"
+        subtitle="Gestion et suivi des recouvrements"
+        imageUrl="https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=900&q=75"
+      />
+      <div className="flex items-center justify-end -mt-4 mb-2">
         <button
           onClick={() => {
             setEditingPayment(null);
