@@ -70,7 +70,7 @@ export function Footer() {
             </p>
             <p className="text-green-100">
               <strong>Lieu:</strong><br />
-              Salle polyvalente<br />
+              Pépinières Brenelière<br />
               Machecoul-Saint-Même
             </p>
           </div>

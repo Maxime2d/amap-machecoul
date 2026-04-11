@@ -40,7 +40,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             </div>
             <div>
               <p className="text-white font-semibold text-sm">Distribution chaque vendredi</p>
-              <p className="text-green-200 text-xs mt-0.5">17h — 19h · Salle associative de Machecoul</p>
+              <p className="text-green-200 text-xs mt-0.5">17h — 19h · Pépinières Brenelière, Machecoul</p>
             </div>
           </div>
         </div>

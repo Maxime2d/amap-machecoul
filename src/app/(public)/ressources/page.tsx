@@ -33,7 +33,7 @@ export default function RessourcesPage() {
     },
     {
       question: "L'AMAP livre-t-elle à domicile ?",
-      answer: "Non, les distributions se font à la salle polyvalente de Machecoul-Saint-Même chaque vendredi de 17h à 19h. C'est une occasion importante de créer du lien et de partager un moment ensemble."
+      answer: "Non, les distributions se font aux Pépinières Brenelière à Machecoul-Saint-Même chaque vendredi de 17h à 19h. C'est une occasion importante de créer du lien et de partager un moment ensemble."
     },
     {
       question: "Puis-je apporter des amis ou de la famille ?",
@@ -172,7 +172,7 @@ export default function RessourcesPage() {
                 <div className="flex-1 pt-1">
                   <h3 className="text-xl font-bold text-gray-900 mb-2">Venir Chercher vos Paniers</h3>                  <p className="text-gray-700">
                     À partir de la première semaine, venez chercher votre panier chaque vendredi de 17h à 19h
-                    à la salle polyvalente de Machecoul-Saint-Même. Bienvenue dans la famille !
+                    aux Pépinières Brenelière à Machecoul-Saint-Même. Bienvenue dans la famille !
                   </p>
                 </div>
               </div>
@@ -191,7 +191,7 @@ export default function RessourcesPage() {
                   <h3 className="text-xl font-bold text-gray-900">Lieu de Distribution</h3>
                 </div>
                 <p className="text-gray-700 mb-2">
-                  <strong>Salle Polyvalente</strong><br />
+                  <strong>Pépinières Brenelière</strong><br />
                   Machecoul-Saint-Même<br />
                   Loire-Atlantique, Pays de Retz<br />
                   France

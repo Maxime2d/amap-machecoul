@@ -257,7 +257,7 @@ export default function ProducerDashboard() {
             </div>
             <div>
               <p className="text-sm font-bold text-white">Tous les vendredis</p>
-              <p className="text-xs text-slate-400 mt-0.5">17h — 19h · Salle associative de Machecoul</p>
+              <p className="text-xs text-slate-400 mt-0.5">17h — 19h · Pépinières Brenelière, Machecoul</p>
             </div>
           </div>
         </div>

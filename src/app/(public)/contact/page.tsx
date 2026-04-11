@@ -57,7 +57,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-lg font-bold text-gray-900 mb-2">Adresse</h3>
                     <p className="text-gray-700">
-                      Salle polyvalente<br />
+                      Pépinières Brenelière<br />
                       Machecoul-Saint-Même<br />
                       Loire-Atlantique
                     </p>

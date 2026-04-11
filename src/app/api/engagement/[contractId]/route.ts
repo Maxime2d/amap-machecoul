@@ -396,7 +396,7 @@ export async function GET(
     });
     yPos -= 14;
 
-    await drawText(page, 'Lieu de distribution: Salle associative, Machecoul', MARGIN, yPos, {
+    await drawText(page, 'Lieu de distribution: Pépinières Brenelière, Machecoul', MARGIN, yPos, {
       size: 10,
     });
     yPos -= 14;

@@ -265,7 +265,7 @@ export default async function DashboardPage() {
                 </div>
                 <div>
                   <p className="text-sm font-bold">Tous les vendredis</p>
-                  <p className="text-xs text-stone-400 mt-0.5">17h — 19h · Salle associative de Machecoul</p>
+                  <p className="text-xs text-stone-400 mt-0.5">17h — 19h · Pépinières Brenelière, Machecoul</p>
                 </div>
               </div>
             </div>

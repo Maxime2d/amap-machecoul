@@ -108,7 +108,7 @@ export default async function AgendaPage() {
                     <div className="flex items-center gap-3">
                       <MapPin className="w-5 h-5 text-green-600" />
                       <span className="text-lg text-gray-700">
-                        <strong>Salle polyvalente, Machecoul-Saint-Même</strong><br />
+                        <strong>Pépinières Brenelière, Machecoul-Saint-Même</strong><br />
                         <span className="text-sm text-gray-600">Loire-Atlantique, Pays de Retz</span>
                       </span>
                     </div>
