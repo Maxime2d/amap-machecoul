@@ -3,17 +3,14 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import {
-  DollarSign,
+  Check,
+  Loader2,
   Plus,
   X,
-  Eye,
   Trash2,
-  CheckCircle,
-  AlertCircle,
-  Clock,
+  ChevronDown,
+  Banknote,
 } from 'lucide-react';
-import { StatsCard } from '@/components/admin/StatsCard';
-import { DataTable } from '@/components/admin/DataTable';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import type { Profile } from '@/types/database';
 
@@ -60,21 +57,27 @@ interface FormData {
   notes: string;
 }
 
-const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
+interface Toast {
+  id: string;
+  type: 'success' | 'error';
+  message: string;
+}
+
+const statusConfig = {
   draft: {
     label: 'Brouillon',
-    color: 'bg-gray-100 text-gray-800',
-    icon: Clock,
+    dot: 'bg-stone-400',
+    bg: 'bg-stone-100 text-stone-600 border-stone-200',
   },
   submitted: {
     label: 'Soumis',
-    color: 'bg-blue-100 text-blue-800',
-    icon: AlertCircle,
+    dot: 'bg-blue-500',
+    bg: 'bg-blue-50 text-blue-700 border-blue-200',
   },
   completed: {
     label: 'Terminé',
-    color: 'bg-green-100 text-green-800',
-    icon: CheckCircle,
+    dot: 'bg-green-500',
+    bg: 'bg-green-50 text-green-700 border-green-200',
   },
 };
 
@@ -91,6 +94,7 @@ export default function RemittancesPage() {
     []
   );
   const [loadingPayments, setLoadingPayments] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
   const [formData, setFormData] = useState<FormData>({
     producer_id: '',
     selectedPayments: [],
@@ -98,6 +102,16 @@ export default function RemittancesPage() {
   });
 
   const supabase = createClient();
+
+  // Toast notification system
+  const addToast = (type: 'success' | 'error', message: string) => {
+    const id = Date.now().toString();
+    const toast = { id, type, message };
+    setToasts((prev) => [...prev, toast]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 2500);
+  };
 
   // Fetch remittances
   useEffect(() => {
@@ -138,6 +152,7 @@ export default function RemittancesPage() {
         setRemittances(processedData);
       } catch (error) {
         console.error('Error fetching remittances:', error);
+        addToast('error', 'Erreur lors du chargement des remises');
       } finally {
         setLoading(false);
       }
@@ -266,7 +281,7 @@ export default function RemittancesPage() {
     e.preventDefault();
 
     if (!formData.producer_id || formData.selectedPayments.length === 0) {
-      alert('Veuillez sélectionner un producteur et au moins un chèque');
+      addToast('error', 'Veuillez sélectionner un producteur et au moins un chèque');
       return;
     }
 
@@ -346,9 +361,10 @@ export default function RemittancesPage() {
         notes: '',
       });
       setShowModal(false);
+      addToast('success', 'Remise créée avec succès');
     } catch (error) {
       console.error('Error creating remittance:', error);
-      alert('Erreur lors de la création de la remise');
+      addToast('error', 'Erreur lors de la création de la remise');
     } finally {
       setIsSubmitting(false);
     }
@@ -372,16 +388,19 @@ export default function RemittancesPage() {
           r.id === remittanceId ? { ...r, status: newStatus } : r
         )
       );
+
+      const statusLabel = statusConfig[newStatus]?.label || newStatus;
+      addToast('success', `Statut changé en ${statusLabel}`);
     } catch (error) {
       console.error('Error updating status:', error);
-      alert('Erreur lors de la mise à jour du statut');
+      addToast('error', 'Erreur lors de la mise à jour du statut');
     }
   };
 
   // Handle delete remittance (only draft)
   const handleDeleteRemittance = async (remittanceId: string) => {
     if (
-      !confirm(
+      !window.confirm(
         'Êtes-vous sûr de vouloir supprimer cette remise ? Cette action est irréversible.'
       )
     ) {
@@ -406,103 +425,54 @@ export default function RemittancesPage() {
       if (remittanceError) throw remittanceError;
 
       setRemittances((prev) => prev.filter((r) => r.id !== remittanceId));
+      addToast('success', 'Remise supprimée avec succès');
     } catch (error) {
       console.error('Error deleting remittance:', error);
-      alert('Erreur lors de la suppression de la remise');
+      addToast('error', 'Erreur lors de la suppression de la remise');
     }
   };
-
-  // Build table rows
-  const rows = remittances.map((remittance) => {
-    const paymentCount = remittance.producer_remittance_payments?.length || 0;
-    const StatusIcon = statusConfig[remittance.status]?.icon;
-
-    return [
-      formatDate(remittance.remittance_date),
-      remittance.producers?.name || '-',
-      paymentCount.toString(),
-      formatCurrency(remittance.total_amount),
-      <span
-        key={`status-${remittance.id}`}
-        className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold ${
-          statusConfig[remittance.status]?.color ||
-          'bg-gray-100 text-gray-800'
-        }`}
-      >
-        {StatusIcon && <StatusIcon className="w-3 h-3" />}
-        {statusConfig[remittance.status]?.label || remittance.status}
-      </span>,
-      <div key={`actions-${remittance.id}`} className="flex gap-2">
-        <button
-          onClick={() =>
-            setExpandedRemittance(
-              expandedRemittance === remittance.id ? null : remittance.id
-            )
-          }
-          className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors flex items-center gap-1"
-          title="Voir les détails"
-        >
-          <Eye className="w-3 h-3" />
-          Détails
-        </button>
-
-        {remittance.status === 'draft' && (
-          <button
-            onClick={() => handleStatusChange(remittance.id, 'submitted')}
-            className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-            title="Soumettre"
-          >
-            Soumettre
-          </button>
-        )}
-
-        {remittance.status === 'submitted' && (
-          <button
-            onClick={() => handleStatusChange(remittance.id, 'completed')}
-            className="px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-            title="Marquer comme complétée"
-          >
-            Complétée
-          </button>
-        )}
-
-        {remittance.status === 'draft' && (
-          <button
-            onClick={() => handleDeleteRemittance(remittance.id)}
-            className="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors flex items-center gap-1"
-            title="Supprimer"
-          >
-            <Trash2 className="w-3 h-3" />
-          </button>
-        )}
-      </div>,
-    ];
-  });
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-slate-500">Chargement...</div>
+        <div className="flex items-center gap-2 text-stone-500">
+          <Loader2 className="w-5 h-5 animate-spin" />
+          Chargement...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-[#f8f7f4] min-h-screen p-6">
+      {/* Toast Notifications */}
+      <div className="fixed top-right z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`rounded-xl px-4 py-3 text-sm font-medium animate-in fade-in slide-in-from-right-4 ${
+              toast.type === 'success'
+                ? 'bg-green-50 text-green-700 border border-green-200'
+                : 'bg-red-50 text-red-700 border border-red-200'
+            }`}
+          >
+            {toast.message}
+          </div>
+        ))}
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
-            <DollarSign className="w-6 h-6 text-green-600" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">
-              Remise producteur
-            </h1>
-            <p className="text-sm text-slate-600">
-              Gestion des bordereaux de remise de chèques
-            </p>
-          </div>
+        <div>
+          <h1 className="text-3xl font-extrabold text-slate-900 flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100">
+              <Banknote className="w-6 h-6 text-amber-600" />
+            </div>
+            Remise producteur
+          </h1>
+          <p className="text-sm text-slate-600 mt-1">
+            Gestion des bordereaux de remise de chèques
+          </p>
         </div>
         <button
           onClick={() => {
@@ -513,95 +483,198 @@ export default function RemittancesPage() {
             });
             setShowModal(true);
           }}
-          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm"
+          className="flex items-center gap-2 px-5 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors font-extrabold text-sm"
         >
           <Plus className="w-4 h-4" />
           Créer une remise
         </button>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard
-          title="Total des remises"
-          value={stats.totalRemittances}
-          icon={<DollarSign className="w-6 h-6" />}
-        />
-        <StatsCard
-          title="Remises en brouillon"
-          value={stats.draftRemittances}
-          icon={<Clock className="w-6 h-6" />}
-        />
-        <StatsCard
-          title="Remises soumises"
-          value={stats.submittedRemittances}
-          icon={<AlertCircle className="w-6 h-6" />}
-        />
-        <StatsCard
-          title="Montant total remis"
-          value={formatCurrency(stats.totalAmountRemitted)}
-          icon={<CheckCircle className="w-6 h-6" />}
-        />
+      {/* Compact inline stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {/* Stone: Total remises */}
+        <div className="bg-white rounded-xl p-4 border border-stone-200 shadow-sm">
+          <p className="text-xs font-medium text-stone-600 uppercase tracking-wide">
+            Total remises
+          </p>
+          <p className="text-2xl font-extrabold text-stone-900 mt-2">
+            {stats.totalRemittances}
+          </p>
+        </div>
+
+        {/* Amber: Brouillons */}
+        <div className="bg-white rounded-xl p-4 border border-amber-200 shadow-sm">
+          <p className="text-xs font-medium text-amber-600 uppercase tracking-wide">
+            Brouillons
+          </p>
+          <p className="text-2xl font-extrabold text-amber-900 mt-2">
+            {stats.draftRemittances}
+          </p>
+        </div>
+
+        {/* Blue: Soumises */}
+        <div className="bg-white rounded-xl p-4 border border-blue-200 shadow-sm">
+          <p className="text-xs font-medium text-blue-600 uppercase tracking-wide">
+            Soumises
+          </p>
+          <p className="text-2xl font-extrabold text-blue-900 mt-2">
+            {stats.submittedRemittances}
+          </p>
+        </div>
+
+        {/* Green: Montant total remis */}
+        <div className="bg-white rounded-xl p-4 border border-green-200 shadow-sm">
+          <p className="text-xs font-medium text-green-600 uppercase tracking-wide">
+            Montant total remis
+          </p>
+          <p className="text-2xl font-extrabold text-green-900 mt-2">
+            {formatCurrency(stats.totalAmountRemitted)}
+          </p>
+        </div>
       </div>
 
-      {/* Remittances Table */}
-      <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-900 mb-4">Remises</h2>
-        <DataTable
-          headers={['Date', 'Producteur', 'Nombre de chèques', 'Montant', 'Statut', 'Actions']}
-          rows={rows}
-        />
-      </div>
+      {/* Remittances List */}
+      <div className="space-y-3">
+        {remittances.length === 0 ? (
+          <div className="bg-white rounded-xl p-8 border border-stone-200 text-center">
+            <p className="text-stone-600">Aucune remise créée pour le moment</p>
+          </div>
+        ) : (
+          remittances.map((remittance) => {
+            const paymentCount = remittance.producer_remittance_payments?.length || 0;
+            const isExpanded = expandedRemittance === remittance.id;
+            const config = statusConfig[remittance.status];
 
-      {/* Expanded Details */}
-      {expandedRemittance && (
-        <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">
-            Détails des chèques
-          </h2>
-          <div className="space-y-2">
-            {remittances
-              .find((r) => r.id === expandedRemittance)
-              ?.producer_remittance_payments?.map((prp) => {
-                const payment = prp.payment;
-                const memberName = payment?.profiles
-                  ? `${payment.profiles.first_name} ${payment.profiles.last_name}`
-                  : '-';
-
-                return (
-                  <div
-                    key={prp.id}
-                    className="flex items-center justify-between p-3 border border-slate-200 rounded bg-slate-50"
-                  >
-                    <div className="flex-1">
-                      <p className="font-medium text-slate-900">{memberName}</p>
-                      <p className="text-xs text-slate-600">
-                        Chèque: {payment?.check_number || '-'} | Banque:{' '}
-                        {payment?.bank_name || '-'}
+            return (
+              <div key={remittance.id}>
+                {/* Main row */}
+                <div className="bg-white rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="p-4 flex items-center justify-between gap-4">
+                    {/* Left: Date & Producer */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-extrabold text-slate-900">
+                        {formatDate(remittance.remittance_date)}
+                      </p>
+                      <p className="text-xs text-slate-600 mt-1">
+                        {remittance.producers?.name || '-'} · {paymentCount}{' '}
+                        {paymentCount === 1 ? 'chèque' : 'chèques'} ·{' '}
+                        {formatCurrency(remittance.total_amount)}
                       </p>
                     </div>
-                    <p className="font-semibold text-slate-900">
-                      {formatCurrency(payment?.amount || 0)}
-                    </p>
+
+                    {/* Middle: Status badge */}
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-2.5 h-2.5 rounded-full ${config.dot}`}
+                      />
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold border ${config.bg}`}
+                      >
+                        {config.label}
+                      </span>
+                    </div>
+
+                    {/* Right: Action buttons */}
+                    <div className="flex items-center gap-2">
+                      {remittance.status === 'draft' && (
+                        <button
+                          onClick={() => handleStatusChange(remittance.id, 'submitted')}
+                          className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
+                        >
+                          Soumettre
+                        </button>
+                      )}
+
+                      {remittance.status === 'submitted' && (
+                        <button
+                          onClick={() =>
+                            handleStatusChange(remittance.id, 'completed')
+                          }
+                          className="px-3 py-1.5 text-xs font-medium bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors whitespace-nowrap"
+                        >
+                          Complétée
+                        </button>
+                      )}
+
+                      {remittance.status === 'draft' && (
+                        <button
+                          onClick={() => handleDeleteRemittance(remittance.id)}
+                          className="px-2 py-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Supprimer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() =>
+                          setExpandedRemittance(
+                            isExpanded ? null : remittance.id
+                          )
+                        }
+                        className={`px-2 py-1.5 text-slate-600 hover:bg-stone-100 rounded-lg transition-colors ${
+                          isExpanded ? 'rotate-180' : ''
+                        }`}
+                      >
+                        <ChevronDown className="w-4 h-4 transition-transform" />
+                      </button>
+                    </div>
                   </div>
-                );
-              })}
-          </div>
-        </div>
-      )}
+
+                  {/* Expanded: Checks list */}
+                  {isExpanded && (
+                    <div className="border-t border-stone-200 bg-stone-50 p-4 space-y-2">
+                      {remittance.producer_remittance_payments?.length === 0 ? (
+                        <p className="text-xs text-stone-600">Aucun chèque</p>
+                      ) : (
+                        remittance.producer_remittance_payments?.map((prp) => {
+                          const payment = prp.payment;
+                          const memberName = payment?.profiles
+                            ? `${payment.profiles.first_name} ${payment.profiles.last_name}`
+                            : 'Adhérent inconnu';
+
+                          return (
+                            <div
+                              key={prp.id}
+                              className="flex items-center justify-between p-2 bg-white rounded-lg border border-stone-100"
+                            >
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-medium text-slate-900">
+                                  {memberName}
+                                </p>
+                                <p className="text-xs text-slate-600">
+                                  Chèque: {payment?.check_number || '-'} |{' '}
+                                  {payment?.bank_name || '-'}
+                                </p>
+                              </div>
+                              <p className="text-xs font-semibold text-slate-900 ml-2 whitespace-nowrap">
+                                {formatCurrency(payment?.amount || 0)}
+                              </p>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
 
       {/* Create/Edit Remittance Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-6 border-b border-slate-200 sticky top-0 bg-white">
-              <h2 className="text-lg font-bold text-slate-900">
+            <div className="flex items-center justify-between p-6 border-b border-stone-200 sticky top-0 bg-white">
+              <h2 className="text-lg font-extrabold text-slate-900">
                 Créer une remise producteur
               </h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-slate-400 hover:text-slate-600"
+                className="text-stone-400 hover:text-stone-600"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -611,7 +684,7 @@ export default function RemittancesPage() {
             <form onSubmit={handleCreateRemittance} className="p-6 space-y-4">
               {/* Producer Selection */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-extrabold text-slate-700 mb-2">
                   Producteur <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -624,7 +697,7 @@ export default function RemittancesPage() {
                     })
                   }
                   required
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
                 >
                   <option value="">Sélectionnez un producteur</option>
                   {producers.map((producer) => (
@@ -638,18 +711,21 @@ export default function RemittancesPage() {
               {/* Eligible Payments */}
               {formData.producer_id && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-extrabold text-slate-700 mb-2">
                     Chèques disponibles{' '}
                     <span className="text-red-500">*</span>
                   </label>
                   {loadingPayments ? (
-                    <p className="text-sm text-slate-600 py-4">Chargement des chèques...</p>
+                    <div className="flex items-center gap-2 text-sm text-stone-600 py-4">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Chargement des chèques...
+                    </div>
                   ) : eligiblePayments.length === 0 ? (
-                    <p className="text-sm text-slate-600 py-4">
+                    <p className="text-sm text-stone-600 py-4">
                       Aucun chèque reçu disponible pour ce producteur
                     </p>
                   ) : (
-                    <div className="space-y-2 max-h-64 overflow-y-auto border border-slate-200 rounded p-3 bg-slate-50">
+                    <div className="space-y-2 max-h-64 overflow-y-auto border border-stone-200 rounded-xl p-3 bg-stone-50">
                       {eligiblePayments.map((payment) => {
                         const memberName = payment.profiles
                           ? `${payment.profiles.first_name} ${payment.profiles.last_name}`
@@ -658,7 +734,7 @@ export default function RemittancesPage() {
                         return (
                           <label
                             key={payment.id}
-                            className="flex items-center gap-3 p-2 hover:bg-slate-100 rounded cursor-pointer"
+                            className="flex items-center gap-3 p-2 hover:bg-stone-100 rounded-lg cursor-pointer transition-colors"
                           >
                             <input
                               type="checkbox"
@@ -690,12 +766,12 @@ export default function RemittancesPage() {
                               <p className="text-sm font-medium text-slate-900">
                                 {memberName}
                               </p>
-                              <p className="text-xs text-slate-600">
+                              <p className="text-xs text-stone-600">
                                 Chèque: {payment.check_number || '-'} | Banque:{' '}
                                 {payment.bank_name || '-'}
                               </p>
                             </div>
-                            <p className="text-sm font-semibold text-slate-900">
+                            <p className="text-sm font-semibold text-slate-900 whitespace-nowrap">
                               {formatCurrency(payment.amount)}
                             </p>
                           </label>
@@ -708,9 +784,12 @@ export default function RemittancesPage() {
 
               {/* Total Amount */}
               {formData.selectedPayments.length > 0 && (
-                <div className="bg-green-50 border border-green-200 rounded p-3">
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4">
                   <p className="text-sm font-medium text-green-900">
-                    Total: <span className="text-lg">{formatCurrency(selectedTotal)}</span>
+                    Total:{' '}
+                    <span className="text-lg font-extrabold">
+                      {formatCurrency(selectedTotal)}
+                    </span>
                   </p>
                   <p className="text-xs text-green-800 mt-1">
                     {formData.selectedPayments.length} chèque(s) sélectionné(s)
@@ -720,7 +799,7 @@ export default function RemittancesPage() {
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-extrabold text-slate-700 mb-2">
                   Notes
                 </label>
                 <textarea
@@ -728,7 +807,7 @@ export default function RemittancesPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, notes: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
                   placeholder="Notes supplémentaires sur cette remise..."
                   rows={3}
                 />
@@ -739,7 +818,7 @@ export default function RemittancesPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors font-medium text-sm"
+                  className="flex-1 px-4 py-2 border border-stone-200 text-slate-700 rounded-xl hover:bg-stone-50 transition-colors font-medium text-sm"
                 >
                   Annuler
                 </button>
@@ -750,7 +829,7 @@ export default function RemittancesPage() {
                     !formData.producer_id ||
                     formData.selectedPayments.length === 0
                   }
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Création...' : 'Créer la remise'}
                 </button>

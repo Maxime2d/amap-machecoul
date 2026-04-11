@@ -2,9 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Calendar, Plus, Trash2, Users, Clock } from 'lucide-react';
-import { DataTable } from '@/components/admin/DataTable';
-import { StatsCard } from '@/components/admin/StatsCard';
+import { Calendar, Plus, Trash2, Users, Check, Loader2 } from 'lucide-react';
 
 interface ShiftDate {
   id: string;
@@ -24,6 +22,12 @@ interface ShiftPeriod {
   status: string;
 }
 
+interface Toast {
+  id: string;
+  message: string;
+  type: 'success' | 'error' | 'info';
+}
+
 export default function AdminPermanencesPage() {
   const [periods, setPeriods] = useState<ShiftPeriod[]>([]);
   const [shiftDates, setShiftDates] = useState<ShiftDate[]>([]);
@@ -32,7 +36,17 @@ export default function AdminPermanencesPage() {
   const [newDate, setNewDate] = useState('');
   const [newCapacity, setNewCapacity] = useState(3);
   const [selectedPeriod, setSelectedPeriod] = useState<string>('');
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const supabase = createClient();
+
+  const addToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    const id = Math.random().toString(36).substring(7);
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 2500);
+  };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -103,9 +117,25 @@ export default function AdminPermanencesPage() {
     });
   };
 
+  const getWeekday = (dateString: string) => {
+    const date = new Date(dateString + 'T00:00:00');
+    const weekdays = ['dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam'];
+    return weekdays[date.getDay()];
+  };
+
+  const getDayNumber = (dateString: string) => {
+    const date = new Date(dateString + 'T00:00:00');
+    return date.getDate();
+  };
+
+  const getMonthYear = (dateString: string) => {
+    const date = new Date(dateString + 'T00:00:00');
+    return date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }).toUpperCase();
+  };
+
   const handleAddDate = async () => {
     if (!newDate || !selectedPeriod) {
-      alert('Veuillez sélectionner une date et une période');
+      addToast('Veuillez sélectionner une date et une période', 'error');
       return;
     }
 
@@ -118,10 +148,11 @@ export default function AdminPermanencesPage() {
       });
 
     if (error) {
-      alert('Erreur: ' + error.message);
+      addToast('Erreur: ' + error.message, 'error');
       return;
     }
 
+    addToast('Permanence ajoutée avec succès', 'success');
     setNewDate('');
     setNewCapacity(3);
     setShowForm(false);
@@ -129,15 +160,19 @@ export default function AdminPermanencesPage() {
   };
 
   const handleDeleteDate = async (id: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cette permanence ?')) return;
-
-    await supabase.from('volunteer_shifts').delete().eq('shift_date_id', id);
-    const { error } = await supabase.from('shift_dates').delete().eq('id', id);
-    if (error) {
-      alert('Erreur: ' + error.message);
-      return;
+    setDeletingId(id);
+    try {
+      await supabase.from('volunteer_shifts').delete().eq('shift_date_id', id);
+      const { error } = await supabase.from('shift_dates').delete().eq('id', id);
+      if (error) {
+        addToast('Erreur: ' + error.message, 'error');
+        return;
+      }
+      addToast('Permanence supprimée', 'success');
+      fetchData();
+    } finally {
+      setDeletingId(null);
     }
-    fetchData();
   };
 
   const isPast = (dateStr: string) => {
@@ -148,207 +183,283 @@ export default function AdminPermanencesPage() {
   const upcomingDates = shiftDates.filter(d => d.date >= todayStr);
   const pastDates = shiftDates.filter(d => d.date < todayStr);
   const totalVolunteers = shiftDates.reduce((sum, d) => sum + d.volunteer_count, 0);
-  const avgFillRate = shiftDates.length > 0
-    ? Math.round((totalVolunteers / shiftDates.reduce((sum, d) => sum + d.capacity, 0)) * 100)
-    : 0;
+  const totalCapacity = shiftDates.reduce((sum, d) => sum + d.capacity, 0);
+  const avgFillRate = totalCapacity > 0 ? Math.round((totalVolunteers / totalCapacity) * 100) : 0;
 
-  const getCapacityBadge = (count: number, capacity: number) => {
-    const pct = (count / capacity) * 100;
-    if (pct >= 100) return 'bg-red-100 text-red-800';
-    if (pct >= 66) return 'bg-green-100 text-green-800';
-    if (pct >= 33) return 'bg-yellow-100 text-yellow-800';
-    return 'bg-gray-100 text-gray-800';
+  // Group shifts by month
+  const groupedByMonth: { [key: string]: ShiftDate[] } = {};
+  shiftDates.forEach(shift => {
+    const monthYear = getMonthYear(shift.date);
+    if (!groupedByMonth[monthYear]) {
+      groupedByMonth[monthYear] = [];
+    }
+    groupedByMonth[monthYear].push(shift);
+  });
+
+  const months = Object.keys(groupedByMonth).sort((a, b) => {
+    const dateA = new Date(groupedByMonth[a][0].date + 'T00:00:00');
+    const dateB = new Date(groupedByMonth[b][0].date + 'T00:00:00');
+    return dateA.getTime() - dateB.getTime();
+  });
+
+  // Volunteer dots
+  const renderVolunteerDots = (shift: ShiftDate) => {
+    const dots = [];
+    for (let i = 0; i < shift.capacity; i++) {
+      const isFilled = i < shift.volunteer_count;
+      dots.push(
+        <div
+          key={i}
+          className={`w-2 h-2 rounded-full ${
+            isFilled ? 'bg-emerald-500' : 'bg-stone-300'
+          }`}
+        />
+      );
+    }
+    return dots;
   };
 
-  const rows = shiftDates.map((shift) => [
-    <span key={`date-${shift.id}`} className={isPast(shift.date) ? 'text-gray-400' : 'font-medium'}>
-      {formatDate(shift.date)}
-    </span>,
-    <span key={`time-${shift.id}`} className="text-gray-600">17:00 - 19:00</span>,
-    <div key={`cap-${shift.id}`} className="flex items-center gap-2">
-      <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[120px]">
-        <div
-          className="bg-green-600 h-2 rounded-full transition-all"
-          style={{ width: `${Math.min((shift.volunteer_count / shift.capacity) * 100, 100)}%` }}
-        />
-      </div>
-      <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${getCapacityBadge(shift.volunteer_count, shift.capacity)}`}>
-        {shift.volunteer_count}/{shift.capacity}
-      </span>
-    </div>,
-    <div key={`vol-${shift.id}`} className="flex flex-wrap gap-1">
-      {shift.volunteers.filter(v => v.status === 'confirmed').map((v, i) => (
-        <span key={i} className="inline-block px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs">
-          {v.first_name} {v.last_name.charAt(0)}.
-        </span>
-      ))}
-      {shift.volunteers.filter(v => v.status === 'confirmed').length === 0 && (
-        <span className="text-gray-400 text-xs">Aucun inscrit</span>
-      )}
-    </div>,
-    <button
-      key={`del-${shift.id}`}
-      onClick={() => handleDeleteDate(shift.id)}
-      className="inline-flex items-center gap-1 px-3 py-1 text-red-600 hover:bg-red-50 rounded transition-colors text-sm"
-      title="Supprimer"
-    >
-      <Trash2 className="w-4 h-4" />
-    </button>,
-  ]);
+  // Confirmed volunteers
+  const confirmedVolunteers = (shift: ShiftDate) => {
+    return shift.volunteers.filter(v => v.status === 'confirmed');
+  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-slate-500">Chargement...</div>
+        <Loader2 className="w-8 h-8 text-stone-400 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
-            <Calendar className="w-6 h-6 text-green-600" />
+    <div className="min-h-screen bg-[#f8f7f4]">
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 space-y-2 z-50">
+        {toasts.map(toast => (
+          <div
+            key={toast.id}
+            className={`px-4 py-3 rounded-xl shadow-lg text-sm font-medium animate-in fade-in slide-in-from-top-2 ${
+              toast.type === 'success'
+                ? 'bg-emerald-500 text-white'
+                : toast.type === 'error'
+                ? 'bg-red-500 text-white'
+                : 'bg-stone-800 text-white'
+            }`}
+          >
+            {toast.message}
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Gestion des permanences</h1>
-            <p className="text-sm text-slate-600">{shiftDates.length} date(s) programmée(s)</p>
-          </div>
-        </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm"
-        >
-          <Plus className="w-4 h-4" />
-          Ajouter une date
-        </button>
+        ))}
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <StatsCard
-          title="Prochaines permanences"
-          value={upcomingDates.length}
-          icon={<Calendar className="w-6 h-6" />}
-        />
-        <StatsCard
-          title="Bénévoles inscrits"
-          value={totalVolunteers}
-          icon={<Users className="w-6 h-6" />}
-        />
-        <StatsCard
-          title="Taux de remplissage"
-          value={`${avgFillRate}%`}
-          icon={<Clock className="w-6 h-6" />}
-          trend={avgFillRate >= 50 ? 'up' : 'down'}
-        />
-      </div>
-
-      {/* Period Filter */}
-      {periods.length > 0 && (
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {periods.map((period) => (
-            <button
-              key={period.id}
-              onClick={() => setSelectedPeriod(period.id)}
-              className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors whitespace-nowrap ${
-                selectedPeriod === period.id
-                  ? 'bg-green-600 text-white'
-                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-              }`}
-            >
-              {period.name}
-            </button>
-          ))}
+      <div className="space-y-6 p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-stone-200">
+              <Calendar className="w-6 h-6 text-stone-700" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-extrabold text-stone-900">Gestion des permanences</h1>
+              <p className="text-sm text-stone-600">{shiftDates.length} date(s) programmée(s)</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center gap-2 px-4 py-2 bg-stone-900 text-white rounded-xl hover:bg-stone-800 transition-colors font-medium text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Ajouter une date
+          </button>
         </div>
-      )}
 
-      {/* Add Form */}
-      {showForm && (
-        <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-slate-900 mb-4">Nouvelle permanence</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Date</label>
-              <input
-                type="date"
-                value={newDate}
-                onChange={(e) => setNewDate(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Capacité</label>
-              <input
-                type="number"
-                value={newCapacity}
-                onChange={(e) => setNewCapacity(parseInt(e.target.value) || 3)}
-                min={1}
-                max={10}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Période</label>
-              <select
-                value={selectedPeriod}
-                onChange={(e) => setSelectedPeriod(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+        {/* Stats - Compact inline blocks */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
+            <div className="text-xs font-semibold text-emerald-700 uppercase tracking-wide mb-1">Prochaines permanences</div>
+            <div className="text-3xl font-extrabold text-emerald-900">{upcomingDates.length}</div>
+          </div>
+          <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+            <div className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-1">Bénévoles inscrits</div>
+            <div className="text-3xl font-extrabold text-blue-900">{totalVolunteers}</div>
+          </div>
+          <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
+            <div className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1">Taux de remplissage</div>
+            <div className="text-3xl font-extrabold text-amber-900">{avgFillRate}%</div>
+          </div>
+        </div>
+
+        {/* Period Filter */}
+        {periods.length > 0 && (
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {periods.map((period) => (
+              <button
+                key={period.id}
+                onClick={() => setSelectedPeriod(period.id)}
+                className={`px-4 py-2 rounded-xl font-medium text-sm transition-colors whitespace-nowrap ${
+                  selectedPeriod === period.id
+                    ? 'bg-stone-900 text-white'
+                    : 'bg-white border border-stone-300 text-stone-700 hover:bg-stone-50'
+                }`}
               >
-                {periods.map((p) => (
-                  <option key={p.id} value={p.id}>{p.name}</option>
-                ))}
-              </select>
+                {period.name}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Add Form - Collapsible */}
+        {showForm && (
+          <div className="bg-white rounded-xl border border-stone-300 p-6 shadow-sm">
+            <h3 className="text-lg font-extrabold text-stone-900 mb-4">Nouvelle permanence</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-stone-700 mb-2">Date</label>
+                <input
+                  type="date"
+                  value={newDate}
+                  onChange={(e) => setNewDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-stone-700 mb-2">Capacité</label>
+                <input
+                  type="number"
+                  value={newCapacity}
+                  onChange={(e) => setNewCapacity(parseInt(e.target.value) || 3)}
+                  min={1}
+                  max={10}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-stone-700 mb-2">Période</label>
+                <select
+                  value={selectedPeriod}
+                  onChange={(e) => setSelectedPeriod(e.target.value)}
+                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900"
+                >
+                  {periods.map((p) => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-6">
+              <button
+                onClick={handleAddDate}
+                className="px-4 py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-800 transition-colors font-medium text-sm"
+              >
+                Ajouter
+              </button>
+              <button
+                onClick={() => setShowForm(false)}
+                className="px-4 py-2 bg-stone-200 text-stone-700 rounded-lg hover:bg-stone-300 transition-colors font-medium text-sm"
+              >
+                Annuler
+              </button>
             </div>
           </div>
-          <div className="flex gap-2 mt-6">
-            <button
-              onClick={handleAddDate}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm"
-            >
-              Ajouter
-            </button>
-            <button
-              onClick={() => setShowForm(false)}
-              className="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors font-medium text-sm"
-            >
-              Annuler
-            </button>
-          </div>
-        </div>
-      )}
+        )}
 
-      {/* Table */}
-      <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+        {/* Shifts List - Grouped by Month */}
         {shiftDates.length > 0 ? (
-          <DataTable
-            headers={['Date', 'Horaires', 'Inscriptions', 'Bénévoles', 'Action']}
-            rows={rows}
-          />
+          <div className="space-y-8">
+            {months.map((monthYear) => (
+              <div key={monthYear}>
+                <h2 className="text-sm font-extrabold text-stone-900 uppercase tracking-wider mb-3">
+                  {monthYear}
+                </h2>
+                <div className="space-y-2">
+                  {groupedByMonth[monthYear].map((shift) => (
+                    <div
+                      key={shift.id}
+                      className={`bg-white rounded-xl border border-stone-300 p-4 flex items-center justify-between transition-opacity ${
+                        isPast(shift.date) ? 'opacity-50' : ''
+                      }`}
+                    >
+                      {/* Date Block */}
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        <div className="w-14 text-center">
+                          <div className="text-2xl font-extrabold text-stone-900">
+                            {getDayNumber(shift.date)}
+                          </div>
+                          <div className="text-xs font-semibold text-stone-600 uppercase">
+                            {getWeekday(shift.date)}
+                          </div>
+                        </div>
+                        <div className="border-l border-stone-300 pl-3">
+                          <div className="text-sm font-medium text-stone-900">{formatDate(shift.date)}</div>
+                          <div className="text-xs text-stone-500">17:00 - 19:00</div>
+                        </div>
+                      </div>
+
+                      {/* Volunteer Dots */}
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        {renderVolunteerDots(shift)}
+                        <span className="text-xs text-stone-600 font-medium ml-2">
+                          {shift.volunteer_count}/{shift.capacity}
+                        </span>
+                      </div>
+
+                      {/* Volunteer Badges */}
+                      <div className="flex flex-wrap gap-1.5 flex-1 px-4">
+                        {confirmedVolunteers(shift).length > 0 ? (
+                          confirmedVolunteers(shift).map((v, i) => (
+                            <span
+                              key={i}
+                              className="inline-block px-2 py-1 bg-stone-100 text-stone-700 rounded-full text-xs font-medium"
+                            >
+                              {v.first_name} {v.last_name.charAt(0)}.
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-xs text-stone-400 italic">Aucun inscrit</span>
+                        )}
+                      </div>
+
+                      {/* Delete Button */}
+                      <button
+                        onClick={() => handleDeleteDate(shift.id)}
+                        disabled={deletingId === shift.id}
+                        className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-red-50 text-stone-600 hover:text-red-600 transition-colors flex-shrink-0 disabled:opacity-50"
+                        title="Supprimer"
+                      >
+                        {deletingId === shift.id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
-          <div className="text-center py-12">
-            <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Aucune permanence programmée</h3>
-            <p className="text-slate-600 mb-4">Commencez par ajouter une première date de permanence</p>
+          <div className="bg-white rounded-xl border border-stone-300 p-12 text-center">
+            <Calendar className="w-16 h-16 text-stone-300 mx-auto mb-4" />
+            <h3 className="text-lg font-extrabold text-stone-900 mb-2">Aucune permanence programmée</h3>
+            <p className="text-stone-600 mb-6">Commencez par ajouter une première date de permanence</p>
             <button
               onClick={() => setShowForm(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-stone-900 text-white rounded-xl hover:bg-stone-800 transition-colors font-medium text-sm"
             >
               <Plus className="w-4 h-4" />
               Ajouter une date
             </button>
           </div>
         )}
-      </div>
 
-      {/* Info */}
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-        <p className="text-sm text-green-900">
-          <strong>Info :</strong> Les permanences sont programmées par défaut le vendredi de 17h à 19h.
-          Chaque adhérent peut s'inscrire via son espace personnel. Vous pouvez ajouter ou supprimer des dates ici.
-        </p>
+        {/* Info Box */}
+        <div className="bg-stone-100 border border-stone-300 rounded-xl p-4">
+          <p className="text-sm text-stone-900">
+            <strong>Info :</strong> Les permanences sont programmées par défaut le vendredi de 17h à 19h.
+            Chaque adhérent peut s'inscrire via son espace personnel. Vous pouvez ajouter ou supprimer des dates ici.
+          </p>
+        </div>
       </div>
     </div>
   );

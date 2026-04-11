@@ -2,15 +2,25 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Tractor, Plus, Edit2, Trash2, X } from 'lucide-react';
-import { DataTable } from '@/components/admin/DataTable';
-import { StatsCard } from '@/components/admin/StatsCard';
+import { Search, Check, Loader2, Plus, X, Tractor, Pencil, Trash2 } from 'lucide-react';
 import type { Producer } from '@/types/database';
 
-const statusLabels: Record<string, { label: string; color: string }> = {
-  active: { label: 'Actif', color: 'bg-green-100 text-green-800' },
-  inactive: { label: 'Inactif', color: 'bg-red-100 text-red-800' },
-  pending: { label: 'En attente', color: 'bg-yellow-100 text-yellow-800' },
+const statusConfig = {
+  active: {
+    label: 'Actif',
+    dot: 'bg-green-500',
+    bg: 'bg-green-50 text-green-700 border-green-200',
+  },
+  inactive: {
+    label: 'Inactif',
+    dot: 'bg-stone-400',
+    bg: 'bg-stone-100 text-stone-600 border-stone-200',
+  },
+  pending: {
+    label: 'En attente',
+    dot: 'bg-amber-500',
+    bg: 'bg-amber-50 text-amber-700 border-amber-200',
+  },
 };
 
 interface FormData {
@@ -48,6 +58,28 @@ function generateSlug(name: string): string {
     .replace(/[^a-z0-9-]/g, '')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
+}
+
+interface Toast {
+  id: string;
+  type: 'success' | 'error';
+  message: string;
+}
+
+function getInitialLetter(name: string): string {
+  return (name?.charAt(0) || '?').toUpperCase();
+}
+
+function getAvatarColor(letter: string): string {
+  const colors = [
+    'bg-green-100 text-green-700',
+    'bg-amber-100 text-amber-700',
+    'bg-stone-200 text-stone-700',
+    'bg-emerald-100 text-emerald-700',
+    'bg-teal-100 text-teal-700',
+  ];
+  const index = letter.charCodeAt(0) % colors.length;
+  return colors[index];
 }
 
 interface ProducerModalProps {
@@ -125,16 +157,16 @@ function ProducerModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#f8f7f4] rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto border border-stone-200">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200 sticky top-0 bg-white">
-          <h2 className="text-lg font-semibold text-slate-900">
+        <div className="flex items-center justify-between p-6 border-b border-stone-200 sticky top-0 bg-[#f8f7f4]">
+          <h2 className="text-lg font-extrabold text-stone-900">
             {mode === 'create' ? 'Ajouter un producteur' : 'Modifier le producteur'}
           </h2>
           <button
             onClick={onClose}
-            className="text-slate-500 hover:text-slate-700 transition-colors"
+            className="text-stone-500 hover:text-stone-700 transition-colors"
             disabled={isSaving}
           >
             <X className="w-5 h-5" />
@@ -145,7 +177,7 @@ function ProducerModal({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-stone-700 mb-1">
               Nom *
             </label>
             <input
@@ -155,7 +187,7 @@ function ProducerModal({
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${
                 errors.name
                   ? 'border-red-500 focus:ring-red-500'
-                  : 'border-slate-200'
+                  : 'border-stone-300 bg-white'
               }`}
               placeholder="Nom du producteur"
               disabled={isSaving}
@@ -167,7 +199,7 @@ function ProducerModal({
 
           {/* Slug */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-stone-700 mb-1">
               Slug *
             </label>
             <input
@@ -177,7 +209,7 @@ function ProducerModal({
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${
                 errors.slug
                   ? 'border-red-500 focus:ring-red-500'
-                  : 'border-slate-200'
+                  : 'border-stone-300 bg-white'
               }`}
               placeholder="slug-du-producteur"
               disabled={isSaving}
@@ -189,7 +221,7 @@ function ProducerModal({
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-stone-700 mb-1">
               Description
             </label>
             <textarea
@@ -197,7 +229,7 @@ function ProducerModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, description: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-none bg-white"
               placeholder="Description complète"
               rows={3}
               disabled={isSaving}
@@ -206,7 +238,7 @@ function ProducerModal({
 
           {/* Short Bio */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-stone-700 mb-1">
               Bio courte
             </label>
             <textarea
@@ -214,7 +246,7 @@ function ProducerModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, short_bio: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-none bg-white"
               placeholder="Bio courte"
               rows={2}
               disabled={isSaving}
@@ -223,7 +255,7 @@ function ProducerModal({
 
           {/* Contact Email */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-stone-700 mb-1">
               Email
             </label>
             <input
@@ -232,7 +264,7 @@ function ProducerModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, contact_email: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               placeholder="contact@example.com"
               disabled={isSaving}
             />
@@ -240,7 +272,7 @@ function ProducerModal({
 
           {/* Phone */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-stone-700 mb-1">
               Téléphone
             </label>
             <input
@@ -249,7 +281,7 @@ function ProducerModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, phone: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               placeholder="+33 6 12 34 56 78"
               disabled={isSaving}
             />
@@ -257,7 +289,7 @@ function ProducerModal({
 
           {/* Address */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-stone-700 mb-1">
               Adresse
             </label>
             <input
@@ -266,7 +298,7 @@ function ProducerModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, address: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               placeholder="123 Rue de la Ferme"
               disabled={isSaving}
             />
@@ -274,7 +306,7 @@ function ProducerModal({
 
           {/* City */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-stone-700 mb-1">
               Ville
             </label>
             <input
@@ -283,7 +315,7 @@ function ProducerModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, city: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               placeholder="Paris"
               disabled={isSaving}
             />
@@ -291,7 +323,7 @@ function ProducerModal({
 
           {/* Website */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-stone-700 mb-1">
               Site web
             </label>
             <input
@@ -300,7 +332,7 @@ function ProducerModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, website: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               placeholder="https://example.com"
               disabled={isSaving}
             />
@@ -308,7 +340,7 @@ function ProducerModal({
 
           {/* Status */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-medium text-stone-700 mb-1">
               Statut
             </label>
             <select
@@ -319,7 +351,7 @@ function ProducerModal({
                   status: e.target.value as 'active' | 'inactive' | 'pending',
                 }))
               }
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               disabled={isSaving}
             >
               <option value="pending">En attente</option>
@@ -329,11 +361,11 @@ function ProducerModal({
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4 border-t border-slate-200">
+          <div className="flex gap-3 pt-4 border-t border-stone-200">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 text-stone-700 bg-stone-200 hover:bg-stone-300 rounded-lg font-medium transition-colors disabled:opacity-50"
               disabled={isSaving}
             >
               Annuler
@@ -352,53 +384,53 @@ function ProducerModal({
   );
 }
 
-interface DeleteConfirmModalProps {
-  isOpen: boolean;
-  producerName: string;
-  onConfirm: () => Promise<void>;
-  onCancel: () => void;
-  isDeleting: boolean;
-}
-
-function DeleteConfirmModal({
-  isOpen,
-  producerName,
-  onConfirm,
-  onCancel,
-  isDeleting,
-}: DeleteConfirmModalProps) {
-  if (!isOpen) return null;
+function Toast({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }) {
+  useEffect(() => {
+    const timer = setTimeout(onDismiss, 2500);
+    return () => clearTimeout(timer);
+  }, [onDismiss]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-lg max-w-sm w-full">
-        <div className="p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-slate-900">
-            Confirmer la suppression
-          </h2>
-          <p className="text-slate-600">
-            Êtes-vous sûr de vouloir supprimer le producteur{' '}
-            <strong>{producerName}</strong> ? Cette action ne peut pas être annulée.
-          </p>
-          <div className="flex gap-3 pt-4 border-t border-slate-200">
-            <button
-              onClick={onCancel}
-              className="flex-1 px-4 py-2 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition-colors disabled:opacity-50"
-              disabled={isDeleting}
-            >
-              Annuler
-            </button>
-            <button
-              onClick={onConfirm}
-              className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
-              disabled={isDeleting}
-            >
-              {isDeleting ? 'Suppression...' : 'Supprimer'}
-            </button>
+    <div
+      className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${
+        toast.type === 'success'
+          ? 'bg-green-50 text-green-700 border-green-200'
+          : 'bg-red-50 text-red-700 border-red-200'
+      }`}
+    >
+      {toast.type === 'success' ? (
+        <Check className="w-4 h-4 flex-shrink-0" />
+      ) : (
+        <span className="w-4 h-4 flex-shrink-0">!</span>
+      )}
+      <span className="text-sm font-medium">{toast.message}</span>
+    </div>
+  );
+}
+
+interface SkeletonRowProps {
+  count: number;
+}
+
+function SkeletonRow({ count }: SkeletonRowProps) {
+  return (
+    <>
+      {Array.from({ length: count }).map((_, i) => (
+        <div
+          key={`skeleton-${i}`}
+          className="p-4 border-b border-stone-100 animate-pulse"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-stone-200" />
+            <div className="flex-1 space-y-2">
+              <div className="h-4 bg-stone-200 rounded w-32" />
+              <div className="h-3 bg-stone-100 rounded w-24" />
+            </div>
+            <div className="h-6 bg-stone-100 rounded w-20" />
           </div>
         </div>
-      </div>
-    </div>
+      ))}
+    </>
   );
 }
 
@@ -411,9 +443,8 @@ export default function ProducersPage() {
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
   const [selectedProducer, setSelectedProducer] = useState<Producer | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [producerToDelete, setProducerToDelete] = useState<Producer | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [updatingIds, setUpdatingIds] = useState<Set<string>>(new Set());
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
   const supabase = createClient();
 
@@ -452,10 +483,20 @@ export default function ProducersPage() {
     }
   }, [searchQuery, producers]);
 
+  // Toast management
+  const addToast = (type: 'success' | 'error', message: string) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    setToasts((prev) => [...prev, { id, type, message }]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+
   // Stats
   const totalProducers = producers.length;
   const activeProducers = producers.filter((p) => p.status === 'active').length;
-  const inactiveProducers = producers.filter((p) => p.status === 'inactive').length;
+  const pendingProducers = producers.filter((p) => p.status === 'pending').length;
 
   // Handle modal open for create
   const handleCreateClick = () => {
@@ -499,6 +540,7 @@ export default function ProducersPage() {
         ]);
 
         if (error) throw error;
+        addToast('success', 'Producteur créé avec succès');
       } else if (selectedProducer) {
         const { error } = await supabase
           .from('producers')
@@ -517,6 +559,7 @@ export default function ProducersPage() {
           .eq('id', selectedProducer.id);
 
         if (error) throw error;
+        addToast('success', 'Producteur modifié avec succès');
       }
 
       // Refresh producers list
@@ -528,101 +571,131 @@ export default function ProducersPage() {
       handleModalClose();
     } catch (error) {
       console.error('Error saving producer:', error);
-      alert('Erreur lors de l\'enregistrement. Veuillez réessayer.');
+      addToast('error', 'Erreur lors de l\'enregistrement. Veuillez réessayer.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Handle delete click
-  const handleDeleteClick = (producer: Producer) => {
-    setProducerToDelete(producer);
-    setIsDeleteModalOpen(true);
+  // Handle inline status change
+  const handleStatusChange = async (
+    producer: Producer,
+    newStatus: 'active' | 'inactive' | 'pending'
+  ) => {
+    setUpdatingIds((prev) => new Set([...prev, producer.id]));
+    try {
+      const { error } = await supabase
+        .from('producers')
+        .update({ status: newStatus })
+        .eq('id', producer.id);
+
+      if (error) throw error;
+
+      setProducers((prev) =>
+        prev.map((p) => (p.id === producer.id ? { ...p, status: newStatus } : p))
+      );
+      addToast('success', `Statut mis à jour`);
+    } catch (error) {
+      console.error('Error updating status:', error);
+      addToast('error', 'Erreur lors de la mise à jour du statut');
+    } finally {
+      setUpdatingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(producer.id);
+        return next;
+      });
+    }
   };
 
-  // Handle delete confirm
-  const handleDeleteConfirm = async () => {
-    if (!producerToDelete) return;
+  // Handle delete
+  const handleDeleteClick = async (producer: Producer) => {
+    if (!window.confirm(`Supprimer "${producer.name}" ? Cette action ne peut pas être annulée.`)) {
+      return;
+    }
 
-    setIsDeleting(true);
+    setUpdatingIds((prev) => new Set([...prev, producer.id]));
     try {
       const { error } = await supabase
         .from('producers')
         .delete()
-        .eq('id', producerToDelete.id);
+        .eq('id', producer.id);
 
       if (error) throw error;
 
-      // Refresh producers list
-      const { data } = await supabase
-        .from('producers')
-        .select('*')
-        .order('name', { ascending: true });
-      setProducers(data || []);
-      setIsDeleteModalOpen(false);
-      setProducerToDelete(null);
+      setProducers((prev) => prev.filter((p) => p.id !== producer.id));
+      addToast('success', 'Producteur supprimé');
     } catch (error) {
       console.error('Error deleting producer:', error);
-      alert('Erreur lors de la suppression. Veuillez réessayer.');
+      addToast('error', 'Erreur lors de la suppression');
     } finally {
-      setIsDeleting(false);
+      setUpdatingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(producer.id);
+        return next;
+      });
     }
   };
 
-  // Build table rows
-  const rows = filteredProducers.map((producer) => [
-    producer.name,
-    producer.city || '-',
-    producer.contact_email || '-',
-    producer.phone || '-',
-    <span
-      key={`status-${producer.id}`}
-      className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
-        statusLabels[producer.status]?.color || 'bg-gray-100 text-gray-800'
-      }`}
-    >
-      {statusLabels[producer.status]?.label || producer.status}
-    </span>,
-    <div key={`actions-${producer.id}`} className="flex gap-2">
-      <button
-        onClick={() => handleEditClick(producer)}
-        className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
-        title="Modifier"
-      >
-        <Edit2 className="w-4 h-4" />
-      </button>
-      <button
-        onClick={() => handleDeleteClick(producer)}
-        className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
-        title="Supprimer"
-      >
-        <Trash2 className="w-4 h-4" />
-      </button>
-    </div>,
-  ]);
-
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-slate-500">Chargement...</div>
+      <div className="space-y-6">
+        {/* Header skeleton */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-stone-200 animate-pulse" />
+            <div className="space-y-2">
+              <div className="h-6 w-48 bg-stone-200 rounded animate-pulse" />
+              <div className="h-4 w-32 bg-stone-100 rounded animate-pulse" />
+            </div>
+          </div>
+          <div className="h-10 w-40 bg-green-600 rounded-lg animate-pulse" />
+        </div>
+
+        {/* Stats skeleton */}
+        <div className="grid grid-cols-3 gap-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-24 bg-stone-100 rounded-xl animate-pulse border border-stone-200"
+            />
+          ))}
+        </div>
+
+        {/* List skeleton */}
+        <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
+          <SkeletonRow count={5} />
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
+      {/* Toasts */}
+      {toasts.length > 0 && (
+        <div className="fixed top-4 right-4 z-40 space-y-2">
+          {toasts.map((toast) => (
+            <Toast
+              key={toast.id}
+              toast={toast}
+              onDismiss={() => removeToast(toast.id)}
+            />
+          ))}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-100">
             <Tractor className="w-6 h-6 text-green-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
-              Gestion des producteurs
+            <h1 className="text-3xl font-extrabold text-stone-900">
+              Producteurs
             </h1>
-            <p className="text-sm text-slate-600">
-              {producers.length} producteur(s)
+            <p className="text-sm text-stone-600">
+              {filteredProducers.length} affichés{filteredProducers.length !== totalProducers ? ` sur ${totalProducers}` : ''}
             </p>
           </div>
         </div>
@@ -631,42 +704,139 @@ export default function ProducersPage() {
           className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm"
         >
           <Plus className="w-4 h-4" />
-          Ajouter un producteur
+          Ajouter
         </button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatsCard
-          title="Total des producteurs"
-          value={totalProducers}
-          icon={<Tractor className="w-6 h-6" />}
-        />
-        <StatsCard
-          title="Producteurs actifs"
-          value={activeProducers}
-          icon={<Tractor className="w-6 h-6" />}
-          trend="up"
-        />
-        <StatsCard
-          title="Producteurs inactifs"
-          value={inactiveProducers}
-          icon={<Tractor className="w-6 h-6" />}
-          trend="down"
+      {/* Compact Inline Stats */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-stone-100 rounded-xl p-4 border border-stone-200">
+          <div className="text-xs font-medium text-stone-600 mb-1">Total</div>
+          <div className="text-2xl font-extrabold text-stone-900">{totalProducers}</div>
+        </div>
+        <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+          <div className="text-xs font-medium text-green-700 mb-1">Actifs</div>
+          <div className="text-2xl font-extrabold text-green-700">{activeProducers}</div>
+        </div>
+        <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
+          <div className="text-xs font-medium text-amber-700 mb-1">En attente</div>
+          <div className="text-2xl font-extrabold text-amber-700">{pendingProducers}</div>
+        </div>
+      </div>
+
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-stone-400" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Rechercher par nom, ville, email..."
+          className="w-full pl-10 pr-4 py-2 bg-white border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
         />
       </div>
 
-      {/* Producers Table */}
-      <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
-        <DataTable
-          headers={['Nom', 'Ville', 'Email', 'Téléphone', 'Statut', 'Actions']}
-          rows={rows}
-          searchPlaceholder="Rechercher par nom, ville, email ou téléphone..."
-          onSearch={setSearchQuery}
-        />
+      {/* Producers List */}
+      <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
+        {filteredProducers.length === 0 ? (
+          <div className="p-12 text-center">
+            <p className="text-stone-500">Aucun producteur trouvé</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-stone-100">
+            {filteredProducers.map((producer) => {
+              const isUpdating = updatingIds.has(producer.id);
+              const statusInfo = statusConfig[producer.status as keyof typeof statusConfig];
+
+              return (
+                <div
+                  key={producer.id}
+                  className="p-4 hover:bg-[#f8f7f4] transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    {/* Left: Avatar + Name + City */}
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div
+                        className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${getAvatarColor(
+                          getInitialLetter(producer.name)
+                        )}`}
+                      >
+                        {getInitialLetter(producer.name)}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-sm font-bold text-stone-900 truncate">
+                          {producer.name}
+                        </h3>
+                        <div className="text-xs text-stone-600 space-x-2">
+                          {producer.city && <span>{producer.city}</span>}
+                          {producer.contact_email && (
+                            <span className="text-stone-500">·</span>
+                          )}
+                          {producer.contact_email && (
+                            <span className="truncate">{producer.contact_email}</span>
+                          )}
+                        </div>
+                        {producer.phone && (
+                          <div className="text-xs text-stone-500 mt-1">
+                            {producer.phone}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Right: Status Select + Actions */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {/* Status Select */}
+                      <div className="relative">
+                        <select
+                          value={producer.status}
+                          onChange={(e) =>
+                            handleStatusChange(
+                              producer,
+                              e.target.value as 'active' | 'inactive' | 'pending'
+                            )
+                          }
+                          disabled={isUpdating}
+                          className={`text-xs px-2 py-1.5 rounded-lg border ${statusInfo?.bg} appearance-none cursor-pointer transition-opacity disabled:opacity-50`}
+                        >
+                          <option value="active">{statusConfig.active.label}</option>
+                          <option value="pending">{statusConfig.pending.label}</option>
+                          <option value="inactive">{statusConfig.inactive.label}</option>
+                        </select>
+                        {isUpdating && (
+                          <Loader2 className="absolute right-2 top-1/2 transform -translate-y-1/2 w-3 h-3 animate-spin text-stone-600" />
+                        )}
+                      </div>
+
+                      {/* Edit Button */}
+                      <button
+                        onClick={() => handleEditClick(producer)}
+                        disabled={isUpdating}
+                        className="p-1.5 text-stone-600 hover:bg-stone-100 rounded-lg transition-colors disabled:opacity-50"
+                        title="Modifier"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+
+                      {/* Delete Button */}
+                      <button
+                        onClick={() => handleDeleteClick(producer)}
+                        disabled={isUpdating}
+                        className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                        title="Supprimer"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Modals */}
+      {/* Modal */}
       <ProducerModal
         isOpen={isModalOpen}
         mode={modalMode}
@@ -674,17 +844,6 @@ export default function ProducersPage() {
         onClose={handleModalClose}
         onSave={handleSave}
         isSaving={isSaving}
-      />
-
-      <DeleteConfirmModal
-        isOpen={isDeleteModalOpen}
-        producerName={producerToDelete?.name || ''}
-        onConfirm={handleDeleteConfirm}
-        onCancel={() => {
-          setIsDeleteModalOpen(false);
-          setProducerToDelete(null);
-        }}
-        isDeleting={isDeleting}
       />
     </div>
   );

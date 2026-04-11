@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Package, Plus, Pencil, Trash2, X } from 'lucide-react';
-import { DataTable } from '@/components/admin/DataTable';
-import { StatsCard } from '@/components/admin/StatsCard';
+import { Package, Plus, Pencil, Trash2, X, Search, Check, Loader2 } from 'lucide-react';
 import type { Product, Producer } from '@/types/database';
 
 const unitTypeLabels: Record<string, string> = {
@@ -101,78 +99,6 @@ export default function ProductsPage() {
     setFilteredProducts(filtered);
   }, [searchQuery, producerFilter, products]);
 
-  // Handle form submission (create or update)
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      if (isEditing && formData.id) {
-        // Update existing product
-        const { error } = await supabase
-          .from('products')
-          .update({
-            name: formData.name,
-            producer_id: formData.producer_id,
-            description: formData.description || null,
-            unit_type: formData.unit_type,
-            packaging: formData.packaging || null,
-            is_active: formData.is_active,
-          })
-          .eq('id', formData.id);
-
-        if (error) throw error;
-
-        // Update local state
-        setProducts(
-          products.map((p) =>
-            p.id === formData.id
-              ? {
-                  ...p,
-                  name: formData.name,
-                  producer_id: formData.producer_id,
-                  description: formData.description,
-                  unit_type: formData.unit_type,
-                  packaging: formData.packaging,
-                  is_active: formData.is_active,
-                }
-              : p
-          )
-        );
-      } else {
-        // Create new product
-        const { data, error } = await supabase
-          .from('products')
-          .insert([
-            {
-              name: formData.name,
-              producer_id: formData.producer_id,
-              description: formData.description || null,
-              unit_type: formData.unit_type,
-              packaging: formData.packaging || null,
-              is_active: formData.is_active,
-            },
-          ])
-          .select('*, producer:producers(name)');
-
-        if (error) throw error;
-
-        if (data) {
-          setProducts([data[0], ...products]);
-        }
-      }
-
-      // Reset form and close modal
-      resetForm();
-      setShowModal(false);
-    } catch (error) {
-      console.error('Error saving product:', error);
-      alert('Erreur lors de la sauvegarde du produit');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const handleEdit = (product: ProductWithProducer) => {
     setFormData({
       id: product.id,
@@ -185,24 +111,6 @@ export default function ProductsPage() {
     });
     setIsEditing(true);
     setShowModal(true);
-  };
-
-  const handleDelete = async (productId: string) => {
-    try {
-      const { error } = await supabase
-        .from('products')
-        .delete()
-        .eq('id', productId);
-
-      if (error) throw error;
-
-      // Update local state
-      setProducts(products.filter((p) => p.id !== productId));
-      setShowDeleteConfirm(null);
-    } catch (error) {
-      console.error('Error deleting product:', error);
-      alert('Erreur lors de la suppression du produit');
-    }
   };
 
   const resetForm = () => {
@@ -222,10 +130,106 @@ export default function ProductsPage() {
     setShowModal(true);
   };
 
+  // Toast notification system
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  };
+
+  // Update error handlers to use toast
+  const handleSubmitWithToast = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      if (isEditing && formData.id) {
+        const { error } = await supabase
+          .from('products')
+          .update({
+            name: formData.name,
+            producer_id: formData.producer_id,
+            description: formData.description || null,
+            unit_type: formData.unit_type,
+            packaging: formData.packaging || null,
+            is_active: formData.is_active,
+          })
+          .eq('id', formData.id);
+
+        if (error) throw error;
+
+        setProducts(
+          products.map((p) =>
+            p.id === formData.id
+              ? {
+                  ...p,
+                  name: formData.name,
+                  producer_id: formData.producer_id,
+                  description: formData.description,
+                  unit_type: formData.unit_type,
+                  packaging: formData.packaging,
+                  is_active: formData.is_active,
+                }
+              : p
+          )
+        );
+        showToast('Produit modifié avec succès', 'success');
+      } else {
+        const { data, error } = await supabase
+          .from('products')
+          .insert([
+            {
+              name: formData.name,
+              producer_id: formData.producer_id,
+              description: formData.description || null,
+              unit_type: formData.unit_type,
+              packaging: formData.packaging || null,
+              is_active: formData.is_active,
+            },
+          ])
+          .select('*, producer:producers(name)');
+
+        if (error) throw error;
+
+        if (data) {
+          setProducts([data[0], ...products]);
+        }
+        showToast('Produit créé avec succès', 'success');
+      }
+
+      resetForm();
+      setShowModal(false);
+    } catch (error) {
+      console.error('Error saving product:', error);
+      showToast('Erreur lors de la sauvegarde du produit', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteWithToast = async (productId: string) => {
+    try {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', productId);
+
+      if (error) throw error;
+
+      setProducts(products.filter((p) => p.id !== productId));
+      setShowDeleteConfirm(null);
+      showToast('Produit supprimé avec succès', 'success');
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      showToast('Erreur lors de la suppression du produit', 'error');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-slate-500">Chargement...</div>
+        <Loader2 className="w-8 h-8 text-stone-400 animate-spin" />
       </div>
     );
   }
@@ -234,130 +238,206 @@ export default function ProductsPage() {
   const activeProducts = products.filter((p) => p.is_active).length;
   const inactiveProducts = products.filter((p) => !p.is_active).length;
 
-  const rows = filteredProducts.map((product) => [
-    product.name,
-    (product.producer as any)?.name || '-',
-    unitTypeLabels[product.unit_type] || product.unit_type,
-    product.packaging || '-',
-    <span
-      key={`active-${product.id}`}
-      className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
-        product.is_active
-          ? 'bg-green-100 text-green-800'
-          : 'bg-gray-100 text-gray-800'
-      }`}
-    >
-      {product.is_active ? 'Actif' : 'Inactif'}
-    </span>,
-    <div
-      key={`actions-${product.id}`}
-      className="flex gap-2"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <button
-        onClick={() => handleEdit(product)}
-        className="px-3 py-1 text-xs border border-slate-300 rounded bg-white text-slate-700 hover:bg-slate-50 transition-colors"
-      >
-        <Pencil className="w-4 h-4" />
-      </button>
-      <button
-        onClick={() => setShowDeleteConfirm(product.id)}
-        className="px-3 py-1 text-xs border border-red-300 rounded bg-white text-red-700 hover:bg-red-50 transition-colors"
-      >
-        <Trash2 className="w-4 h-4" />
-      </button>
-    </div>,
-  ]);
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 min-h-screen bg-[#f8f7f4]">
+      {/* Toast Notifications */}
+      {toast && (
+        <div
+          className={`fixed top-6 right-6 rounded-xl px-6 py-3 text-sm font-medium text-white z-50 shadow-lg animate-in fade-in slide-in-from-top-4 ${
+            toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            {toast.type === 'success' ? (
+              <Check className="w-4 h-4" />
+            ) : (
+              <X className="w-4 h-4" />
+            )}
+            {toast.message}
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
-            <Package className="w-6 h-6 text-green-600" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Gestion des produits</h1>
-            <p className="text-sm text-slate-600">{filteredProducts.length} produit(s)</p>
-          </div>
+        <div>
+          <h1 className="text-3xl font-extrabold text-stone-900">Gestion des produits</h1>
+          <p className="text-sm text-stone-600 mt-1">{filteredProducts.length} produit(s) affichés</p>
         </div>
         <button
           onClick={handleOpenModal}
-          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm"
+          className="flex items-center gap-2 px-5 py-3 bg-stone-900 text-white rounded-xl hover:bg-stone-800 transition-colors font-semibold text-sm"
         >
           <Plus className="w-4 h-4" />
           Ajouter un produit
         </button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <StatsCard
-          title="Total des produits"
-          value={totalProducts}
-          icon={<Package className="w-6 h-6" />}
-        />
-        <StatsCard
-          title="Actifs"
-          value={activeProducts}
-          icon={<Package className="w-6 h-6" />}
-        />
-        <StatsCard
-          title="Inactifs"
-          value={inactiveProducts}
-          icon={<Package className="w-6 h-6" />}
-        />
+      {/* Compact Inline Stats */}
+      <div className="grid grid-cols-3 gap-3">
+        {/* Total */}
+        <div className="bg-white rounded-xl p-4 border border-stone-200">
+          <p className="text-xs text-stone-600 font-medium uppercase tracking-wide">Total</p>
+          <p className="text-2xl font-extrabold text-stone-900 mt-1">{totalProducts}</p>
+        </div>
+
+        {/* Actifs */}
+        <div className="bg-white rounded-xl p-4 border border-green-200">
+          <p className="text-xs text-green-700 font-medium uppercase tracking-wide">Actifs</p>
+          <p className="text-2xl font-extrabold text-green-600 mt-1">{activeProducts}</p>
+        </div>
+
+        {/* Inactifs */}
+        <div className="bg-white rounded-xl p-4 border border-stone-200">
+          <p className="text-xs text-stone-500 font-medium uppercase tracking-wide">Inactifs</p>
+          <p className="text-2xl font-extrabold text-stone-400 mt-1">{inactiveProducts}</p>
+        </div>
       </div>
 
-      {/* Producer Filter */}
-      <div className="flex gap-2">
-        <select
-          value={producerFilter}
-          onChange={(e) => setProducerFilter(e.target.value)}
-          className="px-4 py-2 border border-slate-200 rounded-lg bg-white text-slate-700 hover:border-green-500 focus:border-green-600 focus:outline-none"
+      {/* Producer Filter Tabs */}
+      <div className="flex gap-2 overflow-x-auto pb-2">
+        <button
+          onClick={() => setProducerFilter('all')}
+          className={`px-4 py-2 rounded-xl font-medium text-sm whitespace-nowrap transition-colors ${
+            producerFilter === 'all'
+              ? 'bg-stone-900 text-white'
+              : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50'
+          }`}
         >
-          <option value="all">Tous les producteurs</option>
-          {producers.map((producer) => (
-            <option key={producer.id} value={producer.id}>
-              {producer.name}
-            </option>
-          ))}
-        </select>
+          Tous les producteurs
+        </button>
+        {producers.map((producer) => (
+          <button
+            key={producer.id}
+            onClick={() => setProducerFilter(producer.id)}
+            className={`px-4 py-2 rounded-xl font-medium text-sm whitespace-nowrap transition-colors ${
+              producerFilter === producer.id
+                ? 'bg-stone-900 text-white'
+                : 'bg-white text-stone-700 border border-stone-200 hover:bg-stone-50'
+            }`}
+          >
+            {producer.name}
+          </button>
+        ))}
       </div>
 
-      {/* Products Table */}
-      <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
-        <DataTable
-          headers={['Nom', 'Producteur', 'Type d\'unité', 'Conditionnement', 'Statut', 'Actions']}
-          rows={rows}
-          searchPlaceholder="Rechercher par nom de produit..."
-          onSearch={setSearchQuery}
+      {/* Search Bar */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
+        <input
+          type="text"
+          placeholder="Rechercher par nom de produit..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-10 pr-4 py-3 bg-white border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent text-sm"
         />
+        {searchQuery && (
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-stone-500 font-medium">
+            {filteredProducts.length} résultat(s)
+          </span>
+        )}
+      </div>
+
+      {/* Products List */}
+      <div className="space-y-3">
+        {filteredProducts.length === 0 ? (
+          <div className="bg-white rounded-xl p-8 border border-stone-200 text-center">
+            <Package className="w-12 h-12 text-stone-300 mx-auto mb-3" />
+            <p className="text-stone-600 font-medium">Aucun produit trouvé</p>
+            <p className="text-xs text-stone-500 mt-1">Ajoutez un produit pour commencer</p>
+          </div>
+        ) : (
+          filteredProducts.map((product) => (
+            <div
+              key={product.id}
+              className="bg-white rounded-xl p-4 border border-stone-200 hover:border-stone-300 transition-colors"
+            >
+              {/* Product Header */}
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Package className="w-4 h-4 text-stone-400 flex-shrink-0" />
+                    <h3 className="text-base font-extrabold text-stone-900 truncate">
+                      {product.name}
+                    </h3>
+                  </div>
+
+                  {/* Product Details */}
+                  <div className="text-xs text-stone-600 space-y-1">
+                    <p>
+                      <span className="font-semibold">
+                        {(product.producer as any)?.name || '-'}
+                      </span>
+                      {' · '}
+                      <span>{unitTypeLabels[product.unit_type] || product.unit_type}</span>
+                      {product.packaging && (
+                        <>
+                          {' · '}
+                          <span>{product.packaging}</span>
+                        </>
+                      )}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Status Badge */}
+                <div className="flex-shrink-0">
+                  <span
+                    className={`inline-block px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap ${
+                      product.is_active
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-stone-100 text-stone-600'
+                    }`}
+                  >
+                    {product.is_active ? 'Actif' : 'Inactif'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 mt-4 pt-4 border-t border-stone-100">
+                <button
+                  onClick={() => handleEdit(product)}
+                  className="flex items-center gap-2 flex-1 px-3 py-2 text-xs font-medium text-stone-700 bg-stone-50 border border-stone-200 rounded-lg hover:bg-stone-100 transition-colors"
+                >
+                  <Pencil className="w-3 h-3" />
+                  Modifier
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(product.id)}
+                  className="flex items-center gap-2 flex-1 px-3 py-2 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+                >
+                  <Trash2 className="w-3 h-3" />
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Product Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg max-w-md w-full mx-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-6 border-b border-slate-200">
-              <h2 className="text-lg font-bold text-slate-900">
+            <div className="flex items-center justify-between p-6 border-b border-stone-200">
+              <h2 className="text-lg font-extrabold text-stone-900">
                 {isEditing ? 'Modifier le produit' : 'Ajouter un produit'}
               </h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-slate-400 hover:text-slate-600"
+                className="text-stone-400 hover:text-stone-600 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Modal Body */}
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmitWithToast} className="p-6 space-y-4">
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-semibold text-stone-700 mb-2">
                   Nom du produit <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -365,21 +445,21 @@ export default function ProductsPage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent text-sm"
                   placeholder="Ex: Tomate Bio"
                 />
               </div>
 
               {/* Producer */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-semibold text-stone-700 mb-2">
                   Producteur <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={formData.producer_id}
                   onChange={(e) => setFormData({ ...formData, producer_id: e.target.value })}
                   required
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent text-sm"
                 >
                   <option value="">Sélectionnez un producteur</option>
                   {producers.map((producer) => (
@@ -392,13 +472,13 @@ export default function ProductsPage() {
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-semibold text-stone-700 mb-2">
                   Description
                 </label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent resize-none text-sm"
                   placeholder="Ex: Tomates biologiques cultivées en serre..."
                   rows={3}
                 />
@@ -406,14 +486,14 @@ export default function ProductsPage() {
 
               {/* Unit Type */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-semibold text-stone-700 mb-2">
                   Type d'unité <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={formData.unit_type}
                   onChange={(e) => setFormData({ ...formData, unit_type: e.target.value as any })}
                   required
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent text-sm"
                 >
                   <option value="unit">Unité</option>
                   <option value="weight">Poids (kg)</option>
@@ -424,46 +504,55 @@ export default function ProductsPage() {
 
               {/* Packaging */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-semibold text-stone-700 mb-2">
                   Conditionnement
                 </label>
                 <input
                   type="text"
                   value={formData.packaging}
                   onChange={(e) => setFormData({ ...formData, packaging: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent text-sm"
                   placeholder="Ex: 500g, 1 litre, 6 pièces"
                 />
               </div>
 
               {/* Active Toggle */}
-              <div>
-                <label className="flex items-center gap-3">
+              <div className="pt-2">
+                <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={formData.is_active}
                     onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                    className="w-4 h-4 rounded border-slate-300 text-green-600 focus:ring-green-500"
+                    className="w-4 h-4 rounded border-stone-300 text-stone-900 focus:ring-stone-500"
                   />
-                  <span className="text-sm font-medium text-slate-700">Produit actif</span>
+                  <span className="text-sm font-medium text-stone-700">Produit actif</span>
                 </label>
               </div>
 
               {/* Modal Footer */}
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-6">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors font-medium text-sm"
+                  className="flex-1 px-4 py-2 border border-stone-200 text-stone-700 rounded-lg hover:bg-stone-50 transition-colors font-medium text-sm"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-stone-900 text-white rounded-lg hover:bg-stone-800 transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? 'Enregistrement...' : isEditing ? 'Modifier' : 'Ajouter'}
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      Enregistrement...
+                    </>
+                  ) : isEditing ? (
+                    'Modifier'
+                  ) : (
+                    'Ajouter'
+                  )}
                 </button>
               </div>
             </form>
@@ -474,13 +563,13 @@ export default function ProductsPage() {
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg max-w-sm w-full mx-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4">
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-6 border-b border-slate-200">
-              <h2 className="text-lg font-bold text-slate-900">Confirmer la suppression</h2>
+            <div className="flex items-center justify-between p-6 border-b border-stone-200">
+              <h2 className="text-lg font-extrabold text-stone-900">Confirmer la suppression</h2>
               <button
                 onClick={() => setShowDeleteConfirm(null)}
-                className="text-slate-400 hover:text-slate-600"
+                className="text-stone-400 hover:text-stone-600 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -488,21 +577,21 @@ export default function ProductsPage() {
 
             {/* Modal Body */}
             <div className="p-6">
-              <p className="text-slate-700">
+              <p className="text-stone-700">
                 Êtes-vous sûr de vouloir supprimer ce produit ? Cette action ne peut pas être annulée.
               </p>
             </div>
 
             {/* Modal Footer */}
-            <div className="flex gap-3 p-6 border-t border-slate-200">
+            <div className="flex gap-3 p-6 border-t border-stone-200">
               <button
                 onClick={() => setShowDeleteConfirm(null)}
-                className="flex-1 px-4 py-2 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors font-medium text-sm"
+                className="flex-1 px-4 py-2 border border-stone-200 text-stone-700 rounded-lg hover:bg-stone-50 transition-colors font-medium text-sm"
               >
                 Annuler
               </button>
               <button
-                onClick={() => handleDelete(showDeleteConfirm)}
+                onClick={() => handleDeleteWithToast(showDeleteConfirm)}
                 className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
               >
                 Supprimer
