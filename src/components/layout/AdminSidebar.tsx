@@ -86,7 +86,8 @@ export function AdminSidebar({ firstName }: { firstName?: string }) {
             const Icon = item.icon;
             const active = isActive(item.href, item.exact);
             return (
-              <li key={item.href}>
+              <li key={item.href} className="relative">
+                {active && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-orange-500 rounded-r-full" />}
                 <Link
                   href={item.href}
                   className={`group flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
@@ -98,12 +99,12 @@ export function AdminSidebar({ firstName }: { firstName?: string }) {
                   <div className={`flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
                     active
                       ? 'bg-green-600 text-white shadow-sm'
-                      : 'bg-stone-100 text-stone-500 group-hover:bg-stone-200 group-hover:text-stone-700'
+                      : 'bg-stone-100 text-stone-500 group-hover:bg-orange-100 group-hover:text-orange-600'
                   }`}>
                     <Icon className="w-[18px] h-[18px]" />
                   </div>
                   <span className="flex-1 font-semibold">{item.label}</span>
-                  {active && <ChevronRight className="w-4 h-4 text-green-600" />}
+                  {active && <ChevronRight className="w-4 h-4 text-orange-500" />}
                 </Link>
               </li>
             );

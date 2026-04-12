@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Wallet, TrendingUp } from 'lucide-react';
 import { StatsCard } from '@/components/admin/StatsCard';
 import { DataTable } from '@/components/admin/DataTable';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import type { Payment } from '@/types/database';
 
@@ -91,15 +92,11 @@ export default function FinancesPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
-          <Wallet className="w-6 h-6 text-amber-600" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Gestion financière</h1>
-          <p className="text-sm text-slate-600">Suivi des paiements et cotisations</p>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Finances"
+        subtitle="Suivi financier de l'association"
+        imageUrl="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=900&q=75"
+      />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -135,7 +132,7 @@ export default function FinancesPage() {
             onClick={() => setStatusFilter(status)}
             className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors whitespace-nowrap ${
               statusFilter === status
-                ? 'bg-amber-600 text-white'
+                ? 'bg-green-700 text-white'
                 : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
             }`}
           >

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Package, Calendar, Download, Printer, AlertCircle } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 
 interface ModelDate {
   id: string;
@@ -446,21 +447,11 @@ export default function DistributionsPage() {
       `}</style>
 
       {/* Header */}
-      <div className="flex items-center justify-between no-print">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
-            <Package className="w-6 h-6 text-green-600" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">
-              Feuille de distribution
-            </h1>
-            <p className="text-sm text-slate-600">
-              {upcomingDates.length} date(s) disponible(s)
-            </p>
-          </div>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Distributions"
+        subtitle="Gestion des dates de distribution"
+        imageUrl="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=900&q=75"
+      />
 
       {error && (
         <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg no-print">
@@ -521,14 +512,14 @@ export default function DistributionsPage() {
           <div className="flex gap-3 no-print">
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium text-sm"
             >
               <Printer className="w-4 h-4" />
               Imprimer
             </button>
             <button
               onClick={handleExportCSV}
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium text-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors font-medium text-sm"
             >
               <Download className="w-4 h-4" />
               Exporter en Excel

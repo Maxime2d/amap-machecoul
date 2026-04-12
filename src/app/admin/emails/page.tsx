@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Mail, Send, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import type { Profile, ContractModel } from '@/types/database';
 
 interface SentEmail {
@@ -225,18 +226,11 @@ export default function EmailsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
-            <Mail className="w-6 h-6 text-green-600" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Gestion des emails</h1>
-            <p className="text-sm text-slate-600">Envoyez des emails aux adhérents</p>
-          </div>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Emails"
+        subtitle="Communication avec les adhérents"
+        imageUrl="https://images.unsplash.com/photo-1566385101042-1a0aa4c1c900?w=900&q=75"
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main content */}
@@ -375,7 +369,7 @@ export default function EmailsPage() {
               <button
                 type="submit"
                 disabled={sending || recipients.length === 0}
-                className="w-full bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-orange-500 text-white py-2 rounded-xl font-medium hover:bg-orange-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 <Send className="w-4 h-4" />
                 {sending ? 'Envoi en cours...' : 'Envoyer l\'email'}

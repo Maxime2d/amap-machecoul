@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Newspaper, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { DataTable } from '@/components/admin/DataTable';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import type { Post } from '@/types/database';
@@ -74,24 +75,11 @@ export default function NewsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-100">
-            <Newspaper className="w-6 h-6 text-indigo-600" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-stone-900">Gestion des actualités</h1>
-            <p className="text-sm text-stone-600">{filteredPosts.length} article(s)</p>
-          </div>
-        </div>
-        <Link
-          href="#"
-          className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors font-medium text-sm"
-        >
-          <Plus className="w-4 h-4" />
-          Nouvel article
-        </Link>
-      </div>
+      <AdminPageHeader
+        title="Actualités"
+        subtitle="Gérez les publications de l'AMAP"
+        imageUrl="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=900&q=75"
+      />
 
       {/* Status Filter Tabs */}
       <div className="flex gap-2">
