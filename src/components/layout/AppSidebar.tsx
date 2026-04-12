@@ -70,7 +70,7 @@ export function AppSidebar({ userName, isAdmin }: AppSidebarProps) {
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="px-5 py-5">
-        <div className="flex items-center gap-3 bg-gradient-to-r from-green-600 to-emerald-500 rounded-xl px-4 py-3">
+        <div className="flex items-center gap-3 bg-gradient-to-r from-green-800 to-green-700 rounded-xl px-4 py-3 shadow-md">
           <div className="w-9 h-9 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center flex-shrink-0">
             <Leaf className="w-5 h-5 text-white" />
           </div>
@@ -83,7 +83,7 @@ export function AppSidebar({ userName, isAdmin }: AppSidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-2 overflow-y-auto">
-        <p className="px-4 mb-2 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Menu</p>
+        <p className="px-4 mb-2 text-[11px] font-semibold text-stone-400 uppercase tracking-wider">Menu</p>
         <ul className="space-y-0.5">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -92,21 +92,22 @@ export function AppSidebar({ userName, isAdmin }: AppSidebarProps) {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`group flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  className={`group relative flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                     active
                       ? 'bg-green-50 text-green-700 shadow-sm'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      : 'text-stone-600 hover:bg-orange-50 hover:text-orange-700'
                   }`}
                 >
+                  {active && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-orange-500 rounded-r-full" />}
                   <div className={`flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
                     active
-                      ? 'bg-green-100 text-green-600'
-                      : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200 group-hover:text-gray-700'
+                      ? 'bg-green-600 text-white'
+                      : 'bg-stone-100 text-stone-500 group-hover:bg-orange-100 group-hover:text-orange-600'
                   }`}>
                     <Icon className="w-[18px] h-[18px]" />
                   </div>
                   <span className="flex-1">{item.label}</span>
-                  {active && <ChevronRight className="w-4 h-4 text-green-400" />}
+                  {active && <ChevronRight className="w-4 h-4 text-orange-500" />}
                 </Link>
               </li>
             );
@@ -119,12 +120,12 @@ export function AppSidebar({ userName, isAdmin }: AppSidebarProps) {
         {userName && (
           <div className="mx-1 px-4 py-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100/60">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm">
+              <div className="w-9 h-9 bg-gradient-to-br from-green-600 to-green-700 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm">
                 {userName.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
-                <p className="text-xs text-green-600">Adhérent</p>
+                <p className="text-sm font-semibold text-stone-900 truncate">{userName}</p>
+                <p className="text-xs text-orange-600 font-medium">Adhérent</p>
               </div>
             </div>
           </div>
@@ -134,7 +135,7 @@ export function AppSidebar({ userName, isAdmin }: AppSidebarProps) {
           {isAdmin && (
             <Link
               href="/admin"
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-500 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all duration-200"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-stone-500 hover:bg-orange-50 hover:text-orange-700 rounded-xl transition-all duration-200"
             >
               <Shield className="w-4 h-4" />
               <span>Administration</span>
@@ -142,7 +143,7 @@ export function AppSidebar({ userName, isAdmin }: AppSidebarProps) {
           )}
           <Link
             href="/"
-            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-500 hover:bg-green-50 hover:text-green-700 rounded-xl transition-all duration-200"
+            className="flex items-center gap-3 px-4 py-2.5 text-sm text-stone-500 hover:bg-orange-50 hover:text-orange-700 rounded-xl transition-all duration-200"
           >
             <Globe className="w-4 h-4" />
             <span>Site public</span>
@@ -150,7 +151,7 @@ export function AppSidebar({ userName, isAdmin }: AppSidebarProps) {
         </div>
         <button
           onClick={handleLogout}
-          className="w-full mx-1 flex items-center gap-3 px-4 py-2.5 text-sm text-gray-500 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all duration-200"
+          className="w-full mx-1 flex items-center gap-3 px-4 py-2.5 text-sm text-stone-500 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all duration-200"
         >
           <LogOut className="w-4 h-4" />
           <span>Deconnexion</span>
@@ -164,7 +165,7 @@ export function AppSidebar({ userName, isAdmin }: AppSidebarProps) {
       {/* Mobile toggle */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed top-4 left-4 z-40 p-2.5 bg-white text-gray-700 rounded-xl shadow-lg border border-gray-200 md:hidden hover:bg-gray-50 transition-colors"
+        className="fixed top-4 left-4 z-40 p-2.5 bg-white text-stone-700 rounded-xl shadow-lg border border-stone-200 md:hidden hover:bg-stone-50 transition-colors"
         aria-label="Ouvrir le menu"
       >
         <Menu className="w-5 h-5" />
@@ -186,7 +187,7 @@ export function AppSidebar({ userName, isAdmin }: AppSidebarProps) {
       >
         <button
           onClick={() => setIsOpen(false)}
-          className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          className="absolute top-4 right-4 p-1.5 text-stone-400 hover:text-stone-600 hover:bg-stone-100 rounded-lg transition-colors"
           aria-label="Fermer le menu"
         >
           <X className="w-5 h-5" />
@@ -198,7 +199,7 @@ export function AppSidebar({ userName, isAdmin }: AppSidebarProps) {
       <div className="md:hidden h-14" />
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex md:flex-col w-[272px] bg-white border-r border-gray-100 h-screen sticky top-0">
+      <aside className="hidden md:flex md:flex-col w-[272px] bg-white border-r border-stone-100 h-screen sticky top-0">
         {sidebarContent}
       </aside>
     </>

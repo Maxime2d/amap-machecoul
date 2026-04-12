@@ -81,9 +81,9 @@ export default async function CotisationPage() {
       case 'late':
         return { bg: 'bg-red-100', text: 'text-red-700', label: 'En retard', status: 'late' };
       case 'cancelled':
-        return { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Annulé', status: 'cancelled' };
+        return { bg: 'bg-stone-100', text: 'text-stone-700', label: 'Annulé', status: 'cancelled' };
       default:
-        return { bg: 'bg-gray-100', text: 'text-gray-700', label: status, status: 'default' };
+        return { bg: 'bg-stone-100', text: 'text-stone-700', label: status, status: 'default' };
     }
   };
 
@@ -103,7 +103,7 @@ export default async function CotisationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#f8f7f4] via-white to-[#f8f7f4] p-6 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="mb-10">
@@ -112,10 +112,10 @@ export default async function CotisationPage() {
               <CreditCard className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              <h1 className="text-4xl font-bold text-stone-900 mb-2">
                 Cotisation et paiements
               </h1>
-              <p className="text-gray-600 text-lg">
+              <p className="text-stone-600 text-lg">
                 Suivez vos contributions à l'AMAP
               </p>
             </div>
@@ -125,16 +125,16 @@ export default async function CotisationPage() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Total Amount Card */}
-          <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-8 border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-8 border border-stone-100">
             <div className="flex items-start justify-between mb-6">
               <div>
-                <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide mb-2">
+                <p className="text-stone-600 text-sm font-semibold uppercase tracking-wide mb-2">
                   Total cotisé
                 </p>
-                <p className="text-4xl font-bold text-gray-900">
+                <p className="text-4xl font-bold text-stone-900">
                   {totalAmount.toFixed(2)}€
                 </p>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-stone-500 mt-2">
                   sur votre engagement
                 </p>
               </div>
@@ -143,28 +143,28 @@ export default async function CotisationPage() {
               </div>
             </div>
             {/* Progress Ring */}
-            <div className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="relative w-full h-2 bg-stone-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-green-500 to-green-600 rounded-full transition-all duration-500"
                 style={{ width: `${paidPercentage}%` }}
               />
             </div>
-            <p className="text-xs text-gray-600 mt-2 text-right">
+            <p className="text-xs text-stone-600 mt-2 text-right">
               {Math.round(paidPercentage)}% payé
             </p>
           </div>
 
           {/* Pending Card */}
-          <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-8 border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-8 border border-stone-100">
             <div className="flex items-start justify-between mb-6">
               <div>
-                <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide mb-2">
+                <p className="text-stone-600 text-sm font-semibold uppercase tracking-wide mb-2">
                   En attente
                 </p>
                 <p className="text-4xl font-bold text-amber-600">
                   {pendingAmount.toFixed(2)}€
                 </p>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-stone-500 mt-2">
                   à régulariser
                 </p>
               </div>
@@ -179,16 +179,16 @@ export default async function CotisationPage() {
           </div>
 
           {/* Paid Card */}
-          <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-8 border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-8 border border-stone-100">
             <div className="flex items-start justify-between mb-6">
               <div>
-                <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide mb-2">
+                <p className="text-stone-600 text-sm font-semibold uppercase tracking-wide mb-2">
                   Payé
                 </p>
                 <p className="text-4xl font-bold text-green-600">
                   {paidAmount.toFixed(2)}€
                 </p>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-stone-500 mt-2">
                   reçu ou déposé
                 </p>
               </div>
@@ -204,15 +204,15 @@ export default async function CotisationPage() {
         </div>
 
         {/* Payment Progress Section */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8 mb-8">
+          <h2 className="text-xl font-bold text-stone-900 mb-6">
             Progression du paiement
           </h2>
 
           <div className="space-y-4">
             {/* Progress Bar */}
             <div className="relative">
-              <div className="flex h-10 rounded-full overflow-hidden bg-gray-100">
+              <div className="flex h-10 rounded-full overflow-hidden bg-stone-100">
                 {paidAmount > 0 && (
                   <div
                     className="bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center transition-all duration-500"
@@ -244,17 +244,17 @@ export default async function CotisationPage() {
             <div className="grid grid-cols-3 gap-4 pt-4">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-gradient-to-r from-green-500 to-green-600 rounded" />
-                <span className="text-sm text-gray-700">
+                <span className="text-sm text-stone-700">
                   Payé <span className="font-semibold">{paidAmount.toFixed(2)}€</span>
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-amber-300 rounded" />
-                <span className="text-sm text-gray-700">
+                <span className="text-sm text-stone-700">
                   En attente <span className="font-semibold">{pendingAmount.toFixed(2)}€</span>
                 </span>
               </div>
-              <div className="text-sm text-gray-700">
+              <div className="text-sm text-stone-700">
                 Total <span className="font-semibold">{totalAmount.toFixed(2)}€</span>
               </div>
             </div>
@@ -264,10 +264,10 @@ export default async function CotisationPage() {
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Contract Summary */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+          <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
             <div className="flex items-center gap-2 mb-6">
               <FileText className="w-5 h-5 text-green-600" />
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-stone-900">
                 Résumé des contrats
               </h2>
             </div>
@@ -282,10 +282,10 @@ export default async function CotisationPage() {
                     <div className="flex items-center gap-3">
                       <div className="w-2 h-2 bg-green-600 rounded-full" />
                       <div>
-                        <p className="font-semibold text-gray-900">
+                        <p className="font-semibold text-stone-900">
                           Contrat actif
                         </p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-stone-600">
                           {formatDate(contract.contract_models?.start_date || '')} à{' '}
                           {formatDate(contract.contract_models?.end_date || '')}
                         </p>
@@ -299,8 +299,8 @@ export default async function CotisationPage() {
               </div>
             ) : (
               <div className="text-center py-8">
-                <AlertCircle className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                <p className="text-gray-600 text-sm">
+                <AlertCircle className="w-8 h-8 text-stone-300 mx-auto mb-2" />
+                <p className="text-stone-600 text-sm">
                   Vous n'avez actuellement aucun contrat actif.
                 </p>
               </div>
@@ -308,17 +308,17 @@ export default async function CotisationPage() {
           </div>
 
           {/* Payment Info Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+          <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-8">
             <div className="flex items-center gap-2 mb-6">
               <Zap className="w-5 h-5 text-green-600" />
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-stone-900">
                 Informations de paiement
               </h2>
             </div>
 
             <div className="space-y-6">
-              <div className="pb-6 border-b border-gray-100">
-                <p className="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-3">
+              <div className="pb-6 border-b border-stone-100">
+                <p className="text-sm text-stone-600 font-semibold uppercase tracking-wide mb-3">
                   Statut de cotisation
                 </p>
                 <div>
@@ -340,20 +340,20 @@ export default async function CotisationPage() {
                 </div>
               </div>
 
-              <div className="pb-6 border-b border-gray-100">
-                <p className="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-3">
+              <div className="pb-6 border-b border-stone-100">
+                <p className="text-sm text-stone-600 font-semibold uppercase tracking-wide mb-3">
                   Moyens de paiement
                 </p>
                 <div className="space-y-2">
-                  <p className="text-sm text-gray-700 flex items-center gap-2">
+                  <p className="text-sm text-stone-700 flex items-center gap-2">
                     <Check className="w-4 h-4 text-green-600" />
                     Virement bancaire
                   </p>
-                  <p className="text-sm text-gray-700 flex items-center gap-2">
+                  <p className="text-sm text-stone-700 flex items-center gap-2">
                     <Check className="w-4 h-4 text-green-600" />
                     Chèque
                   </p>
-                  <p className="text-sm text-gray-700 flex items-center gap-2">
+                  <p className="text-sm text-stone-700 flex items-center gap-2">
                     <Check className="w-4 h-4 text-green-600" />
                     Espèces
                   </p>
@@ -374,11 +374,11 @@ export default async function CotisationPage() {
 
         {/* Payment History */}
         {payments && payments.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-8 border-b border-gray-100">
+          <div className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+            <div className="p-8 border-b border-stone-100">
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-green-600" />
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-stone-900">
                   Historique des paiements
                 </h2>
               </div>
@@ -387,36 +387,36 @@ export default async function CotisationPage() {
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-stone-50 border-b border-stone-200">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-stone-600 uppercase tracking-wider">
                       Date d'échéance
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-stone-600 uppercase tracking-wider">
                       Montant
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-stone-600 uppercase tracking-wider">
                       Statut
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-stone-600 uppercase tracking-wider">
                       Méthode
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-stone-100">
                   {(payments as any[]).map((payment: any, index: number) => {
                     const statusColor = getPaymentStatusColor(payment.status);
                     return (
                       <tr
                         key={payment.id}
-                        className={`hover:bg-gray-50 transition-colors ${
-                          index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                        className={`hover:bg-stone-50 transition-colors ${
+                          index % 2 === 0 ? 'bg-white' : 'bg-stone-50'
                         }`}
                       >
-                        <td className="px-6 py-4 text-sm text-gray-900">
+                        <td className="px-6 py-4 text-sm text-stone-900">
                           {formatDate(payment.due_date)}
                         </td>
-                        <td className="px-6 py-4 text-sm font-semibold text-gray-900">
+                        <td className="px-6 py-4 text-sm font-semibold text-stone-900">
                           {payment.amount.toFixed(2)}€
                         </td>
                         <td className="px-6 py-4 text-sm">
@@ -433,16 +433,16 @@ export default async function CotisationPage() {
                             {statusColor.label}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-600">
+                        <td className="px-6 py-4 text-sm text-stone-600">
                           {payment.method ? (
                             <div className="flex items-center gap-2">
-                              <div className="text-gray-400">
+                              <div className="text-stone-400">
                                 {getPaymentMethodIcon(payment.method)}
                               </div>
                               {getPaymentMethodLabel(payment.method)}
                             </div>
                           ) : (
-                            <span className="text-gray-400">-</span>
+                            <span className="text-stone-400">-</span>
                           )}
                         </td>
                       </tr>
@@ -459,10 +459,10 @@ export default async function CotisationPage() {
                 return (
                   <div
                     key={payment.id}
-                    className="border border-gray-200 rounded-xl p-4 hover:border-green-300 transition-colors"
+                    className="border border-stone-200 rounded-xl p-4 hover:border-green-300 transition-colors"
                   >
                     <div className="flex items-center justify-between mb-3">
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-stone-900">
                         {payment.amount.toFixed(2)}€
                       </p>
                       <span
@@ -478,14 +478,14 @@ export default async function CotisationPage() {
                         {statusColor.label}
                       </span>
                     </div>
-                    <div className="space-y-2 text-sm text-gray-600">
+                    <div className="space-y-2 text-sm text-stone-600">
                       <p>
                         <span className="font-medium">Échéance:</span> {formatDate(payment.due_date)}
                       </p>
                       {payment.method && (
                         <p className="flex items-center gap-2">
                           <span className="font-medium">Méthode:</span>
-                          <div className="text-gray-400">
+                          <div className="text-stone-400">
                             {getPaymentMethodIcon(payment.method)}
                           </div>
                           {getPaymentMethodLabel(payment.method)}

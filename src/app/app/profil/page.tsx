@@ -103,11 +103,11 @@ export default function ProfilePage() {
       <div className="p-6 md:p-8 max-w-2xl">
         <div className="bg-white rounded-lg shadow p-8">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded mb-6"></div>
+            <div className="h-8 bg-stone-200 rounded mb-4"></div>
+            <div className="h-4 bg-stone-200 rounded mb-6"></div>
             <div className="space-y-4">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-10 bg-gray-200 rounded"></div>
+                <div key={i} className="h-10 bg-stone-200 rounded"></div>
               ))}
             </div>
           </div>
@@ -123,8 +123,8 @@ export default function ProfilePage() {
           <User className="w-6 h-6 text-green-600" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Mon profil</h1>
-          <p className="text-gray-600">Gérez vos informations personnelles</p>
+          <h1 className="text-3xl font-bold text-stone-900">Mon profil</h1>
+          <p className="text-stone-600">Gérez vos informations personnelles</p>
         </div>
       </div>
 
@@ -154,7 +154,7 @@ export default function ProfilePage() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-stone-700 mb-2">
               Prénom
             </label>
             <input
@@ -163,12 +163,12 @@ export default function ProfilePage() {
               onChange={(e) =>
                 setProfile({ ...profile, first_name: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-stone-700 mb-2">
               Nom
             </label>
             <input
@@ -177,28 +177,28 @@ export default function ProfilePage() {
               onChange={(e) =>
                 setProfile({ ...profile, last_name: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-stone-700 mb-2">
             Email
           </label>
           <input
             type="email"
             value={profile.email}
             disabled
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
+            className="w-full px-4 py-2 border border-stone-300 rounded-lg bg-stone-50 text-stone-600"
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-stone-500 mt-1">
             L'adresse email ne peut pas être modifiée
           </p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-stone-700 mb-2">
             Téléphone
           </label>
           <input
@@ -207,13 +207,13 @@ export default function ProfilePage() {
             onChange={(e) =>
               setProfile({ ...profile, phone: e.target.value })
             }
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
             placeholder="+33 6 12 34 56 78"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-stone-700 mb-2">
             Adresse
           </label>
           <input
@@ -222,14 +222,14 @@ export default function ProfilePage() {
             onChange={(e) =>
               setProfile({ ...profile, address: e.target.value })
             }
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
             placeholder="Rue de l'exemple"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-stone-700 mb-2">
               Ville
             </label>
             <input
@@ -238,13 +238,13 @@ export default function ProfilePage() {
               onChange={(e) =>
                 setProfile({ ...profile, city: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               placeholder="Paris"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-stone-700 mb-2">
               Code postal
             </label>
             <input
@@ -253,7 +253,7 @@ export default function ProfilePage() {
               onChange={(e) =>
                 setProfile({ ...profile, zip_code: e.target.value })
               }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               placeholder="75000"
             />
           </div>
@@ -261,10 +261,10 @@ export default function ProfilePage() {
 
         {profile.role && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-stone-700 mb-2">
               Rôle
             </label>
-            <div className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 inline-block">
+            <div className="w-full px-4 py-2 border border-stone-300 rounded-lg bg-stone-50 text-stone-600 inline-block">
               <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
                 {profile.role === 'member' && 'Adhérent'}
                 {profile.role === 'admin' && 'Administrateur'}
@@ -276,11 +276,11 @@ export default function ProfilePage() {
           </div>
         )}
 
-        <div className="pt-4 border-t border-gray-200">
+        <div className="pt-4 border-t border-stone-200">
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 w-full md:w-auto px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors"
+            className="flex items-center gap-2 w-full md:w-auto px-6 py-3 bg-green-700 hover:bg-green-800 disabled:bg-stone-400 text-white rounded-lg font-medium transition-colors"
           >
             <Save className="w-5 h-5" />
             {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}

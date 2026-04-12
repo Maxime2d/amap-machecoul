@@ -160,7 +160,7 @@ export default async function DashboardPage() {
             <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide">Mes contrats</h2>
             <Link
               href="/app/contrats"
-              className="text-xs font-semibold text-green-700 hover:text-green-800 flex items-center gap-0.5"
+              className="text-xs font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-0.5"
             >
               Tous <ChevronRight className="w-3.5 h-3.5" />
             </Link>
@@ -195,7 +195,7 @@ export default async function DashboardPage() {
                           </span>
                         )}
                         {contract.status === 'pending' && (
-                          <span className="ml-1.5 px-1.5 py-0.5 bg-amber-50 text-amber-700 rounded text-[10px] font-bold uppercase">
+                          <span className="ml-1.5 px-1.5 py-0.5 bg-orange-50 text-orange-700 rounded text-[10px] font-bold uppercase">
                             En attente
                           </span>
                         )}
@@ -232,7 +232,7 @@ export default async function DashboardPage() {
               </h2>
               <Link
                 href="/app/permanences"
-                className="text-xs font-semibold text-green-700 hover:text-green-800 flex items-center gap-0.5"
+                className="text-xs font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-0.5"
               >
                 Voir tout <ChevronRight className="w-3.5 h-3.5" />
               </Link>
@@ -279,7 +279,7 @@ export default async function DashboardPage() {
               </h2>
               <Link
                 href="/app/livraisons"
-                className="text-xs font-semibold text-green-700 hover:text-green-800 flex items-center gap-0.5"
+                className="text-xs font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-0.5"
               >
                 Toutes <ChevronRight className="w-3.5 h-3.5" />
               </Link>
@@ -324,13 +324,13 @@ export default async function DashboardPage() {
           <div className="grid grid-cols-2 gap-2">
             <Link
               href="/app/permanences"
-              className="flex items-center gap-3 p-3 bg-white rounded-xl border border-stone-200 hover:border-green-300 transition-colors group"
+              className="flex items-center gap-3 p-3 bg-white rounded-xl border border-stone-200 hover:border-orange-300 transition-colors group"
             >
-              <div className="w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
-                <Users className="w-4 h-4 text-green-700" />
+              <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+                <Users className="w-4 h-4 text-orange-600" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-stone-900 group-hover:text-green-700 transition-colors">
+                <p className="text-sm font-semibold text-stone-900 group-hover:text-orange-600 transition-colors">
                   Permanences
                 </p>
                 <p className="text-xs text-stone-500">S&apos;inscrire</p>
@@ -338,13 +338,13 @@ export default async function DashboardPage() {
             </Link>
             <Link
               href="/app/cotisation"
-              className="flex items-center gap-3 p-3 bg-white rounded-xl border border-stone-200 hover:border-green-300 transition-colors group"
+              className="flex items-center gap-3 p-3 bg-white rounded-xl border border-stone-200 hover:border-orange-300 transition-colors group"
             >
-              <div className="w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
-                <CreditCard className="w-4 h-4 text-green-700" />
+              <div className="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+                <CreditCard className="w-4 h-4 text-orange-600" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-stone-900 group-hover:text-green-700 transition-colors">
+                <p className="text-sm font-semibold text-stone-900 group-hover:text-orange-600 transition-colors">
                   Cotisation
                 </p>
                 <p className="text-xs text-stone-500">Paiements</p>

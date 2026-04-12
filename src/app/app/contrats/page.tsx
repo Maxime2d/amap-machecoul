@@ -69,11 +69,11 @@ export default async function ContractsPage() {
       default:
         return {
           borderColor: 'border-l-gray-500',
-          badgeBg: 'bg-gray-50',
-          badgeText: 'text-gray-700',
+          badgeBg: 'bg-stone-50',
+          badgeText: 'text-stone-700',
           badgeLabel: status,
           icon: AlertCircle,
-          iconColor: 'text-gray-600',
+          iconColor: 'text-stone-600',
         };
     }
   };
@@ -94,8 +94,8 @@ export default async function ContractsPage() {
         };
       default:
         return {
-          badgeBg: 'bg-gray-100',
-          badgeText: 'text-gray-700',
+          badgeBg: 'bg-stone-100',
+          badgeText: 'text-stone-700',
           badgeLabel: nature,
         };
     }
@@ -140,22 +140,22 @@ export default async function ContractsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-[#f8f7f4] via-white to-[#f8f7f4]">
       <div className="p-6 md:p-8 max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-12">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
+              <h1 className="text-4xl md:text-5xl font-bold text-stone-900 mb-2">
                 Mes contrats
               </h1>
-              <p className="text-gray-600 text-lg">
+              <p className="text-stone-600 text-lg">
                 Gérez vos contrats avec les producteurs de l'AMAP
               </p>
             </div>
             <Link
               href="/app/contrats/disponibles"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
             >
               <Plus className="w-5 h-5" />
               Souscrire
@@ -169,7 +169,7 @@ export default async function ContractsPage() {
             {activeContracts.length > 0 && (
               <div>
                 <div className="mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                  <h2 className="text-2xl font-bold text-stone-900 flex items-center gap-2">
                     <div className="w-1 h-8 bg-green-600 rounded-full"></div>
                     Contrats actifs
                   </h2>
@@ -202,10 +202,10 @@ export default async function ContractsPage() {
                                 <Leaf className="w-6 h-6 text-green-700" />
                               </div>
                               <div className="flex-1">
-                                <h3 className="font-bold text-gray-900 text-lg group-hover:text-green-700 transition-colors">
+                                <h3 className="font-bold text-stone-900 text-lg group-hover:text-green-700 transition-colors">
                                   {contract.contract_models?.name || 'Contrat'}
                                 </h3>
-                                <p className="text-sm text-gray-500 font-medium">
+                                <p className="text-sm text-stone-500 font-medium">
                                   {contract.contract_models?.producers?.name || 'Producteur'}
                                 </p>
                               </div>
@@ -228,8 +228,8 @@ export default async function ContractsPage() {
 
                           {/* Amount - Prominent */}
                           {contract.total_amount && (
-                            <div className="mb-5 pb-5 border-b border-gray-100">
-                              <p className="text-sm text-gray-600 mb-1">Montant du contrat</p>
+                            <div className="mb-5 pb-5 border-b border-stone-100">
+                              <p className="text-sm text-stone-600 mb-1">Montant du contrat</p>
                               <p className="text-3xl font-bold text-green-700">
                                 {contract.total_amount.toFixed(2)}€
                               </p>
@@ -239,12 +239,12 @@ export default async function ContractsPage() {
                           {/* Progress Indicator */}
                           <div className="mb-5">
                             <div className="flex items-center justify-between mb-2">
-                              <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                              <p className="text-xs font-semibold text-stone-700 uppercase tracking-wide">
                                 Progression
                               </p>
                               <p className="text-xs font-bold text-green-700">{progress}%</p>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div className="w-full bg-stone-200 rounded-full h-2">
                               <div
                                 className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-500"
                                 style={{ width: `${progress}%` }}
@@ -253,8 +253,8 @@ export default async function ContractsPage() {
                           </div>
 
                           {/* Date Range */}
-                          <div className="flex items-center gap-2 text-sm text-gray-600 mb-5">
-                            <Calendar className="w-4 h-4 text-gray-400" />
+                          <div className="flex items-center gap-2 text-sm text-stone-600 mb-5">
+                            <Calendar className="w-4 h-4 text-stone-400" />
                             <span>
                               {formatDate(contract.contract_models?.start_date || '')} jusqu'au{' '}
                               {formatDate(contract.contract_models?.end_date || '')}
@@ -263,13 +263,13 @@ export default async function ContractsPage() {
 
                           {/* Signed Date */}
                           {contract.signed_at && (
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-stone-500">
                               Signé le {formatDateLong(contract.signed_at)}
                             </p>
                           )}
 
                           {/* Footer CTA */}
-                          <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between text-green-700 font-semibold group-hover:gap-3 transition-all">
+                          <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between text-green-700 font-semibold group-hover:gap-3 transition-all">
                             <span>{isFlexible ? 'Commander / Détails' : 'Voir les détails'}</span>
                             <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                           </div>
@@ -285,8 +285,8 @@ export default async function ContractsPage() {
             {otherContracts.length > 0 && (
               <div>
                 <div className="mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                    <div className="w-1 h-8 bg-gray-400 rounded-full"></div>
+                  <h2 className="text-2xl font-bold text-stone-900 flex items-center gap-2">
+                    <div className="w-1 h-8 bg-orange-500 rounded-full"></div>
                     Autres contrats
                   </h2>
                 </div>
@@ -304,20 +304,20 @@ export default async function ContractsPage() {
                         className={`group relative bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border ${statusConfig.borderColor} border-l-4 opacity-85 hover:opacity-100`}
                       >
                         {/* Card Background Accent */}
-                        <div className="absolute top-0 right-0 w-20 h-20 bg-gray-50 rounded-full -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-300"></div>
+                        <div className="absolute top-0 right-0 w-20 h-20 bg-stone-50 rounded-full -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-300"></div>
 
                         <div className="relative p-6 md:p-7">
                           {/* Header */}
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center gap-3 flex-1">
-                              <div className="bg-gray-100 p-3 rounded-xl">
-                                <FileText className="w-6 h-6 text-gray-600" />
+                              <div className="bg-stone-100 p-3 rounded-xl">
+                                <FileText className="w-6 h-6 text-stone-600" />
                               </div>
                               <div className="flex-1">
-                                <h3 className="font-bold text-gray-900 text-lg">
+                                <h3 className="font-bold text-stone-900 text-lg">
                                   {contract.contract_models?.name || 'Contrat'}
                                 </h3>
-                                <p className="text-sm text-gray-500 font-medium">
+                                <p className="text-sm text-stone-500 font-medium">
                                   {contract.contract_models?.producers?.name || 'Producteur'}
                                 </p>
                               </div>
@@ -340,17 +340,17 @@ export default async function ContractsPage() {
 
                           {/* Amount */}
                           {contract.total_amount && (
-                            <div className="mb-4 pb-4 border-b border-gray-100">
-                              <p className="text-sm text-gray-600 mb-1">Montant</p>
-                              <p className="text-2xl font-bold text-gray-800">
+                            <div className="mb-4 pb-4 border-b border-stone-100">
+                              <p className="text-sm text-stone-600 mb-1">Montant</p>
+                              <p className="text-2xl font-bold text-stone-800">
                                 {contract.total_amount.toFixed(2)}€
                               </p>
                             </div>
                           )}
 
                           {/* Date Range */}
-                          <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                            <Calendar className="w-4 h-4 text-gray-400" />
+                          <div className="flex items-center gap-2 text-sm text-stone-600 mb-4">
+                            <Calendar className="w-4 h-4 text-stone-400" />
                             <span>
                               {formatDate(contract.contract_models?.start_date || '')} -{' '}
                               {formatDate(contract.contract_models?.end_date || '')}
@@ -359,13 +359,13 @@ export default async function ContractsPage() {
 
                           {/* Signed Date */}
                           {contract.signed_at && (
-                            <p className="text-xs text-gray-500 mb-4">
+                            <p className="text-xs text-stone-500 mb-4">
                               Signé le {formatDateLong(contract.signed_at)}
                             </p>
                           )}
 
                           {/* Footer CTA */}
-                          <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between text-gray-700 font-semibold group-hover:gap-3 transition-all">
+                          <div className="mt-4 pt-4 border-t border-stone-100 flex items-center justify-between text-stone-700 font-semibold group-hover:gap-3 transition-all">
                             <span>{isFlexible ? 'Commander / Détails' : 'Voir les détails'}</span>
                             <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                           </div>
@@ -380,7 +380,7 @@ export default async function ContractsPage() {
         ) : (
           /* Empty State */
           <div className="relative">
-            <div className="bg-white rounded-3xl shadow-lg p-12 md:p-16 text-center border border-gray-100">
+            <div className="bg-white rounded-3xl shadow-lg p-12 md:p-16 text-center border border-stone-100">
               {/* Decorative Elements */}
               <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-green-50 rounded-2xl flex items-center justify-center shadow-lg">
@@ -389,13 +389,13 @@ export default async function ContractsPage() {
               </div>
 
               <div className="pt-6">
-                <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                <h2 className="text-3xl font-bold text-stone-900 mb-3">
                   Aucun contrat pour le moment
                 </h2>
-                <p className="text-gray-600 text-lg mb-2">
+                <p className="text-stone-600 text-lg mb-2">
                   Vous n'avez pas encore souscrit à un contrat AMAP.
                 </p>
-                <p className="text-gray-500 mb-8">
+                <p className="text-stone-500 mb-8">
                   Découvrez nos offres disponibles et rejoignez nos producteurs partenaires!
                 </p>
 

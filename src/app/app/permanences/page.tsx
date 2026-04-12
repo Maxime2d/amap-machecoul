@@ -148,7 +148,7 @@ export default function MemberPermanencesPage() {
         {/* Toast notification */}
         {toast && (
           <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl shadow-lg text-sm font-semibold text-white flex items-center gap-2 animate-[slideIn_0.3s_ease-out] ${
-            toast.type === 'success' ? 'bg-green-600' : 'bg-stone-700'
+            toast.type === 'success' ? 'bg-green-600' : 'bg-stone-800'
           }`}>
             {toast.type === 'success' ? <Check className="w-4 h-4" /> : null}
             {toast.message}
@@ -205,7 +205,10 @@ export default function MemberPermanencesPage() {
           <div className="space-y-6">
             {Object.entries(groupedShifts).map(([monthKey, shifts]) => (
               <div key={monthKey}>
-                <h2 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-2.5 capitalize">{monthKey}</h2>
+                <div className="flex items-center gap-2 mb-2.5">
+                  <div className="w-1 h-6 bg-orange-500 rounded-full"></div>
+                  <h2 className="text-xs font-bold text-stone-700 uppercase tracking-wider capitalize">{monthKey}</h2>
+                </div>
                 <div className="space-y-3">
                   {shifts.map((shift) => {
                     const isFull = shift.volunteer_count >= shift.capacity;
@@ -288,7 +291,7 @@ export default function MemberPermanencesPage() {
                               <button
                                 onClick={() => handleToggle(shift)}
                                 disabled={isLoading}
-                                className="flex items-center gap-1.5 px-3 py-2 rounded-lg border-2 border-green-600 text-green-700 text-xs font-bold hover:bg-green-600 hover:text-white transition-all disabled:opacity-50"
+                                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-orange-500 text-white text-xs font-bold hover:bg-orange-600 transition-all disabled:opacity-50"
                               >
                                 {isLoading ? (
                                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
