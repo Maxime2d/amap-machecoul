@@ -467,34 +467,33 @@ export default function DistributionsPage() {
       )}
 
       {/* Date Selector */}
-      <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm no-print">
-        <label className="block text-sm font-medium text-slate-700 mb-3">
-          Sélectionnez une date de distribution
+      <div className="bg-white rounded-lg border border-stone-200 p-6 shadow-sm no-print">
+        <label htmlFor="date-select" className="block text-sm font-bold text-stone-700 mb-2">
+          Date de distribution
         </label>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {upcomingDates.map((date) => (
-            <button
-              key={date.id}
-              onClick={() => setSelectedDate(date.delivery_date)}
-              className={`p-4 rounded-lg border-2 transition-colors text-left ${
-                selectedDate === date.delivery_date
-                  ? 'border-green-600 bg-green-50'
-                  : 'border-slate-200 bg-white hover:border-green-400'
-              }`}
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <Calendar className="w-4 h-4 text-slate-600" />
-                <p className="font-semibold text-slate-900">
-                  {formatDate(date.delivery_date)}
-                </p>
-              </div>
-              <p className="text-xs text-slate-600">
-                {new Date(date.delivery_date).toLocaleDateString('fr-FR', {
+        <div className="relative">
+          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400 pointer-events-none" />
+          <select
+            id="date-select"
+            value={selectedDate || ''}
+            onChange={(e) => setSelectedDate(e.target.value || null)}
+            className="w-full md:w-96 pl-10 pr-4 py-3 rounded-xl border border-stone-300 bg-white text-stone-900 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 appearance-none cursor-pointer"
+          >
+            <option value="">— Sélectionnez une date —</option>
+            {upcomingDates.map((date) => (
+              <option key={date.id} value={date.delivery_date}>
+                {new Date(date.delivery_date + 'T00:00:00').toLocaleDateString('fr-FR', {
                   weekday: 'long',
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
                 })}
-              </p>
-            </button>
-          ))}
+              </option>
+            ))}
+          </select>
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+            <svg className="w-4 h-4 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+          </div>
         </div>
       </div>
 
