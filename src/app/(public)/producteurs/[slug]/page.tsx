@@ -129,7 +129,7 @@ export default async function ProducerPage({ params }: { params: Promise<{ slug:
                     {products.map((product: any) => (
                       <tr key={product.id} className="border-b border-gray-200 hover:bg-green-50 transition-colors">
                         <td className="py-4 px-4 text-gray-900">{product.name}</td>
-                        <td className="py-4 px-4 text-gray-700">{product.unit_type || '-'}</td>
+                        <td className="py-4 px-4 text-gray-700">{{ unit: 'Unité', weight: 'Poids (kg)', volume: 'Volume (L)', bundle: 'Lot' }[product.unit_type as string] || product.unit_type || '-'}</td>
                         <td className="py-4 px-4 text-gray-700">{product.packaging || '-'}</td>
                       </tr>
                     ))}

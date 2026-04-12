@@ -16,6 +16,13 @@ import {
   ShoppingCart,
 } from 'lucide-react';
 
+const unitTypeLabels: Record<string, string> = {
+  unit: 'unité',
+  weight: 'kg',
+  volume: 'L',
+  bundle: 'lot',
+};
+
 interface Product {
   id: string;
   name: string;
@@ -502,7 +509,7 @@ export default function ContractDetailPage() {
                           {group.items.map((item) => (
                             <div key={item.id} className="text-gray-900">
                               {item.products.name} x{item.quantity}{' '}
-                              {item.products.unit_type}
+                              {unitTypeLabels[item.products.unit_type] || item.products.unit_type}
                             </div>
                           ))}
                         </div>

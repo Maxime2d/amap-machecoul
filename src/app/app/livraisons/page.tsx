@@ -13,6 +13,13 @@ import {
   MapPin,
 } from 'lucide-react';
 
+const unitTypeLabels: Record<string, string> = {
+  unit: 'unité',
+  weight: 'kg',
+  volume: 'L',
+  bundle: 'lot',
+};
+
 interface Product {
   name: string;
   unit_type: string;
@@ -303,7 +310,7 @@ export default function LivraisonsPage() {
                     </div>
                   </div>
                   <span className="text-sm font-semibold text-stone-700 ml-3 flex-shrink-0">
-                    {item.quantity} {item.unit_type}
+                    {item.quantity} {unitTypeLabels[item.unit_type] || item.unit_type}
                   </span>
                 </div>
               ))}
@@ -436,7 +443,7 @@ function DeliveryCard({
                 </div>
               </div>
               <span className="text-sm font-semibold text-stone-700 ml-3 flex-shrink-0">
-                {item.quantity} {item.unit_type}
+                {item.quantity} {unitTypeLabels[item.unit_type] || item.unit_type}
               </span>
             </div>
           ))}
@@ -507,7 +514,7 @@ function PastDeliveriesSection({
                       <span className="text-xs text-stone-400">({item.producer_name})</span>
                     </div>
                     <span className="text-stone-600 font-medium ml-2 flex-shrink-0">
-                      {item.quantity} {item.unit_type}
+                      {item.quantity} {unitTypeLabels[item.unit_type] || item.unit_type}
                     </span>
                   </div>
                 ))}
