@@ -66,6 +66,15 @@ export default async function ContractsPage() {
           icon: XCircle,
           iconColor: 'text-red-600',
         };
+      case 'open':
+        return {
+          borderColor: 'border-l-green-500',
+          badgeBg: 'bg-green-50',
+          badgeText: 'text-green-700',
+          badgeLabel: 'Ouvert',
+          icon: CheckCircle,
+          iconColor: 'text-green-600',
+        };
       default:
         return {
           borderColor: 'border-l-gray-500',
@@ -211,8 +220,9 @@ export default async function ContractsPage() {
                               </div>
                             </div>
                             <span
-                              className={`px-3 py-1 rounded-lg text-xs font-bold ${statusConfig.badgeBg} ${statusConfig.badgeText} whitespace-nowrap`}
+                              className={`inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold ${statusConfig.badgeBg} ${statusConfig.badgeText} whitespace-nowrap`}
                             >
+                              <StatusIcon className="w-3 h-3" />
                               {statusConfig.badgeLabel}
                             </span>
                           </div>
@@ -323,8 +333,9 @@ export default async function ContractsPage() {
                               </div>
                             </div>
                             <span
-                              className={`px-3 py-1 rounded-lg text-xs font-bold ${statusConfig.badgeBg} ${statusConfig.badgeText} whitespace-nowrap`}
+                              className={`inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold ${statusConfig.badgeBg} ${statusConfig.badgeText} whitespace-nowrap`}
                             >
+                              <StatusIcon className="w-3 h-3" />
                               {statusConfig.badgeLabel}
                             </span>
                           </div>

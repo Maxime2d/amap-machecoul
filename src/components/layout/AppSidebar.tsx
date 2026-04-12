@@ -154,7 +154,7 @@ export function AppSidebar({ userName, isAdmin }: AppSidebarProps) {
           className="w-full mx-1 flex items-center gap-3 px-4 py-2.5 text-sm text-stone-500 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all duration-200"
         >
           <LogOut className="w-4 h-4" />
-          <span>Deconnexion</span>
+          <span>Déconnexion</span>
         </button>
       </div>
     </div>

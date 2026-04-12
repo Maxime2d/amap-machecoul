@@ -48,7 +48,7 @@ export default async function DashboardPage() {
   const upcomingDates = Array.from(deliveryMap.entries()).slice(0, 5);
   const nextDate = upcomingDates[0];
 
-  const firstName = (profile as any)?.first_name || 'Adherent';
+  const firstName = (profile as any)?.first_name || 'Adhérent';
   const pendingTotal = pendingPayments.reduce((sum: number, p: any) => sum + (p.amount || 0), 0);
 
   // Upcoming permanences the user is signed up for
@@ -75,9 +75,28 @@ export default async function DashboardPage() {
 
         {/* Greeting */}
         <div className="mb-6">
-          <p className="text-xs font-medium text-stone-400 uppercase tracking-wider">Espace adherent</p>
+          <p className="text-xs font-medium text-stone-400 uppercase tracking-wider">Espace adhérent</p>
           <h1 className="text-2xl font-bold text-stone-900 mt-1">Salut {firstName} !</h1>
         </div>
+
+        {/* Pending payments alert */}
+        {pendingPayments.length > 0 && (
+          <Link
+            href="/app/cotisation"
+            className="flex items-center gap-3 mb-4 p-4 bg-red-50 border border-red-200 rounded-xl hover:border-red-300 transition-colors group"
+          >
+            <div className="w-9 h-9 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <CreditCard className="w-4 h-4 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-red-900">
+                {pendingPayments.length} paiement{pendingPayments.length > 1 ? 's' : ''} en attente — {pendingTotal.toFixed(0)} &euro;
+              </p>
+              <p className="text-xs text-red-700">Régulariser votre situation</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-red-400 group-hover:translate-x-1 transition-transform flex-shrink-0" />
+          </Link>
+        )}
 
         {/* Next delivery — compact highlight */}
         {nextDate ? (
@@ -130,28 +149,9 @@ export default async function DashboardPage() {
             <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-stone-100 mb-2">
               <Calendar className="w-5 h-5 text-stone-400" />
             </div>
-            <p className="font-semibold text-stone-700">Pas de livraison prevue</p>
+            <p className="font-semibold text-stone-700">Pas de livraison prévue</p>
             <p className="text-sm text-stone-500 mt-0.5">Souscrivez un contrat pour commencer.</p>
           </div>
-        )}
-
-        {/* Pending payments alert */}
-        {pendingPayments.length > 0 && (
-          <Link
-            href="/app/cotisation"
-            className="flex items-center gap-3 mb-4 p-4 bg-red-50 border border-red-200 rounded-xl hover:border-red-300 transition-colors group"
-          >
-            <div className="w-9 h-9 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
-              <CreditCard className="w-4 h-4 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-red-900">
-                {pendingPayments.length} paiement{pendingPayments.length > 1 ? 's' : ''} en attente — {pendingTotal.toFixed(0)} &euro;
-              </p>
-              <p className="text-xs text-red-700">Regulariser votre situation</p>
-            </div>
-            <ArrowRight className="w-4 h-4 text-red-400 group-hover:translate-x-1 transition-transform flex-shrink-0" />
-          </Link>
         )}
 
         {/* Mes contrats */}
@@ -319,7 +319,7 @@ export default async function DashboardPage() {
         {/* Quick links */}
         <div className="mb-6">
           <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
-            Acces rapide
+            Accès rapide
           </h2>
           <div className="grid grid-cols-2 gap-2">
             <Link
