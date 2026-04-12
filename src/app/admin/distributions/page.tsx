@@ -99,7 +99,14 @@ export default function DistributionsPage() {
 
         if (fetchError) throw fetchError;
 
-        setUpcomingDates(data || []);
+        // Deduplicate by delivery_date — model_dates has one row per contract model
+        const seen = new Set<string>();
+        const unique = (data || []).filter((d: ModelDate) => {
+          if (seen.has(d.delivery_date)) return false;
+          seen.add(d.delivery_date);
+          return true;
+        });
+        setUpcomingDates(unique);
       } catch (err) {
         console.error('Error fetching distribution dates:', err);
         setError('Erreur lors du chargement des dates de distribution');
@@ -124,10 +131,9 @@ export default function DistributionsPage() {
         setDataLoading(true);
         setError(null);
 
-        // Find the selected date object
+        // Find the selected date object (use first matching since we deduplicated)
         const dateObj = upcomingDates.find((d) => d.delivery_date === selectedDate);
-        if (!dateObj) return;
-        setSelectedDateData(dateObj);
+        setSelectedDateData(dateObj || null);
 
         // Fetch all contract items for this delivery date
         const { data: items, error: itemsError } = await supabase
