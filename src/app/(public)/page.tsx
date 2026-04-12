@@ -151,7 +151,7 @@ export default async function HomePage() {
       <section className="bg-gray-100 py-2">
         <div className="flex gap-2 overflow-hidden">
           {[
-            { src: 'https://images.unsplash.com/photo-1566385101042-1a0aa4c1c900?w=400&h=250&fit=crop', alt: 'Panier de légumes bio' },
+            { src: 'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=250&fit=crop', alt: 'Panier de légumes bio' },
             { src: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&h=250&fit=crop', alt: 'Salade et légumes verts frais' },
             { src: 'https://images.unsplash.com/photo-1518843875459-f738682238a6?w=400&h=250&fit=crop', alt: 'Tomates bio sur pied' },
             { src: 'https://images.unsplash.com/photo-1445282768818-728615cc910a?w=400&h=250&fit=crop', alt: 'Courgettes du potager' },
