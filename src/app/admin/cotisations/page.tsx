@@ -687,7 +687,7 @@ export default function CotisationsPage() {
               placeholder="Rechercher par nom ou email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+              className="w-full pl-12 pr-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
             />
             {searchQuery && (
               <button
@@ -835,7 +835,7 @@ export default function CotisationsPage() {
           <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-stone-200 sticky top-0 bg-white">
-              <h2 className="text-xl font-extrabold text-stone-900">
+              <h2 className="text-xl font-extrabold text-stone-900 tracking-tight">
                 Créer une période d'adhésion
               </h2>
               <button
@@ -850,7 +850,7 @@ export default function CotisationsPage() {
             <form onSubmit={handleCreatePeriod} className="p-6 space-y-5">
               {/* Name */}
               <div>
-                <label className="block text-sm font-semibold text-stone-900 mb-2">
+                <label className="block text-sm font-bold text-stone-900 mb-2">
                   Nom <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -860,14 +860,14 @@ export default function CotisationsPage() {
                     setPeriodFormData({ ...periodFormData, name: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
                   placeholder="Ex: Saison 2025-2026"
                 />
               </div>
 
               {/* Start Date */}
               <div>
-                <label className="block text-sm font-semibold text-stone-900 mb-2">
+                <label className="block text-sm font-bold text-stone-900 mb-2">
                   Date de début <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -877,13 +877,13 @@ export default function CotisationsPage() {
                     setPeriodFormData({ ...periodFormData, start_date: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
                 />
               </div>
 
               {/* End Date */}
               <div>
-                <label className="block text-sm font-semibold text-stone-900 mb-2">
+                <label className="block text-sm font-bold text-stone-900 mb-2">
                   Date de fin <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -893,13 +893,13 @@ export default function CotisationsPage() {
                     setPeriodFormData({ ...periodFormData, end_date: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
                 />
               </div>
 
               {/* Suggested Amount */}
               <div>
-                <label className="block text-sm font-semibold text-stone-900 mb-2">
+                <label className="block text-sm font-bold text-stone-900 mb-2">
                   Montant suggéré <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -913,14 +913,14 @@ export default function CotisationsPage() {
                     })
                   }
                   required
-                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
                   placeholder="0.00"
                 />
               </div>
 
               {/* Minimum Amount */}
               <div>
-                <label className="block text-sm font-semibold text-stone-900 mb-2">
+                <label className="block text-sm font-bold text-stone-900 mb-2">
                   Montant minimum <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -934,7 +934,7 @@ export default function CotisationsPage() {
                     })
                   }
                   required
-                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
                   placeholder="0.00"
                 />
               </div>
@@ -968,7 +968,7 @@ export default function CotisationsPage() {
           <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-stone-200 sticky top-0 bg-white">
-              <h2 className="text-xl font-extrabold text-stone-900">
+              <h2 className="text-xl font-extrabold text-stone-900 tracking-tight">
                 Enregistrer une cotisation
               </h2>
               <button
@@ -983,7 +983,7 @@ export default function CotisationsPage() {
             <form onSubmit={handleCreateFee} className="p-6 space-y-5">
               {/* Member Selection */}
               <div>
-                <label className="block text-sm font-semibold text-stone-900 mb-2">
+                <label className="block text-sm font-bold text-stone-900 mb-2">
                   Adhérent <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -992,7 +992,7 @@ export default function CotisationsPage() {
                     setFeeFormData({ ...feeFormData, user_id: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
                 >
                   <option value="">Sélectionnez un adhérent</option>
                   {members.map((member) => (
@@ -1005,7 +1005,7 @@ export default function CotisationsPage() {
 
               {/* Period Selection */}
               <div>
-                <label className="block text-sm font-semibold text-stone-900 mb-2">
+                <label className="block text-sm font-bold text-stone-900 mb-2">
                   Période <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -1014,7 +1014,7 @@ export default function CotisationsPage() {
                     setFeeFormData({ ...feeFormData, period_id: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
                 >
                   <option value="">Sélectionnez une période</option>
                   {periods.map((period) => (
@@ -1027,7 +1027,7 @@ export default function CotisationsPage() {
 
               {/* Amount */}
               <div>
-                <label className="block text-sm font-semibold text-stone-900 mb-2">
+                <label className="block text-sm font-bold text-stone-900 mb-2">
                   Montant <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1038,14 +1038,14 @@ export default function CotisationsPage() {
                     setFeeFormData({ ...feeFormData, amount: e.target.value })
                   }
                   required
-                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
                   placeholder="0.00"
                 />
               </div>
 
               {/* Payment Method */}
               <div>
-                <label className="block text-sm font-semibold text-stone-900 mb-2">
+                <label className="block text-sm font-bold text-stone-900 mb-2">
                   Méthode de paiement
                 </label>
                 <select
@@ -1056,7 +1056,7 @@ export default function CotisationsPage() {
                       method: e.target.value as any,
                     })
                   }
-                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
                 >
                   <option value="check">Chèque</option>
                   <option value="transfer">Virement</option>
@@ -1067,7 +1067,7 @@ export default function CotisationsPage() {
 
               {/* Status */}
               <div>
-                <label className="block text-sm font-semibold text-stone-900 mb-2">
+                <label className="block text-sm font-bold text-stone-900 mb-2">
                   Statut
                 </label>
                 <select
@@ -1075,7 +1075,7 @@ export default function CotisationsPage() {
                   onChange={(e) =>
                     setFeeFormData({ ...feeFormData, status: e.target.value as any })
                   }
-                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-stone-300 bg-white"
+                  className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
                 >
                   {Object.entries(statusConfig).map(([key, val]) => (
                     <option key={key} value={key}>

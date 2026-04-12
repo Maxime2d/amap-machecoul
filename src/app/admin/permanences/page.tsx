@@ -263,7 +263,7 @@ export default function AdminPermanencesPage() {
         <div className="flex items-center justify-end -mt-4 mb-2">
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-medium text-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors font-medium text-sm"
           >
             <Plus className="w-4 h-4" />
             Ajouter une date
@@ -307,7 +307,7 @@ export default function AdminPermanencesPage() {
 
         {/* Add Form - Collapsible */}
         {showForm && (
-          <div className="bg-white rounded-xl border border-stone-300 p-6 shadow-sm">
+          <div className="bg-white rounded-2xl border border-stone-300 p-6 shadow-sm">
             <h3 className="text-lg font-extrabold text-stone-900 mb-4">Nouvelle permanence</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -316,7 +316,7 @@ export default function AdminPermanencesPage() {
                   type="date"
                   value={newDate}
                   onChange={(e) => setNewDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900"
+                  className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
               <div>
@@ -327,7 +327,7 @@ export default function AdminPermanencesPage() {
                   onChange={(e) => setNewCapacity(parseInt(e.target.value) || 3)}
                   min={1}
                   max={10}
-                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900"
+                  className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
               <div>
@@ -335,7 +335,7 @@ export default function AdminPermanencesPage() {
                 <select
                   value={selectedPeriod}
                   onChange={(e) => setSelectedPeriod(e.target.value)}
-                  className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900"
+                  className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                   {periods.map((p) => (
                     <option key={p.id} value={p.id}>{p.name}</option>
@@ -346,13 +346,13 @@ export default function AdminPermanencesPage() {
             <div className="flex gap-2 mt-6">
               <button
                 onClick={handleAddDate}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm"
+                className="px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-medium text-sm"
               >
                 Ajouter
               </button>
               <button
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 bg-stone-200 text-stone-700 rounded-lg hover:bg-stone-300 transition-colors font-medium text-sm"
+                className="px-4 py-2 bg-stone-200 text-stone-700 rounded-xl hover:bg-stone-300 transition-colors font-medium text-sm"
               >
                 Annuler
               </button>

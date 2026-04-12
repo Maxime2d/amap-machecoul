@@ -66,7 +66,7 @@ export default function NewsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-slate-500">Chargement...</div>
+        <div className="text-stone-500">Chargement...</div>
       </div>
     );
   }
@@ -80,13 +80,13 @@ export default function NewsPage() {
             <Newspaper className="w-6 h-6 text-indigo-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Gestion des actualités</h1>
-            <p className="text-sm text-slate-600">{filteredPosts.length} article(s)</p>
+            <h1 className="text-2xl font-bold text-stone-900">Gestion des actualités</h1>
+            <p className="text-sm text-stone-600">{filteredPosts.length} article(s)</p>
           </div>
         </div>
         <Link
           href="#"
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors font-medium text-sm"
         >
           <Plus className="w-4 h-4" />
           Nouvel article
@@ -97,30 +97,30 @@ export default function NewsPage() {
       <div className="flex gap-2">
         <button
           onClick={() => setStatusFilter('all')}
-          className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+          className={`px-4 py-2 rounded-xl font-medium text-sm transition-colors ${
             statusFilter === 'all'
-              ? 'bg-indigo-600 text-white'
-              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+              ? 'bg-green-700 text-white'
+              : 'bg-white border border-stone-200 text-stone-700 hover:bg-stone-50'
           }`}
         >
           Tous
         </button>
         <button
           onClick={() => setStatusFilter('published')}
-          className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+          className={`px-4 py-2 rounded-xl font-medium text-sm transition-colors ${
             statusFilter === 'published'
               ? 'bg-green-600 text-white'
-              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+              : 'bg-white border border-stone-200 text-stone-700 hover:bg-stone-50'
           }`}
         >
           Publiés
         </button>
         <button
           onClick={() => setStatusFilter('draft')}
-          className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+          className={`px-4 py-2 rounded-xl font-medium text-sm transition-colors ${
             statusFilter === 'draft'
               ? 'bg-gray-600 text-white'
-              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+              : 'bg-white border border-stone-200 text-stone-700 hover:bg-stone-50'
           }`}
         >
           Brouillons
@@ -128,7 +128,7 @@ export default function NewsPage() {
       </div>
 
       {/* Posts Table */}
-      <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+      <div className="bg-white rounded-lg border border-stone-200 p-6 shadow-sm">
         <DataTable
           headers={['Titre', 'Statut', 'Date']}
           rows={rows}

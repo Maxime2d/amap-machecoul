@@ -267,7 +267,7 @@ export default function ContractsPage() {
         <div className="flex items-center justify-end -mt-4 mb-2">
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-semibold text-sm"
           >
             <Plus className="w-5 h-5" />
             Créer un modèle
@@ -312,7 +312,7 @@ export default function ContractsPage() {
                 onClick={() => setStatusFilter(status)}
                 className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors whitespace-nowrap ${
                   statusFilter === status
-                    ? 'bg-green-600 text-white'
+                    ? 'bg-green-700 text-white'
                     : 'bg-white border border-stone-200 text-stone-700 hover:bg-stone-50'
                 }`}
               >
@@ -429,10 +429,10 @@ export default function ContractsPage() {
       {/* Create Model Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-stone-200 sticky top-0 bg-white">
-              <h2 className="text-lg font-extrabold text-stone-900">Créer un modèle de contrat</h2>
+              <h2 className="text-xl font-extrabold text-stone-900">Créer un modèle de contrat</h2>
               <button
                 onClick={() => setShowModal(false)}
                 className="text-stone-400 hover:text-stone-600 transition-colors"
@@ -453,7 +453,7 @@ export default function ContractsPage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                  className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-stone-900"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-stone-900"
                   placeholder="Ex: Panier Bio Saisonnier"
                 />
               </div>
@@ -467,7 +467,7 @@ export default function ContractsPage() {
                   value={formData.producer_id}
                   onChange={(e) => setFormData({ ...formData, producer_id: e.target.value })}
                   required
-                  className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-stone-900"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-stone-900"
                 >
                   <option value="">Sélectionnez un producteur</option>
                   {producers.map((producer) => (
@@ -486,7 +486,7 @@ export default function ContractsPage() {
                 <select
                   value={formData.nature}
                   onChange={(e) => setFormData({ ...formData, nature: e.target.value as 'subscription' | 'flexible' })}
-                  className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-stone-900"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-stone-900"
                 >
                   <option value="subscription">Abonnement</option>
                   <option value="flexible">Flexible</option>
@@ -503,7 +503,7 @@ export default function ContractsPage() {
                   value={formData.start_date}
                   onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
                   required
-                  className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-stone-900"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-stone-900"
                 />
               </div>
 
@@ -517,7 +517,7 @@ export default function ContractsPage() {
                   value={formData.end_date}
                   onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
                   required
-                  className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-stone-900"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-stone-900"
                 />
               </div>
 
@@ -530,7 +530,7 @@ export default function ContractsPage() {
                   type="date"
                   value={formData.enroll_start}
                   onChange={(e) => setFormData({ ...formData, enroll_start: e.target.value })}
-                  className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-stone-900"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-stone-900"
                 />
               </div>
 
@@ -543,7 +543,7 @@ export default function ContractsPage() {
                   type="date"
                   value={formData.enroll_end}
                   onChange={(e) => setFormData({ ...formData, enroll_end: e.target.value })}
-                  className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-stone-900"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-stone-900"
                 />
               </div>
 
@@ -552,7 +552,7 @@ export default function ContractsPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-stone-200 text-stone-700 rounded-lg hover:bg-stone-50 transition-colors font-semibold text-sm"
+                  className="flex-1 px-4 py-2 border border-stone-200 text-stone-700 rounded-xl hover:bg-stone-50 transition-colors font-semibold text-sm"
                 >
                   Annuler
                 </button>

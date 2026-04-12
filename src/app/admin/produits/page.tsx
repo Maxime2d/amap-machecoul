@@ -268,7 +268,7 @@ export default function ProductsPage() {
       <div className="flex items-center justify-end -mt-4 mb-2">
         <button
           onClick={handleOpenModal}
-          className="flex items-center gap-2 px-5 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-semibold text-sm"
+          className="flex items-center gap-2 px-5 py-3 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors font-semibold text-sm"
         >
           <Plus className="w-4 h-4" />
           Ajouter un produit
@@ -421,10 +421,10 @@ export default function ProductsPage() {
       {/* Product Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-stone-200">
-              <h2 className="text-lg font-extrabold text-stone-900">
+              <h2 className="text-xl tracking-tight font-extrabold text-stone-900">
                 {isEditing ? 'Modifier le produit' : 'Ajouter un produit'}
               </h2>
               <button
@@ -447,7 +447,7 @@ export default function ProductsPage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent text-sm"
+                  className="w-full px-4 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
                   placeholder="Ex: Tomate Bio"
                 />
               </div>
@@ -461,7 +461,7 @@ export default function ProductsPage() {
                   value={formData.producer_id}
                   onChange={(e) => setFormData({ ...formData, producer_id: e.target.value })}
                   required
-                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent text-sm"
+                  className="w-full px-4 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
                 >
                   <option value="">Sélectionnez un producteur</option>
                   {producers.map((producer) => (
@@ -480,7 +480,7 @@ export default function ProductsPage() {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent resize-none text-sm"
+                  className="w-full px-4 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none text-sm"
                   placeholder="Ex: Tomates biologiques cultivées en serre..."
                   rows={3}
                 />
@@ -495,7 +495,7 @@ export default function ProductsPage() {
                   value={formData.unit_type}
                   onChange={(e) => setFormData({ ...formData, unit_type: e.target.value as any })}
                   required
-                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent text-sm"
+                  className="w-full px-4 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
                 >
                   <option value="unit">Unité</option>
                   <option value="weight">Poids (kg)</option>
@@ -513,7 +513,7 @@ export default function ProductsPage() {
                   type="text"
                   value={formData.packaging}
                   onChange={(e) => setFormData({ ...formData, packaging: e.target.value })}
-                  className="w-full px-4 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent text-sm"
+                  className="w-full px-4 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
                   placeholder="Ex: 500g, 1 litre, 6 pièces"
                 />
               </div>
@@ -525,7 +525,7 @@ export default function ProductsPage() {
                     type="checkbox"
                     checked={formData.is_active}
                     onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                    className="w-4 h-4 rounded border-stone-300 text-stone-900 focus:ring-stone-500"
+                    className="w-4 h-4 rounded border-stone-300 text-stone-900 focus:ring-green-500"
                   />
                   <span className="text-sm font-medium text-stone-700">Produit actif</span>
                 </label>
@@ -536,14 +536,14 @@ export default function ProductsPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-stone-200 text-stone-700 rounded-lg hover:bg-stone-50 transition-colors font-medium text-sm"
+                  className="flex-1 px-4 py-2 border border-stone-200 text-stone-700 rounded-xl hover:bg-stone-50 transition-colors font-medium text-sm"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>
@@ -565,7 +565,7 @@ export default function ProductsPage() {
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full mx-4">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-stone-200">
               <h2 className="text-lg font-extrabold text-stone-900">Confirmer la suppression</h2>
@@ -588,13 +588,13 @@ export default function ProductsPage() {
             <div className="flex gap-3 p-6 border-t border-stone-200">
               <button
                 onClick={() => setShowDeleteConfirm(null)}
-                className="flex-1 px-4 py-2 border border-stone-200 text-stone-700 rounded-lg hover:bg-stone-50 transition-colors font-medium text-sm"
+                className="flex-1 px-4 py-2 border border-stone-200 text-stone-700 rounded-xl hover:bg-stone-50 transition-colors font-medium text-sm"
               >
                 Annuler
               </button>
               <button
                 onClick={() => handleDeleteWithToast(showDeleteConfirm)}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors font-medium text-sm"
               >
                 Supprimer
               </button>

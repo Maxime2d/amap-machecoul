@@ -66,13 +66,15 @@ export default async function AdminDashboard() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-green-900/80 to-green-800/50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-green-900/90 via-green-900/70 to-green-800/40" />
         <div className="relative z-10 h-full flex flex-col justify-end p-6 md:p-8">
-          <div className="flex items-center gap-2 mb-1">
-            <Leaf className="w-4 h-4 text-green-300" />
-            <p className="text-xs font-semibold text-green-200 uppercase tracking-wider">Administration AMAP</p>
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center w-7 h-7 bg-green-500/25 backdrop-blur-sm rounded-full border border-green-400/30">
+              <Leaf className="w-3.5 h-3.5 text-green-300" />
+            </div>
+            <p className="text-xs font-bold text-green-200/90 uppercase tracking-wider">Administration AMAP</p>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white">
+          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
             Bonjour {firstName}
           </h1>
         </div>
@@ -114,7 +116,7 @@ export default async function AdminDashboard() {
         <div className="lg:col-span-2 bg-white rounded-xl border border-stone-200 overflow-hidden">
           <div className="px-5 py-3.5 border-b border-stone-100 flex items-center justify-between">
             <h2 className="text-sm font-bold text-stone-900">Derniers inscrits</h2>
-            <Link href="/admin/membres" className="text-xs font-semibold text-green-700 hover:text-green-800 flex items-center gap-0.5">
+            <Link href="/admin/membres" className="text-xs font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5">
               Tous <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -210,7 +212,7 @@ export default async function AdminDashboard() {
               <Package className="w-4 h-4 text-green-600" />
               <h2 className="text-sm font-bold text-stone-900">Contrats ouverts</h2>
             </div>
-            <Link href="/admin/contrats" className="text-xs font-semibold text-green-700 hover:text-green-800 flex items-center gap-0.5">
+            <Link href="/admin/contrats" className="text-xs font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5">
               Tous <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>

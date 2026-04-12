@@ -159,10 +159,10 @@ function ProducerModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#f8f7f4] rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto border border-stone-200">
+      <div className="bg-white rounded-2xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto border border-stone-200">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-stone-200 sticky top-0 bg-[#f8f7f4]">
-          <h2 className="text-lg font-extrabold text-stone-900">
+        <div className="flex items-center justify-between p-6 border-b border-stone-200 sticky top-0 bg-white">
+          <h2 className="text-xl font-extrabold text-stone-900">
             {mode === 'create' ? 'Ajouter un producteur' : 'Modifier le producteur'}
           </h2>
           <button
@@ -185,7 +185,7 @@ function ProducerModal({
               type="text"
               value={formData.name}
               onChange={handleNameChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${
+              className={`w-full px-3 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 ${
                 errors.name
                   ? 'border-red-500 focus:ring-red-500'
                   : 'border-stone-300 bg-white'
@@ -207,7 +207,7 @@ function ProducerModal({
               type="text"
               value={formData.slug}
               onChange={handleSlugChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${
+              className={`w-full px-3 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 ${
                 errors.slug
                   ? 'border-red-500 focus:ring-red-500'
                   : 'border-stone-300 bg-white'
@@ -230,7 +230,7 @@ function ProducerModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, description: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-none bg-white"
+              className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 resize-none bg-white"
               placeholder="Description complète"
               rows={3}
               disabled={isSaving}
@@ -247,7 +247,7 @@ function ProducerModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, short_bio: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-none bg-white"
+              className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 resize-none bg-white"
               placeholder="Bio courte"
               rows={2}
               disabled={isSaving}
@@ -265,7 +265,7 @@ function ProducerModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, contact_email: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+              className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               placeholder="contact@example.com"
               disabled={isSaving}
             />
@@ -282,7 +282,7 @@ function ProducerModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, phone: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+              className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               placeholder="+33 6 12 34 56 78"
               disabled={isSaving}
             />
@@ -299,7 +299,7 @@ function ProducerModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, address: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+              className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               placeholder="123 Rue de la Ferme"
               disabled={isSaving}
             />
@@ -316,7 +316,7 @@ function ProducerModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, city: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+              className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               placeholder="Paris"
               disabled={isSaving}
             />
@@ -333,7 +333,7 @@ function ProducerModal({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, website: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+              className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               placeholder="https://example.com"
               disabled={isSaving}
             />
@@ -352,7 +352,7 @@ function ProducerModal({
                   status: e.target.value as 'active' | 'inactive' | 'pending',
                 }))
               }
-              className="w-full px-3 py-2 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+              className="w-full px-3 py-2 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               disabled={isSaving}
             >
               <option value="pending">En attente</option>
@@ -366,7 +366,7 @@ function ProducerModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 text-stone-700 bg-stone-200 hover:bg-stone-300 rounded-lg font-medium transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 border border-stone-200 text-stone-700 hover:bg-stone-50 rounded-lg font-medium transition-colors disabled:opacity-50"
               disabled={isSaving}
             >
               Annuler
@@ -694,7 +694,7 @@ export default function ProducersPage() {
       <div className="flex items-center justify-end -mt-4 mb-2">
         <button
           onClick={handleCreateClick}
-          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium text-sm"
         >
           <Plus className="w-4 h-4" />
           Ajouter

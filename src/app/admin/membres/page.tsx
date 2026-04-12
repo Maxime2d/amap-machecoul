@@ -118,9 +118,9 @@ export default function MembersPage() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-colors whitespace-nowrap ${
               activeTab === tab.key
-                ? 'bg-green-600 text-white'
+                ? 'bg-green-700 text-white shadow-sm'
                 : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-300'
             }`}
           >
@@ -142,7 +142,7 @@ export default function MembersPage() {
           placeholder="Rechercher par nom ou email..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 bg-white border border-stone-200 rounded-xl text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          className="w-full pl-10 pr-4 py-2.5 bg-white border border-stone-200 rounded-xl text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500"
         />
         {searchQuery && (
           <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-stone-400">

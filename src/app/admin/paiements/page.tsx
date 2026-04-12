@@ -399,7 +399,7 @@ export default function PaymentsPage() {
             });
             setShowModal(true);
           }}
-          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-semibold text-sm"
         >
           <Plus className="w-4 h-4" />
           Ajouter un paiement
@@ -621,10 +621,10 @@ export default function PaymentsPage() {
       {/* Payment Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-stone-200 sticky top-0 bg-white">
-              <h2 className="text-xl font-extrabold text-stone-900">
+              <h2 className="text-xl font-extrabold text-stone-900 tracking-tight">
                 {editingPayment ? 'Modifier le paiement' : 'Ajouter un paiement'}
               </h2>
               <button
@@ -651,7 +651,7 @@ export default function PaymentsPage() {
                       value={formData.user_id}
                       onChange={(e) => setFormData({ ...formData, user_id: e.target.value })}
                       required
-                      className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
                       <option value="">Sélectionnez un adhérent</option>
                       {members.map((member) => (
@@ -672,7 +672,7 @@ export default function PaymentsPage() {
                       onChange={(e) => setFormData({ ...formData, contract_id: e.target.value })}
                       required
                       disabled={!formData.user_id}
-                      className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-stone-50 disabled:text-stone-500"
+                      className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-stone-50 disabled:text-stone-500"
                     >
                       <option value="">Sélectionnez un contrat</option>
                       {selectedMemberContracts.map((contract) => (
@@ -696,7 +696,7 @@ export default function PaymentsPage() {
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                   required
-                  className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
                   placeholder="0.00"
                 />
               </div>
@@ -709,7 +709,7 @@ export default function PaymentsPage() {
                 <select
                   value={formData.method}
                   onChange={(e) => setFormData({ ...formData, method: e.target.value as any })}
-                  className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                   <option value="check">Chèque</option>
                   <option value="transfer">Virement</option>
@@ -729,7 +729,7 @@ export default function PaymentsPage() {
                       type="text"
                       value={formData.check_number || ''}
                       onChange={(e) => setFormData({ ...formData, check_number: e.target.value })}
-                      className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
                       placeholder="Ex: 123456"
                     />
                   </div>
@@ -742,7 +742,7 @@ export default function PaymentsPage() {
                       type="text"
                       value={formData.bank_name || ''}
                       onChange={(e) => setFormData({ ...formData, bank_name: e.target.value })}
-                      className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
                       placeholder="Ex: BNP Paribas"
                     />
                   </div>
@@ -758,7 +758,7 @@ export default function PaymentsPage() {
                   type="text"
                   value={formData.reference}
                   onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
-                  className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
                   placeholder="Référence du paiement"
                 />
               </div>
@@ -771,7 +771,7 @@ export default function PaymentsPage() {
                 <textarea
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
                   placeholder="Notes supplémentaires"
                   rows={3}
                 />
@@ -785,14 +785,14 @@ export default function PaymentsPage() {
                     setShowModal(false);
                     setEditingPayment(null);
                   }}
-                  className="flex-1 px-4 py-2 border border-stone-200 text-stone-700 rounded-lg hover:bg-stone-50 transition-colors font-semibold text-sm"
+                  className="flex-1 px-4 py-2 border border-stone-200 text-stone-700 rounded-xl hover:bg-stone-50 transition-colors font-semibold text-sm"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (editingPayment ? 'Modification...' : 'Enregistrement...') : (editingPayment ? 'Modifier' : 'Enregistrer')}
                 </button>

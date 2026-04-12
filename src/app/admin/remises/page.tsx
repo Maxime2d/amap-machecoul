@@ -478,7 +478,7 @@ export default function RemittancesPage() {
             });
             setShowModal(true);
           }}
-          className="flex items-center gap-2 px-5 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors font-extrabold text-sm"
+          className="flex items-center gap-2 px-5 py-3 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors font-bold text-sm"
         >
           <Plus className="w-4 h-4" />
           Créer une remise
@@ -547,10 +547,10 @@ export default function RemittancesPage() {
                   <div className="p-4 flex items-center justify-between gap-4">
                     {/* Left: Date & Producer */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-extrabold text-slate-900">
+                      <p className="text-sm font-extrabold text-stone-900">
                         {formatDate(remittance.remittance_date)}
                       </p>
-                      <p className="text-xs text-slate-600 mt-1">
+                      <p className="text-xs text-stone-600 mt-1">
                         {remittance.producers?.name || '-'} · {paymentCount}{' '}
                         {paymentCount === 1 ? 'chèque' : 'chèques'} ·{' '}
                         {formatCurrency(remittance.total_amount)}
@@ -607,7 +607,7 @@ export default function RemittancesPage() {
                             isExpanded ? null : remittance.id
                           )
                         }
-                        className={`px-2 py-1.5 text-slate-600 hover:bg-stone-100 rounded-lg transition-colors ${
+                        className={`px-2 py-1.5 text-stone-600 hover:bg-stone-100 rounded-lg transition-colors ${
                           isExpanded ? 'rotate-180' : ''
                         }`}
                       >
@@ -634,15 +634,15 @@ export default function RemittancesPage() {
                               className="flex items-center justify-between p-2 bg-white rounded-lg border border-stone-100"
                             >
                               <div className="flex-1 min-w-0">
-                                <p className="text-xs font-medium text-slate-900">
+                                <p className="text-xs font-medium text-stone-900">
                                   {memberName}
                                 </p>
-                                <p className="text-xs text-slate-600">
+                                <p className="text-xs text-stone-600">
                                   Chèque: {payment?.check_number || '-'} |{' '}
                                   {payment?.bank_name || '-'}
                                 </p>
                               </div>
-                              <p className="text-xs font-semibold text-slate-900 ml-2 whitespace-nowrap">
+                              <p className="text-xs font-semibold text-stone-900 ml-2 whitespace-nowrap">
                                 {formatCurrency(payment?.amount || 0)}
                               </p>
                             </div>
@@ -661,10 +661,10 @@ export default function RemittancesPage() {
       {/* Create/Edit Remittance Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-stone-200 sticky top-0 bg-white">
-              <h2 className="text-lg font-extrabold text-slate-900">
+              <h2 className="text-xl tracking-tight font-bold text-stone-900">
                 Créer une remise producteur
               </h2>
               <button
@@ -679,7 +679,7 @@ export default function RemittancesPage() {
             <form onSubmit={handleCreateRemittance} className="p-6 space-y-4">
               {/* Producer Selection */}
               <div>
-                <label className="block text-sm font-extrabold text-slate-700 mb-2">
+                <label className="block text-sm font-bold text-stone-700 mb-2">
                   Producteur <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -692,7 +692,7 @@ export default function RemittancesPage() {
                     })
                   }
                   required
-                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                 >
                   <option value="">Sélectionnez un producteur</option>
                   {producers.map((producer) => (
@@ -706,7 +706,7 @@ export default function RemittancesPage() {
               {/* Eligible Payments */}
               {formData.producer_id && (
                 <div>
-                  <label className="block text-sm font-extrabold text-slate-700 mb-2">
+                  <label className="block text-sm font-bold text-stone-700 mb-2">
                     Chèques disponibles{' '}
                     <span className="text-red-500">*</span>
                   </label>
@@ -758,7 +758,7 @@ export default function RemittancesPage() {
                               className="rounded"
                             />
                             <div className="flex-1">
-                              <p className="text-sm font-medium text-slate-900">
+                              <p className="text-sm font-medium text-stone-900">
                                 {memberName}
                               </p>
                               <p className="text-xs text-stone-600">
@@ -766,7 +766,7 @@ export default function RemittancesPage() {
                                 {payment.bank_name || '-'}
                               </p>
                             </div>
-                            <p className="text-sm font-semibold text-slate-900 whitespace-nowrap">
+                            <p className="text-sm font-semibold text-stone-900 whitespace-nowrap">
                               {formatCurrency(payment.amount)}
                             </p>
                           </label>
@@ -794,7 +794,7 @@ export default function RemittancesPage() {
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-extrabold text-slate-700 mb-2">
+                <label className="block text-sm font-bold text-stone-700 mb-2">
                   Notes
                 </label>
                 <textarea
@@ -802,7 +802,7 @@ export default function RemittancesPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, notes: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+                  className="w-full px-3 py-2 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                   placeholder="Notes supplémentaires sur cette remise..."
                   rows={3}
                 />
@@ -813,7 +813,7 @@ export default function RemittancesPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-stone-200 text-slate-700 rounded-xl hover:bg-stone-50 transition-colors font-medium text-sm"
+                  className="flex-1 px-4 py-2 border border-stone-200 text-stone-700 rounded-xl hover:bg-stone-50 transition-colors font-medium text-sm"
                 >
                   Annuler
                 </button>
@@ -824,7 +824,7 @@ export default function RemittancesPage() {
                     !formData.producer_id ||
                     formData.selectedPayments.length === 0
                   }
-                  className="flex-1 px-4 py-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Création...' : 'Créer la remise'}
                 </button>
